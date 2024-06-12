@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TablesConfig(AppConfig):
+class OutletsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tables'
+    name = 'outlets'
