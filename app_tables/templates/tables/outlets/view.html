@@ -1,0 +1,116 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block content_header %}
+<div class="page-header">
+    <h3 class="fw-bold mb-3">View Outlet</h3>
+    <ul class="breadcrumbs mb-3">
+      <li class="nav-home">
+        <a href="#">
+          <i class="icon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Outlets</a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">View Outlet</a>
+      </li>
+    </ul>
+  </div>
+{% endblock content_header %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Outlet Information</div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="mt-4 col-md-6 col-lg-6">
+                <label class="mb-3"><b>General Info</b></label>
+                <div class="row">
+                    <div class="col-auto">
+                        <label class="d-block">No Outlet</label>
+                        <label class="d-block">Outlet Code</label>
+                        <label class="d-block">Name</label>
+                        <label class="d-block">Type</label>
+                        <label class="d-block">Address</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">Value 1</label>
+                        <label class="d-block">Value 2</label>
+                        <label class="d-block">Value 3</label>
+                        <label class="d-block">Value 4</label>
+                        <label class="d-block">Value 5</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 col-md-6 col-lg-6">
+                <label class="mb-3"><b>Location Info</b></label>
+                <div class="row">
+                    <div class="col-auto">
+                        <label class="d-block">Province</label>
+                        <label class="d-block">Kabupaten</label>
+                        <label class="d-block">Kecamatan</label>
+                        <label class="d-block">Kelurahan</label>
+                        <label class="d-block">Coordinate</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">Value 1</label>
+                        <label class="d-block">Value 2</label>
+                        <label class="d-block">Value 3</label>
+                        <label class="d-block">Value 4</label>
+                        <label class="d-block">Value 5</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 col-md-6 col-lg-6">
+                <label class="mb-3"><b>Delivery Info</b></label>
+                <div class="row">
+                    <div class="col-auto">
+                        <label class="d-block">Day Delivery</label>
+                        <label class="d-block">Daily/Weekly</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">:</label>
+                        <label class="d-block">:</label>
+                    </div>
+                    <div class="col-auto">
+                        <label class="d-block">Value 1</label>
+                        <label class="d-block">Value 2</label>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-action">
+          <button class="btn btn-success">Submit</button>
+          <button class="btn btn-danger">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
