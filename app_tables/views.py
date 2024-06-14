@@ -16,3 +16,12 @@ def outlets_view(request):
 
 def vehicles_index(request):
     return render(request, 'tables/vehicles/index.html')
+
+def vehicles_create(request):
+    return render(request, 'tables/vehicles/create.html')
+
+def vehicles_update(request):
+    return render(request, 'tables/vehicles/update.html')
+
+def vehicles_view(request):
+    return render(request, 'tables/vehicles/view.html')

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_dashboard',
     'app_tables',
+    'app_schedule',
 ]
 
 MIDDLEWARE = [
