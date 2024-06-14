@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TablesConfig(AppConfig):
+class AppReportConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'tables'
+    name = 'app_report'

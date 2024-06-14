@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'app_dashboard',
     'app_tables',
     'app_schedule',
+    'app_report',
 ]
 
 MIDDLEWARE = [
