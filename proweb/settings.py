@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app_dashboard',
-    'app_tables',
     'app_schedule',
+    'app_tables',
     'app_report',
 ]
 
@@ -87,7 +87,11 @@ WSGI_APPLICATION = 'proweb.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': env('ENGINE'),
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': env('NAME'),
+        'USER' : env('USER'),
+        'PASSWORD' : env('PASSWORD'),
+        'HOST' : env('HOST'),
+        'PORT' : env('PORT'),
     }
 }
 
