@@ -1,15 +1,20 @@
 from django.urls import path
 from . import views
 
-app_name="datatables"
+app_name="app_tables"
 urlpatterns = [
-    path('outlets/', views.outlets_index, name='outlet'),
-    path('outlets/create/', views.outlets_create, name='outletCreate'),
-    path('outlets/update/', views.outlets_update, name='outletUpdate'),
-    path('outlets/view/', views.outlets_view, name='outletView'),
+    path('outlets/', views.outlet_index, name='outletIndex'),
+    path('outlets/create/', views.outlet_create, name='outletCreate'),
+    path('outlets/update/', views.outlet_update, name='outletUpdate'),
+    path('outlets/view/', views.outlet_view, name='outletView'),
     
-    path('vehicles/', views.vehicles_index, name='vehicle'),
-    path('vehicles/create', views.vehicles_create, name='vehicleCreate'),
-    path('vehicles/update', views.vehicles_update, name='vehicleUpdate'),
-    path('vehicles/view', views.vehicles_view, name='vehicleView'),
+    path('vehicles/', views.vehicle_index, name='vehicleIndex'),
+    path('vehicles/create', views.vehicle_create, name='vehicleCreate'),
+    path('vehicles/update', views.vehicle_update, name='vehicleUpdate'),
+    path('vehicles/view', views.vehicle_view, name='vehicleView'),
+    
+    
+    path('driver/create', views.driver_create, name='driverCreate'),
+    # path('driver/update', views.driver_update, name='driverUpdate'),
+    # path('driver/view', views.driver_view, name='driverView'),
 ]

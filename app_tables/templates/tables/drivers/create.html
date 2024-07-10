@@ -3,7 +3,7 @@
 
 {% block content_header %}
 <div class="page-header">
-    <h3 class="fw-bold mb-3">Add Vehicle</h3>
+    <h3 class="fw-bold mb-3">Add Driver</h3>
     <ul class="breadcrumbs mb-3">
       <li class="nav-home">
         <a href="#">
@@ -20,7 +20,7 @@
         <i class="icon-arrow-right"></i>
       </li>
       <li class="nav-item">
-        <a href="#">Add Vehicle</a>
+        <a href="#">Add Driver</a>
       </li>
     </ul>
   </div>
@@ -36,16 +36,24 @@
         <div class="card-body">
           <div class="row">
             <div class="col-md-6 col-lg-4">
-              <form action="{% url "app_tables:vehicleCreate" %}" method='POST'>
+              <form action="{% url "app_tables:driverCreate" %}" method='POST'>
                 {% csrf_token %}
                 <label class="mb-3"><b>General Info</b></label>
-                <div class="form-group">
-                    {{form.UnitType.label}}
-                    {{form.UnitType}}
+                 <div class="form-group">
+                    {{form.FullName.label}}
+                    {{form.FullName}}
                 </div>
                 <div class="form-group">
-                    {{form.VehicleNumber.label}}
-                    {{form.VehicleNumber}}
+                    {{form.Email.label}}
+                    {{form.Email}}
+                </div>
+                <div class="form-group">
+                    {{form.Phone.label}}
+                    {{form.Phone}}
+                </div>
+                <div class="form-group">
+                    {{form.Address.label}}
+                    {{form.Address}}
                 </div>
                 <div class="card-action">
                   <button class="btn btn-success" type="submit">Submit</button>

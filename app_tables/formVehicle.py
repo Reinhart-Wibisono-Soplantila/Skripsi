@@ -5,20 +5,20 @@ class VehicleForm(forms.ModelForm):
     class Meta:
         model=VehicleModel
         fields=[
-            'FullName',
-            'VehicleNumber'
+            'UnitType',
+            'VehicleNumber',
         ]
         
         labels = {
-            'FullName' : 'Nama Lengkap',
+            'UnitType' : 'Tipe Kendaraan',
             'VehicleNumber' : 'Nomor Kendaraan'
         }
         
         widgets = {
-            'FullName': forms.TextInput(
+            'UnitType': forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Nama Driver"
+                    'placeholder' : "Masukkan Tipe Kendaraan"
                 }
             ),
             'VehicleNumber' : forms.TextInput(

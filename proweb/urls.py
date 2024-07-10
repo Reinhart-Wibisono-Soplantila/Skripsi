@@ -21,5 +21,5 @@ urlpatterns = [
     path('schedule/', include('app_schedule.urls')),
     path('report/', include('app_report.urls')),
     path('admin/', admin.site.urls),
-    path('', include('app_tables.urls', namespace='datatables')),
+    path('', include('app_tables.urls', namespace='app_tables')),
 ]

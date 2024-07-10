@@ -1,33 +1,41 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from .models import VehicleModel
 from .formVehicle import VehicleForm
+from .formDriver import DriverForm
 
 # Create your views here.
-def outlets_index(request):
+def outlet_index(request):
     context={
-        'link':'datatables:outletCreate',
+        'PageHeader' : 'Outlet Review',
+        'link':'app_tables:outletCreate',
         'linkButton' : 'Add Outlet',
     }
-    return render(request, 'tables/index.html', context)
+    return render(request, 'tables/outlets/index.html', context)
 
-def outlets_create(request):
+def outlet_create(request):
     return render(request, 'tables/outlets/create.html')
 
-def outlets_update(request):
+def outlet_update(request):
     return render(request, 'tables/outlets/update.html')
 
-def outlets_view(request):
+def outlet_view(request):
     return render(request, 'tables/outlets/view.html')
 
 
-def vehicles_index(request):
+def vehicle_index(request):
+    VehicleObject = VehicleModel.objects.all()
     context={
-        'link':'datatables:vehicleCreate', 
-        'linkButton' : 'Add Vehicle',
+        'PageHeader' : 'Vehicle & Driver',
+        'VehicleLink': 'app_tables:vehicleCreate', 
+        'VehicleButton' : 'Add Vehicle',
+        'DriverLink' : 'app_tables:driverCreate',
+        'DriverButton' : 'Add Driver',
+        'Datas' : VehicleObject,
     }
-    return render(request, 'tables/index.html', context)
+    return render(request, 'tables/vehicles/index.html', context)
 
-def vehicles_create(request):
+def vehicle_create(request):
     Vehicle_Form = VehicleForm(request.POST or None)
     if request.method == 'POST':
         if Vehicle_Form.is_valid():
@@ -38,8 +46,19 @@ def vehicles_create(request):
     }
     return render(request, 'tables/vehicles/create.html', context)
 
-def vehicles_update(request):
+def vehicle_update(request):
     return render(request, 'tables/vehicles/update.html')
 
-def vehicles_view(request):
+def vehicle_view(request):
     return render(request, 'tables/vehicles/view.html')
+
+def driver_create(request):
+    Vehicle_Form = DriverForm(request.POST or None)
+    if request.method == 'POST':
+        if Vehicle_Form.is_valid():
+            Vehicle_Form.save()
+            return HttpResponseRedirect('/vehicles/')
+    context={
+        'form':DriverForm
+    }
+    return render(request, 'tables/drivers/create.html', context)
