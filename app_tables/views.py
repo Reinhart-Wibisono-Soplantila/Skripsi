@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .models import VehicleModel
-from .formVehicle import VehicleForm
-from .formDriver import DriverForm
+from .form import VehicleForm
+from .form import DriverForm
 
 # Create your views here.
 def outlet_index(request):
