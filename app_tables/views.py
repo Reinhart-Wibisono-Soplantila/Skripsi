@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from .models import VehicleModel
 from .form import VehicleForm
@@ -36,21 +36,39 @@ def vehicle_index(request):
     return render(request, 'tables/vehicles/index.html', context)
 
 def vehicle_create(request):
-    Vehicle_Form = VehicleForm(request.POST or None)
+    VehicleForm_Create = VehicleForm(request.POST or None)
+    error = None
     if request.method == 'POST':
-        if Vehicle_Form.is_valid():
-            Vehicle_Form.save()
-            return HttpResponseRedirect('/vehicles/')
+        if VehicleForm_Create.is_valid():
+            VehicleForm_Create.save()
+            return redirect('app_tables:vehicleIndex')
+        else:
+            error = VehicleForm_Create.errors
     context={
-        'form':VehicleForm
+        'form': VehicleForm,
+        'error' : error 
     }
     return render(request, 'tables/vehicles/create.html', context)
 
-def vehicle_update(request):
-    return render(request, 'tables/vehicles/update.html')
+def vehicle_update(request, vehicleNumber):
+    updated_data = get_object_or_404(VehicleModel, VehicleNumber=vehicleNumber)
+    VehicleForm_updated = VehicleForm(request.POST or None, instance=updated_data)
+    error = None
+    if(request.method == 'POST'):
+        if(VehicleForm_updated.is_valid()):
+            VehicleForm_updated.save()
+            return redirect('app_tables:vehicleIndex')
+        else:
+            error = VehicleForm_updated.errors
+    context={
+        'form':VehicleForm_updated,
+        'error':error
+    }
+    return render(request, 'tables/vehicles/update.html', context)
 
-def vehicle_view(request):
-    return render(request, 'tables/vehicles/view.html')
+def vehicle_delete(request, vehicleNumber):
+    VehicleModel.objects.filter(VehicleNumber = vehicleNumber).delete()
+    return redirect('app_tables:vehicleIndex')
 
 def driver_create(request):
     Vehicle_Form = DriverForm(request.POST or None)

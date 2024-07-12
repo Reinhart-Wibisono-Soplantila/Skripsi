@@ -16,7 +16,7 @@ class DriverForm(forms.ModelForm):
             'FullName' : 'Nama Lengkap',
             'Phone' : 'Nomor Telepon',
             'Email' : 'Email',
-            'Address' : 'Alamat'
+            'Address' : 'Alamat',
         }
         
         widgets = {
@@ -48,16 +48,40 @@ class DriverForm(forms.ModelForm):
 
 
 class VehicleForm(forms.ModelForm):
+    StatusChoices=(
+        ("Ready", 'Ready'),
+        ('Repaired', 'Repaired'),
+    )
+    Status = forms.ChoiceField(
+        choices=StatusChoices,
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class' :'form-select form-control'
+            }
+        )
+    )
     class Meta:
         model=VehicleModel
-        fields=[
+        fields = [
             'UnitType',
             'VehicleNumber',
+            'Status',
         ]
         
         labels = {
             'UnitType' : 'Tipe Kendaraan',
             'VehicleNumber' : 'Nomor Kendaraan'
+        }
+        
+        error_messages ={
+            'UnitType' : {
+                'max_length' : 'Tipe Kendaraan terlalu panjang'
+            },
+            'VehicleNumber' : {
+                'max_length': 'Nomor Kendaraan terlalu panjang',
+                'unique': "Nomor Kendaraan sudah digunakan.",
+            }
         }
         
         widgets = {

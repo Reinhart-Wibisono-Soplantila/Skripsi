@@ -1,6 +1,10 @@
 {% extends "layout/base.html" %}
 {% load static %}
 
+{% block style_app %}
+<link rel="stylesheet" href="{% static '/web/css/styles.css' %}">
+{% endblock style_app %}
+
 {% block content_header %}
 <div class="page-header">
     <h3 class="fw-bold mb-3">Update Vehicle</h3>
@@ -14,7 +18,7 @@
         <i class="icon-arrow-right"></i>
       </li>
       <li class="nav-item">
-        <a href="#">Vehicles Overview</a>
+        <a href="#">Vehicles & Driver Overview</a>
       </li>
       <li class="separator">
         <i class="icon-arrow-right"></i>
@@ -31,166 +35,38 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">Form Update Outlet</div>
+          <div class="card-title">Form Update Vehicle</div>
         </div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-6 col-lg-4">
+              <form action='' method='POST'>
+                {% csrf_token %}
                 <label class="mb-3"><b>General Info</b></label>
-                {% comment %} default-input {% endcomment %}
                 <div class="form-group">
-                    <label for="largeInput">No Outlet</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
+                    {{form.UnitType.label}}
+                    {{form.UnitType}}
+                    {% if error.UnitType %}
+                      {{error.UnitType}}
+                    {% endif %}
                 </div>
                 <div class="form-group">
-                    <label for="largeInput">Outlet Code</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
+                    {{form.VehicleNumber.label}}
+                    {{form.VehicleNumber}}
+                    {% if error.VehicleNumber %}
+                      {{error.VehicleNumber}}
+                    {% endif %}
                 </div>
                 <div class="form-group">
-                    <label for="largeInput">Name</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
+                    {{form.Status.label}}
+                    {{form.Status}}
                 </div>
-                <div class="form-group">
-                    <label for="largeInput">Type</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
+                <div class="card-action">
+                  <button class="btn btn-success" type="submit">Submit</button>
                 </div>
-                <div class="form-group">
-                    <label for="comment">Address</label>
-                    <textarea class="form-control" id="comment" rows="5">
-                    </textarea>
-                </div>
-                {% comment %} default select {% endcomment %}
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <label class="mb-3"><b>Location Info</b></label>
-                <div class="form-group">
-                    <label for="defaultSelect">Province</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kabupaten</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kecamatan</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kelurahan</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="largeInput">Coordinate</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <label class="mb-3"><b>Delivery Info</b></label>
-                <div class="form-group">
-                    <label for="defaultSelect">Day Delivery</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="defaultSelect">Daily/Weekly</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    </select>
-                </div>
-
+              </form>
             </div>
           </div>
-        </div>
-        <div class="card-action">
-          <button class="btn btn-success">Submit</button>
-          <button class="btn btn-danger">Cancel</button>
         </div>
       </div>
     </div>
