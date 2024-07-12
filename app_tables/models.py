@@ -31,7 +31,9 @@ class DriverModel(models.Model):
     Phone=models.CharField(
         max_length=30
     )
-    Email=models.EmailField()
+    Email=models.EmailField(
+        unique=True
+    )
     Address=models.TextField()
     Created_at=models.DateField(
         auto_now_add=True

@@ -19,6 +19,20 @@ class DriverForm(forms.ModelForm):
             'Address' : 'Alamat',
         }
         
+        error_messages ={
+            'FullName' : {
+                'max_length' : 'FullName terlalu panjang'
+            },
+            'Email' : {
+                'max_length': 'Email terlalu panjang',
+                'unique': "Email sudah digunakan",
+            },'Phone' : {
+                'max_length' : 'Phone terlalu panjang'
+            },'Address' : {
+                'max_length' : 'Address terlalu panjang'
+            },
+        }
+        
         widgets = {
             'FullName': forms.TextInput(
                 attrs = {
@@ -80,7 +94,7 @@ class VehicleForm(forms.ModelForm):
             },
             'VehicleNumber' : {
                 'max_length': 'Nomor Kendaraan terlalu panjang',
-                'unique': "Nomor Kendaraan sudah digunakan.",
+                'unique': "Nomor Kendaraan sudah digunakan",
             }
         }
         

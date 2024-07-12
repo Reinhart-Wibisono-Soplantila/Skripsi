@@ -14,6 +14,7 @@ urlpatterns = [
     path('vehicles/delete/<str:vehicleNumber>', views.vehicle_delete, name='vehicleDelete'),
     
     path('driver/create', views.driver_create, name='driverCreate'),
-    # path('driver/update', views.driver_update, name='driverUpdate'),
-    # path('driver/view', views.driver_view, name='driverView'),
+    path('driver/update/<str:driverId>', views.driver_update, name='driverUpdate'),
+    path('driver/delete/<str:driverId>', views.driver_delete, name='driverDelete'),
+    path('driver/view/<str:driverId>', views.driver_view, name='driverView'),
 ]

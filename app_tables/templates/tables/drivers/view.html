@@ -14,7 +14,7 @@
         <i class="icon-arrow-right"></i>
       </li>
       <li class="nav-item">
-        <a href="#">Vehicles & Driver Overview</a>
+        <a href="#">Vehicles Overview</a>
       </li>
       <li class="separator">
         <i class="icon-arrow-right"></i>
@@ -31,35 +31,49 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">{{pageHeader}} Form</div>
+          <div class="card-title">{{pageHeader}}</div>
         </div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-6 col-lg-4">
-              <form action='' method='POST'>
+              <form action="" method='POST'>
                 {% csrf_token %}
                 <label class="mb-3"><b>General Info</b></label>
-                
-                <div class="form-group">
-                    {{form.UnitType.label}}
-                    {{form.UnitType}}
-                    {% if error.UnitType %}
-                      {% for error in error.UnitType  %}
+                 <div class="form-group">
+                    {{form.FullName.label}}
+                    {{form.FullName}}
+                    {% if error.FullName %}
+                      {% for error in error.FullName %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.VehicleNumber.label}}
-                    {{form.VehicleNumber}}
-                    {% if error.VehicleNumber %}
-                      {% for error in error.VehicleNumber  %}
+                    {{form.Email.label}}
+                    {{form.Email}}
+                    {% if error.Email %}
+                      {% for error in error.Email %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
-                <div class="card-action">
-                  <button class="btn btn-success" type="submit">Submit</button>
+                <div class="form-group">
+                    {{form.Phone.label}}
+                    {{form.Phone}}
+                    {% if error.Phone %}
+                      {% for error in error.Phone %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.Address.label}}
+                    {{form.Address}}
+                    {% if error.Address %}
+                      {% for error in error.Address %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
                 </div>
               </form>
             </div>
