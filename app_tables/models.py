@@ -42,3 +42,52 @@ class DriverModel(models.Model):
         auto_now=True
     )
     
+    def __str__(self):
+        return"{}. {}".format(self.id, self.FullName)
+    
+class OutletModel(models.Model):
+    OutletNumber=models.CharField(
+        max_length=255
+    )
+    OutletCode=models.CharField(
+        max_length=255
+    )
+    OutletName=models.CharField(
+        max_length=255
+    )
+    OutletType=models.CharField(
+        max_length=255
+    )
+    Address1=models.CharField(
+        max_length=255
+    )
+    Address2=models.CharField(
+        max_length=255
+    )
+    Town=models.CharField(
+        max_length=255
+    )
+    Provinsi=models.CharField(
+        max_length=255
+    )
+    Kabupaten=models.CharField(
+        max_length=255
+    )
+    Kecamatan=models.CharField(
+        max_length=255
+    )
+    Kelurahan=models.CharField(
+        max_length=255
+    )
+    Latitude=models.CharField(
+        max_length=255
+    )
+    Longitude=models.CharField(
+        max_length=255
+    )
+    Days=models.CharField(
+        max_length=255
+    )
+    Delivery=models.CharField(
+        max_length=255
+    )

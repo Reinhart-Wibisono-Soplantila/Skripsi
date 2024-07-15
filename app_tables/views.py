@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
-from .models import VehicleModel, DriverModel
-from .form import VehicleForm, DriverForm
+from .models import VehicleModel, DriverModel, OutletModel
+from .form import VehicleForm, DriverForm, OutletForm
 
 # Create your views here.
 # outlet views
@@ -14,13 +14,54 @@ def outlet_index(request):
     return render(request, 'tables/outlets/index.html', context)
 
 def outlet_create(request):
-    return render(request, 'tables/outlets/create.html')
+    OutletForm_Create = OutletForm(request.POST or None)
+    error = None
+    if request.method == 'POST':
+        if OutletForm_Create.is_valid():
+            OutletForm_Create.save()
+            return redirect('app_tables:outletIndex')
+        else:
+            error = OutletForm_Create.errors
+    context={
+        'pageHeader' : 'Add Outlet',
+        'form' : OutletForm,
+        'error' : error
+    }
+    return render(request, 'tables/outlets/create.html', context)
 
-def outlet_update(request):
-    return render(request, 'tables/outlets/update.html')
+def outlet_update(request, outletCode):
+    updated_data = get_object_or_404(OutletModel, OutletCode = outletCode)
+    OutletForm_updated = OutletForm(request.POST or None, instance=updated_data)
+    error = None
+    if request.method == "POST":
+        if OutletForm_updated.is_valid():
+            OutletForm_updated.save()
+            return redirect('app_tables:outletIndex')
+        else:
+            error = OutletForm_updated.errors
+    context = {
+        'pageHeader' : 'Update Outlet',
+        'form' : OutletForm_updated,
+        'error' : error,
+    }
+    return render(request, 'tables/outlets/update.html', context)
 
-def outlet_view(request):
+def outlet_view(request, outletCode):
+    selected_data = get_object_or_404(OutletModel, OuletCode = outletCode)
+    OutletForm_selected = OutletForm(request.POST or None, instance=selected_data)
+    for field in OutletForm_selected.fields.values():
+        field.widget.attrs['disabled'] = 'disabled'
+    
+    context = {
+        'pageHeader' : 'View Outlet',
+        'form' : OutletForm_selected
+    }
     return render(request, 'tables/outlets/view.html')
+
+
+def outlet_delete(request, outletCode):
+    OutletModel.objects.filter(OutletCode=outletCode).delete()
+    return redirect('app_tables:outletDelete')
 
 # vehicle views
 def vehicle_index(request):
@@ -109,10 +150,6 @@ def driver_update(request, driverId):
     }
     return render(request, 'tables/drivers/update.html', context)
 
-def driver_delete(request, driverId):
-    DriverModel.objects.filter(id=driverId).delete()
-    return redirect('app_tables:vehicleIndex')
-
 def driver_view(request, driverId):
     selected_data = get_object_or_404(DriverModel, id=driverId)
     DriverForm_selected = DriverForm(instance=selected_data)
@@ -125,3 +162,7 @@ def driver_view(request, driverId):
         'form' : DriverForm_selected
     }
     return render(request, 'tables/drivers/view.html', context)
+
+def driver_delete(request, driverId):
+    DriverModel.objects.filter(id=driverId).delete()
+    return redirect('app_tables:vehicleIndex')
