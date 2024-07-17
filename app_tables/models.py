@@ -58,13 +58,7 @@ class OutletModel(models.Model):
     OutletType=models.CharField(
         max_length=255
     )
-    Address1=models.CharField(
-        max_length=255
-    )
-    Address2=models.CharField(
-        max_length=255
-    )
-    Town=models.CharField(
+    Address=models.CharField(
         max_length=255
     )
     Provinsi=models.CharField(
@@ -91,3 +85,34 @@ class OutletModel(models.Model):
     Delivery=models.CharField(
         max_length=255
     )
+
+class reg_Provinces(models.Model):
+    name=models.CharField(
+        max_length=255
+    )
+    def __str__(self):
+        return self.name
+    
+class reg_Regencies(models.Model):
+    province=models.ForeignKey(reg_Provinces, on_delete=models.CASCADE)
+    name=models.CharField(
+        max_length=255
+    )
+    def __str__(self):
+        return self.name
+
+class reg_Districts(models.Model):
+    regency=models.ForeignKey(reg_Regencies, on_delete=models.CASCADE)
+    name=models.CharField(
+        max_length=255
+    )
+    def __str__(self):
+        return self.name
+    
+class reg_Villages(models.Model):
+    district=models.ForeignKey(reg_Districts, on_delete=models.CASCADE)
+    name=models.CharField(
+        max_length=255
+    )
+    def __str__(self):
+        return self.name

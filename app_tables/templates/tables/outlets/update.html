@@ -1,6 +1,10 @@
 {% extends "layout/base.html" %}
 {% load static %}
 
+{% block style_app %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock style_app %}
+
 {% block content_header %}
 <div class="page-header">
     <h3 class="fw-bold mb-3">Update Outlet</h3>
@@ -35,165 +39,248 @@
           <div class="card-title">Form Update Outlet</div>
         </div>
         <div class="card-body">
-          <div class="row">
-            <div class="col-md-6 col-lg-4">
-                <label class="mb-3"><b>General Info</b></label>
-                {% comment %} default-input {% endcomment %}
-                <div class="form-group">
-                    <label for="largeInput">No Outlet</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="largeInput">Outlet Code</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="largeInput">Name</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="largeInput">Type</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
-                <div class="form-group">
-                    <label for="comment">Address</label>
-                    <textarea class="form-control" id="comment" rows="5">
-                    </textarea>
-                </div>
-                {% comment %} default select {% endcomment %}
+          <form action="" method="POST">
+            <div class="row">
+              {% csrf_token %}
+              <div class="col-md-6 col-lg-4">
+                  <label class="mb-3"><b>General Info</b></label>
+                  <div class="form-group">
+                    {{form.OutletNumber.label}}
+                    {{form.OutletNumber}}
+                    {% if error.OutletNumber %}
+                      {% for error in error.OutletNumber %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.OutletCode.label}}
+                    {{form.OutletCode}}
+                    {% if error.OutletCode %}
+                      {% for error in error.OutletCode %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.OutletName.label}}
+                    {{form.OutletName}}
+                    {% if error.OutletName %}
+                      {% for error in error.OutletName %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.OutletType.label}}
+                    {{form.OutletType}}
+                    {% if error.OutletType %}
+                      {% for error in error.OutletType %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <!-- <div class="form-group">
+                    {{form.Town.label}}
+                    {{form.Town}}
+                    {% if error.Town %}
+                      {% for error in error.Town %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Address1.label}}
+                    {{form.Address1}}
+                    {% if error.Address1 %}
+                      {% for error in error.Address1 %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div> -->
+                  <div class="form-group">
+                    {{form.Address.label}}
+                    {{form.Address}}
+                    {% if error.Address %}
+                      {% for error in error.Address %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                  <label class="mb-3"><b>Location Info</b></label>
+                  <div class="form-group">
+                    {{form.Provinsi.label}}
+                    {{form.Provinsi}}
+                    {% if error.Provinsi %}
+                      {% for error in error.Provinsi %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Kabupaten.label}}
+                    {{form.Kabupaten}}
+                    {% if error.Kabupaten %}
+                      {% for error in error.Kabupaten %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Kecamatan.label}}
+                    {{form.Kecamatan}}
+                    {% if error.Kecamatan %}
+                      {% for error in error.Kecamatan %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Kelurahan.label}}
+                    {{form.Kelurahan}}
+                    {% if error.Kelurahan %}
+                      {% for error in error.Kelurahan %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Latitude.label}}
+                    {{form.Latitude}}
+                    {% if error.Latitude %}
+                      {% for error in error.Latitude %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Longitude.label}}
+                    {{form.Longitude}}
+                    {% if error.Longitude %}
+                      {% for error in error.Longitude %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+              </div>
+              <div class="col-md-6 col-lg-4">
+                  <label class="mb-3"><b>Delivery Info</b></label>
+                  <div class="form-group">
+                    {{form.Days.label}}
+                    {{form.Days}}
+                    {% if error.Days %}
+                      {% for error in error.Days %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="form-group">
+                    {{form.Delivery.label}}
+                    {{form.Delivery}}
+                    {% if error.Delivery %}
+                      {% for error in error.Delivery %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+              </div>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <label class="mb-3"><b>Location Info</b></label>
-                <div class="form-group">
-                    <label for="defaultSelect">Province</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kabupaten</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kecamatan</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="defaultSelect">Kelurahan</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="largeInput">Coordinate</label>
-                    <input
-                    type="text"
-                    class="form-control form-control"
-                    id="defaultInput"
-                    placeholder="Default Input"
-                    />
-                </div>
+            <div class="card-action">
+              <button class="btn btn-success" type="submit">Submit</button>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <label class="mb-3"><b>Delivery Info</b></label>
-                <div class="form-group">
-                    <label for="defaultSelect">Day Delivery</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Sunday</option>
-                    <option>Monday</option>
-                    <option>Tuesday</option>
-                    <option>Wednesday</option>
-                    <option>Thursday</option>
-                    <option>Friday</option>
-                    <option>Saturday</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="defaultSelect">Daily/Weekly</label>
-                    <select
-                    class="form-select form-control"
-                    id="defaultSelect"
-                    >
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    </select>
-                </div>
-
-            </div>
-          </div>
-        </div>
-        <div class="card-action">
-          <button class="btn btn-success">Submit</button>
-          <button class="btn btn-danger">Cancel</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
 {% endblock Content %}
+
+{% block scripts_app %}
+<script type="text/javascript">
+  $.ajax({
+    url: '/path/to/get_instance_data/' + outletCode + '/',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data) {
+        // Di sini Anda dapat menggunakan data yang diterima
+        console.log(data);
+        // Misalnya, menetapkan nilai ke elemen HTML
+        $('#provinsi').val(data.provinsi);
+        $('#kabupaten').val(data.kabupaten);
+        $('#kecamatan').val(data.kecamatan);
+        $('#kelurahan').val(data.kelurahan);
+    },
+    error: function(xhr, status, error) {
+        console.error('Error fetching instance data:', error);
+    }
+});
+  $("#id_Provinsi").change(function () {
+      var url = "{% url 'app_tables:ajax_load_regencies' %}";
+      var provinceId = $(this).val();
+
+      $.ajax({
+          url: url,
+          data: {
+              'Provinsi': provinceId
+          },
+          success: function (data) {
+              console.log(data);
+              $("#id_Kabupaten").html('<option disabled selected value="">Pilih Kabupaten</option>');
+
+              data.forEach(function (item) {
+                  $("#id_Kabupaten").append('<option value="' + item.id + '">' + item.name + '</option>');
+              });
+          },
+          error: function(xhr, status, error) {
+              console.error('Error:', error);
+          }
+      });
+  });
+
+  $("#id_Kabupaten").change(function () {
+      var url = "{% url 'app_tables:ajax_load_districts' %}";
+      var regencyId = $(this).val();
+
+      $.ajax({
+          url: url,
+          data: {
+              'Kabupaten': regencyId
+          },
+          success: function (data) {
+            console.log(data);
+              $("#id_Kecamatan").html('<option disabled selected value="">Pilih Kecamatan</option>');
+              data.forEach(function (item) {
+                  $("#id_Kecamatan").append('<option value="' + item.id + '">' + item.name + '</option>');
+              });
+          }, 
+          error: function(xhr, status, error) {
+              console.error('Error:', error);
+          }
+      });
+  });
+
+  $("#id_Kecamatan").change(function () {
+      var url = "{% url 'app_tables:ajax_load_villages' %}";
+      var districtId = $(this).val();
+
+      $.ajax({
+          url: url,
+          data: {
+              'Kecamatan': districtId
+          },
+          success: function (data) {
+            console.log(data);
+              $("#id_Kelurahan").html('<option disabled selected value="">Pilih Kelurahan</option>');
+              data.forEach(function (item) {
+                  $("#id_Kelurahan").append('<option value="' + item.id + '">' + item.name + '</option>');
+              });
+          }, 
+          error: function(xhr, status, error) {
+              console.error('Error:', error);
+          }
+      });
+  });
+</script>
+{% endblock scripts_app %}

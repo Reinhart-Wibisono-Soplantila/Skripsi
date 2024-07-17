@@ -1,15 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from .models import VehicleModel, DriverModel, OutletModel
-from .form import VehicleForm, DriverForm, OutletForm
+from .models import reg_Provinces, reg_Regencies, reg_Districts, reg_Villages
+from .form import VehicleForm, DriverForm, OutletForm, OutletViewForm
 
 # Create your views here.
-# outlet views
+# Outlet Views
 def outlet_index(request):
+    OutletObject = OutletModel.objects.all()
     context={
         'PageHeader' : 'Outlet Review',
         'link':'app_tables:outletCreate',
         'linkButton' : 'Add Outlet',
+        'OutletDatas' : OutletObject
     }
     return render(request, 'tables/outlets/index.html', context)
 
@@ -17,6 +20,7 @@ def outlet_create(request):
     OutletForm_Create = OutletForm(request.POST or None)
     error = None
     if request.method == 'POST':
+        print(request.POST)
         if OutletForm_Create.is_valid():
             OutletForm_Create.save()
             return redirect('app_tables:outletIndex')
@@ -31,24 +35,25 @@ def outlet_create(request):
 
 def outlet_update(request, outletCode):
     updated_data = get_object_or_404(OutletModel, OutletCode = outletCode)
-    OutletForm_updated = OutletForm(request.POST or None, instance=updated_data)
+    # OutletForm_updated = OutletForm(request.POST or None, instance=updated_data)
     error = None
-    if request.method == "POST":
-        if OutletForm_updated.is_valid():
-            OutletForm_updated.save()
-            return redirect('app_tables:outletIndex')
-        else:
-            error = OutletForm_updated.errors
+    if request.method == 'POST':
+        form = OutletForm(request.POST, instance=updated_data)
+        if form.is_valid():
+            form.save()
+            return redirect('nama_view_atau_url_yang_diinginkan')
+    else:
+        form = OutletForm(instance=updated_data)
     context = {
         'pageHeader' : 'Update Outlet',
-        'form' : OutletForm_updated,
+        'form' : form,
         'error' : error,
     }
     return render(request, 'tables/outlets/update.html', context)
 
 def outlet_view(request, outletCode):
-    selected_data = get_object_or_404(OutletModel, OuletCode = outletCode)
-    OutletForm_selected = OutletForm(request.POST or None, instance=selected_data)
+    selected_data = get_object_or_404(OutletModel, OutletCode = outletCode)
+    OutletForm_selected = OutletViewForm(instance=selected_data)
     for field in OutletForm_selected.fields.values():
         field.widget.attrs['disabled'] = 'disabled'
     
@@ -56,12 +61,29 @@ def outlet_view(request, outletCode):
         'pageHeader' : 'View Outlet',
         'form' : OutletForm_selected
     }
-    return render(request, 'tables/outlets/view.html')
+    return render(request, 'tables/outlets/view.html', context)
 
 
 def outlet_delete(request, outletCode):
     OutletModel.objects.filter(OutletCode=outletCode).delete()
-    return redirect('app_tables:outletDelete')
+    return redirect('app_tables:outletIndex')
+
+# Loations Views
+def load_regencies(request):
+    province_id = request.GET.get('Provinsi')
+    regencies = reg_Regencies.objects.filter(province_id=province_id).order_by('name')
+    return JsonResponse(list(regencies.values('id', 'name')), safe=False)
+
+def load_districts(request):
+    regency_id = request.GET.get('Kabupaten')
+    districts = reg_Districts.objects.filter(regency_id=regency_id).order_by('name')
+    return JsonResponse(list(districts.values('id', 'name')), safe=False)
+
+def load_villages(request):
+    district_id = request.GET.get('Kecamatan')
+    villages = reg_Villages.objects.filter(district_id=district_id).order_by('name')
+    return JsonResponse(list(villages.values('id', 'name')), safe=False)
+
 
 # vehicle views
 def vehicle_index(request):

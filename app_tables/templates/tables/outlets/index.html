@@ -44,35 +44,44 @@
             <thead>
               <tr>
                 <th scope="col">No.</th>
-                <th scope="col">Unit Type</th>
-                <th scope="col">Vehicle Number</th>
-                <th scope="col">Status</th>
+                <th scope="col">Outlet Code</th>
+                <th scope="col">Outet Name</th>
+                <th scope="col">Outlet Type</th>
+                <th scope="col">Provinsi</th>
+                <th scope="col">Kabupaten/Kota</th>
                 <th style="width: 10%">Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td></td>
-                <td>
-                  <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                    <a href="{% url "app_tables:outletView" outletCode=1 %}">
-                      <i class="fas fa-eye fa-lg"></i>
-                    </a>
-                  </button>
-                  <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                     <a href="{% url 'app_tables:outletUpdate' outletCode=1%}"> 
-                      <i class="fa fa-edit fa-lg"></i>
-                    </a>
-                  </button>
-                  <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove">
-                    <a href="{% url "app_tables:outletDelete"  outletCode=1%}">  
-                      <span style="color: red;">
-                        <i class="fa fa-times fa-lg"></i>
-                      </span>
-                    </a>
-                  </button>
-                </td>
-              </tr>
+                {% for data in OutletDatas %}
+                  <tr>
+                    <td scope="row">{{forloop.counter}}</td>
+                    <td>{{data.OutletCode}}</td>
+                    <td>{{data.OutletName}}</td>
+                    <td>{{data.OutletType}}</td>
+                    <td>{{data.Provinsi}}</td>
+                    <td>{{data.Kabupaten}}</td>
+                    <td class="form-button-action">
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
+                        <a href="{% url "app_tables:outletView" outletCode=data.OutletCode %}">
+                          <i class="fas fa-eye fa-lg"></i>
+                        </a>
+                      </button>
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
+                        <a href="{% url 'app_tables:outletUpdate' outletCode=data.OutletCode %}"> 
+                          <i class="fa fa-edit fa-lg"></i>
+                        </a>
+                      </button>
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove">
+                        <a href="{% url "app_tables:outletDelete"  outletCode=data.OutletCode %}">  
+                          <span style="color: red;">
+                            <i class="fa fa-times fa-lg"></i>
+                          </span>
+                        </a>
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
             </tbody>
           </table>
         </div>
