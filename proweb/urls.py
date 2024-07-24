@@ -19,10 +19,10 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     # path('', redirect('home/')),
-    path('home/', include('app_dashboard.urls')),
-    path('schedule/', include('app_schedules.urls')),
-    path('report/', include('app_report.urls')),
-    path('admin/', admin.site.urls),
+    path('schedule/', include('app_schedules.urls', namespace='app_schedules')),
     path('vehicle/', include('app_vehicle.urls', namespace='app_vehicle')),
     path('outlet/', include('app_outlet.urls', namespace='app_outlet')),
+    path('home/', include('app_dashboard.urls')),
+    path('report/', include('app_report.urls')),
+    path('admin/', admin.site.urls),
 ]

@@ -5,5 +5,5 @@ class ScheduleForm(forms.Form):
     datas=forms.ModelMultipleChoiceField(
         queryset=OutletModel.objects.all(),
         widget=forms.CheckboxSelectMultiple,
-        required=True
+        required=True,
     )

@@ -27,7 +27,7 @@
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">Outlets Table</h4>
-          <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal" data-bs-target="#addRowModal">
+          <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
             Generate Schedule
           </button>
         </div>
@@ -67,8 +67,9 @@
               {% endfor %}
             </tbody>
           </table> -->
-          <form action="POST">  
-            <table id="basic-datatables" class="display table table-striped table-hover">
+          <form id="schedule-form" method="POST" > 
+            <input type="hidden" name="outletCodes" id="id_outletCodes"> 
+            <table id="add-row" class="display table table-striped table-hover">
             {% csrf_token %}
               <thead>
                 <tr>
@@ -88,9 +89,8 @@
                       <tr>
                           <!-- <td>{{ form.data.as_widget }}</td> -->
                           <td>
-                            <input type="checkbox" name="outlets" value="{{ data.OutletCode }}">
+                            <input type="checkbox" name="datas" value="{{ data.OutletCode }}">
                           </td>
-                          <!-- <td>{{ data.OutletCode }}</td> -->
                           <td>{{ data.OutletName }}</td>
                           <td>{{ data.OutletType }}</td>
                           <td>{{ data.Provinsi }}</td>
@@ -113,9 +113,14 @@
 {% block scripts_app %}
 {% load static %}
 <!-- Datatables -->
+<script src="{% static '/assets/js/core/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'web/datatables/datatables.min.js' %}"></script>
 <script>
     $(document).ready(function () {
+      $('#generate-schedule-btn').click(function() {
+        $('#schedule-form').submit();
+      });
+
       $("#basic-datatables").DataTable({});
 
       $("#multi-filter-select").DataTable({

@@ -5,10 +5,11 @@ from django.utils import timezone
 
     
 class OutletModel(models.Model):
-    OutletNumber=models.CharField(
-        max_length=255
-    )
     OutletCode=models.CharField(
+        max_length=255,
+        primary_key=True
+    )
+    OutletNumber=models.CharField(
         max_length=255
     )
     OutletName=models.CharField(
