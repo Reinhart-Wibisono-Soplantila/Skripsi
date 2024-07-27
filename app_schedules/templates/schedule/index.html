@@ -76,12 +76,13 @@
             {% if error.datas %}
                 <div class="error">{{ errorsdatas }}</div>
             {% endif %}
-            <table id="basic-datatables" class="display table table-striped table-hover">
+            <table id="add-row" class="display table table-striped table-hover">
             {% csrf_token %}
               <thead>
                 <tr>
+                    <th>No.</th>
                     <th>Select</th>
-                    <!-- <th>Outlet Code</th> -->
+                    <th>Outlet Code</th>
                     <th>Outlet Name</th>
                     <th>Outlet Type</th>
                     <th>Provinsi</th>
@@ -94,10 +95,11 @@
               <tbody>
                   {% for data in OutletObject %}
                       <tr>
-                          <!-- <td>{{ form.data.as_widget }}</td> -->
+                          <td scope="row">{{forloop.counter}}</td>
                           <td>
-                            <input type="checkbox" name="datas" value="{{ data.OutletCode }}">
+                            <input type="checkbox" value="{{ data.OutletCode }}">
                           </td>
+                          <td>{{ data.OutletCode }}</td>
                           <td>{{ data.OutletName }}</td>
                           <td>{{ data.OutletType }}</td>
                           <td>{{ data.Provinsi }}</td>
@@ -110,7 +112,7 @@
               </tbody>
             </table>
             
-            <!-- <input type="hidden" id="all_checked_ids" name="all_checked_ids"> -->
+            <input type="hidden" id="datas" name="datas">
           </form>
         </div>
       </div>
@@ -126,9 +128,9 @@
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
 <script>
     $(document).ready(function () {
-      var table = $('#datatable-container table').DataTable({
-          paging: true
-      });
+      // Clear session storage on page load
+      sessionStorage.clear(); 
+      $('input[type="checkbox"]').prop('checked', false);
 
       // Restore checked checkboxes from session storage
       $('input[type="checkbox"]').each(function() {
@@ -159,8 +161,8 @@
                   checkedIds.push(key);
               }
           }
-          $('#all_checked_ids').val(checkedIds.join(','));
-
+          $('#datas').val(checkedIds.join(','));
+  
           // Clear session storage after submitting the form
           sessionStorage.clear();
       });
@@ -174,29 +176,21 @@
         $('#schedule-form').submit();
       });
 
+      
       $("#basic-datatables").DataTable({});
 
-      new DataTable('#example', {
-        columnDefs: [
-            {
-                orderable: false,
-                render: DataTable.render.select(),
-                targets: 0
-            }
-        ],
-        fixedColumns: {
-            start: 2
-        },
-        order: [[1, 'asc']],
-        paging: false,
-        scrollCollapse: true,
-        scrollX: true,
-        scrollY: 300,
-        select: {
-            style: 'os',
-            selector: 'td:first-child'
-        }
-    });
+      $("#add-row").DataTable({
+        pageLength: 10,
+      });
+
+      var action =
+        '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+      $("#addRowButton").click(function () {
+        $("#add-row")
+          .dataTable()
+        $("#addRowModal").modal("hide");
+      });
     });
   </script>
 {% endblock scripts_app %}

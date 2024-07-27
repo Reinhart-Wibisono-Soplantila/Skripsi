@@ -8,23 +8,26 @@ try:
     # import matplotlib.pyplot as plt
     import json
     import time
+    import os
+    from django.conf import settings
+    
+    from django.contrib.staticfiles import finders
     print("library sudah terimpor")
 except ImportError:
     print("Libary belum terimpor")
 
 
+file_path = finders.find('files/DistanceMatriks.xlsx')
+distance_df = pd.read_excel(file_path, engine='openpyxl', index_col=0)
 start = time.time()
-
-df_location = pd.read_excel("tes1 - Copy.xlsx", index_col=0)
-distance_df = pd.DataFrame(df_location)
-
-shops_index = distance_df.index
-cities = []
-for shop in shops_index:
-    if(shop == '15000000000000000000000000'):
-        continue
-    else:
-        cities.append(shop)
+# def GetLocation(population):
+    # shops_index = distance_df.index
+    # cities = []
+    # for shop in shops_index:
+    #     if(shop == '15000000000000000000000000'):
+    #         continue
+    #     else:
+    #         cities.append(shop)
 
 # get shop's label info
 # def getCity():
@@ -72,7 +75,7 @@ def geneticAlgorithm(
     TOURNAMENT_SELECTION_SIZE,
     MUTATION_RATE,
     CROSSOVER_RATE,
-    # TARGET,
+    TARGET,
 ):
     max_gen = 200
     gen_number = 0
@@ -138,14 +141,20 @@ def geneticAlgorithm(
         population = new_population
         gen_number += 1
 
-        if gen_number % 10 == 0:
-            print(gen_number, sorted(population)[0][0])
-        # if sorted(population)[0][0] < TARGET:
-        #     break
+        print(gen_number, sorted(population)[0][0])
+        best = sorted(population)[0][0] 
+        if targetCounter == 20:
+            break
+        else:
+            if best < TARGET:
+                TARGET = best
+                targetCounter=0
+            else:
+                targetCounter+=1
     answer = sorted(population)[0]
     return answer, gen_number
 
-def main():
+def main(cities):
     count=1
     while count <=1:
         # initial values
@@ -153,17 +162,17 @@ def main():
         TOURNAMENT_SELECTION_SIZE = 10
         MUTATION_RATE = 0.8
         CROSSOVER_RATE = 0.8
-        # TARGET = 450.0
 
         firstPopulation, firstFitest = selectPopulation(cities, POPULATION_SIZE)
-        # tessspopulation = copy.deepcopy(firstPopulation)
+        
+        TARGET = firstFitest[0]# tessspopulation = copy.deepcopy(firstPopulation)
         answer, genNumber = geneticAlgorithm(
             firstPopulation,
             len(cities),
             TOURNAMENT_SELECTION_SIZE,
             MUTATION_RATE,
             CROSSOVER_RATE,
-            # TARGET,
+            TARGET,
         )
 
         print("\n----------------------------------------------------------------")
@@ -172,7 +181,7 @@ def main():
         print("Population : " + str(POPULATION_SIZE))
         print("Fittest chromosome distance before training: " + str(firstFitest[0]))
         print("Fittest chromosome distance after training: " + str(answer[0]))
-        # print("The location: " + str(answer[1]))
+        print("The location: " + str(answer[1]))
         # print("Target distance: " + str(TARGET))
         print("----------------------------------------------------------------\n")
         
@@ -210,5 +219,3 @@ def main():
     # return tessspopulation, firstFitest
 
 # tessspopulation, firstFitest = main()
-
-main()

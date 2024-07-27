@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from app_outlet.models import OutletModel
-# from .form import ScheduleForm
+from .algorithm.GeneticAlgorithm import main
 
 # Create your views here.
 def index(request):
@@ -12,30 +12,20 @@ def index(request):
         print("POST Data:", request.POST)
         print('')
         
-        CheckedList = request.POST.getlist('datas') 
-        # if form.is_valid():
-        #     print("Form is valid")
-        #     selectedData = form.cleaned_data['datas']
-        #     print(selectedData)
-        #     print('')
-        #     # Mengambil semua ID dari objek yang dipilih
-        #     # selected_ids = [outlet.OutletCode for outlet in selectedData]
-            
-        #     # # Menampilkan ID untuk tujuan debug
-        #     # print("Selected IDs:", selected_ids)
-            
-        #     redirect ('app_schedules:index')
-        # else:
-        #     print("Form is not valid")
-        #     error = form.errors
-        #     print(error)
+        CheckedList = request.POST.get('datas', '')
         if not CheckedList:
             error['datas'] = "You must select at least one option."
+            print('error')
 
         if not error:
+            population = [int(x) for x in CheckedList.split(',')]
             print('form is valid')
             print("POST Data:", CheckedList)
-            # return redirect('success')
+            print('')
+            print('populasi :', population)
+            
+            best_individual = main(population)
+            print(best_individual)
     context={
         # 'objectdatas' : OutletObject,
         # 'form' : form,
