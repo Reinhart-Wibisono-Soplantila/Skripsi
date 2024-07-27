@@ -73,9 +73,6 @@
             </tbody>
           </table> -->
           <form id="schedule-form" method="POST" > 
-            {% if error.datas %}
-                <div class="error">{{ errorsdatas }}</div>
-            {% endif %}
             <table id="basic-datatables" class="display table table-striped table-hover">
             {% csrf_token %}
               <thead>
@@ -92,7 +89,7 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for data in OutletObject %}
+                  {% for data in form.datas.field.queryset %}
                       <tr>
                           <!-- <td>{{ form.data.as_widget }}</td> -->
                           <td>
@@ -110,7 +107,7 @@
               </tbody>
             </table>
             
-            <!-- <input type="hidden" id="all_checked_ids" name="all_checked_ids"> -->
+            <input type="hidden" id="all_checked_ids" name="all_checked_ids">
           </form>
         </div>
       </div>

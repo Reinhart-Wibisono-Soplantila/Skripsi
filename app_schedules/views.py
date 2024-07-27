@@ -1,28 +1,46 @@
 from django.shortcuts import render, redirect
 from app_outlet.models import OutletModel
-from .form import ScheduleForm
+# from .form import ScheduleForm
 
 # Create your views here.
 def index(request):
     # OutletObject = OutletModel.objects.all()
-    form = ScheduleForm(request.POST or None)
-    error=None
+    Outletdatas = OutletModel.objects.all()
+    error={}
     if request.method == 'POST':
         print("Request Method is POST")
         print("POST Data:", request.POST)
-        if form.is_valid():
-            print("Form is valid")
-            selectedData = form.cleaned_data['datas']
-            print(selectedData)
-            redirect ('app_schedules:index')
-        else:
-            print("Form is not valid")
-            error = form.errors
-            print(error)
+        print('')
+        
+        CheckedList = request.POST.getlist('datas') 
+        # if form.is_valid():
+        #     print("Form is valid")
+        #     selectedData = form.cleaned_data['datas']
+        #     print(selectedData)
+        #     print('')
+        #     # Mengambil semua ID dari objek yang dipilih
+        #     # selected_ids = [outlet.OutletCode for outlet in selectedData]
+            
+        #     # # Menampilkan ID untuk tujuan debug
+        #     # print("Selected IDs:", selected_ids)
+            
+        #     redirect ('app_schedules:index')
+        # else:
+        #     print("Form is not valid")
+        #     error = form.errors
+        #     print(error)
+        if not CheckedList:
+            error['datas'] = "You must select at least one option."
+
+        if not error:
+            print('form is valid')
+            print("POST Data:", CheckedList)
+            # return redirect('success')
     context={
         # 'objectdatas' : OutletObject,
-        'form' : form,
+        # 'form' : form,
         'error' : error,
+        'OutletObject' : Outletdatas
     }
     return render(request, 'schedule/index.html', context)
 

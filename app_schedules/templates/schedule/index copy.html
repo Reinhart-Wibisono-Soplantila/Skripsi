@@ -73,9 +73,6 @@
             </tbody>
           </table> -->
           <form id="schedule-form" method="POST" > 
-            {% if error.datas %}
-                <div class="error">{{ errorsdatas }}</div>
-            {% endif %}
             <table id="basic-datatables" class="display table table-striped table-hover">
             {% csrf_token %}
               <thead>
@@ -92,7 +89,7 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for data in OutletObject %}
+                  {% for data in form.datas.field.queryset %}
                       <tr>
                           <!-- <td>{{ form.data.as_widget }}</td> -->
                           <td>
@@ -110,7 +107,7 @@
               </tbody>
             </table>
             
-            <!-- <input type="hidden" id="all_checked_ids" name="all_checked_ids"> -->
+            <input type="hidden" id="all_checked_ids" name="all_checked_ids">
           </form>
         </div>
       </div>
@@ -131,6 +128,7 @@
       });
 
       // Restore checked checkboxes from session storage
+      // Restore checked checkboxes from session storage
       $('input[type="checkbox"]').each(function() {
           var id = $(this).val();
           if (sessionStorage.getItem(id)) {
@@ -149,20 +147,28 @@
       });
 
       // Collect all checked values before submitting the form
-      $('#schedule-form').on('submit', function() {
-          var checkedIds = [];
-          // Collect checked ids from sessionStorage
-          for (var i = 0; i < sessionStorage.length; i++) {
-              var key = sessionStorage.key(i);
-              // Validate if key is a valid ID format
-              if (/^\d+$/.test(key)) {
-                  checkedIds.push(key);
-              }
-          }
-          $('#all_checked_ids').val(checkedIds.join(','));
+      $('#schedule-form').on('submit', function(e) {
 
-          // Clear session storage after submitting the form
-          sessionStorage.clear();
+          var checkedIds = [];
+          $('input[type="checkbox"]:checked').each(function() {
+              checkedIds.push($(this).val());
+          });
+
+          // Set the value of hidden field to all checked IDs
+          $('#datas').val(checkedIds.join(','));
+
+          // Optionally, send data via AJAX
+          $.ajax({
+              url: '{% url "app_schedules:index" %}',
+              method: 'POST',
+              data: {
+                  'csrfmiddlewaretoken': '{{ csrf_token }}',
+                  'datas': $('#datas').val()
+              },
+              success: function(response) {
+                  // Optionally handle the response and redirect or update the page
+              }
+          });
       });
 
       // Clear session storage when the page is unloaded
