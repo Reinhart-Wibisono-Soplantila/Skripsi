@@ -3,7 +3,16 @@
 
 {% block style_app %}
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-
+<style>
+  .text-center {
+    text-align: center;
+    vertical-align: middle;
+  }
+  .large-checkbox {
+    width: 20px;
+    height: 20px;
+  }
+</style>
 {% endblock style_app %}
 
 {% block content_header %}
@@ -39,39 +48,6 @@
       </div>
       <div class="card-body">
         <div class="table-responsive">        
-          <!-- <table
-            id="add-row"
-            class="display table table-striped table-hover"
-          >
-            <thead>
-              <tr>
-                <th style="width: 10%">Select</th>
-                <th scope="col">Outlet Code</th>
-                <th scope="col">Outet Name</th>
-                <th scope="col">Outlet Type</th>
-                <th scope="col">Provinsi</th>
-                <th scope="col">Kabupaten/Kota</th>
-                <th scope="col">Alamat</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for data in objectdatas %}
-                <tr>
-                  <td class="d-flex justify-content-center align-items-center">
-                    <div class="btn-group m-3 m-md-4 m-sm-4" role="group" aria-label="Basic checkbox toggle button group">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    </div>
-                  </td>
-                  <td>{{data.OutletCode}}</td>
-                  <td>{{data.OutletName}}</td>
-                  <td>{{data.OutletType}}</td>
-                  <td>{{data.Provinsi}}</td>
-                  <td>{{data.Kabupaten}}</td>
-                  <td>{{data.Address}}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table> -->
           <form id="schedule-form" method="POST" > 
             {% if error.datas %}
                 <div class="error">{{ errorsdatas }}</div>
@@ -81,32 +57,36 @@
               <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Select</th>
-                    <th>Outlet Code</th>
+                    <th><input type="checkbox" id="select-all" class="large-checkbox"></th>
+                    <!-- <th>Outlet Code</th> -->
                     <th>Outlet Name</th>
                     <th>Outlet Type</th>
-                    <th>Provinsi</th>
-                    <th>Kabupaten/Kota</th>
+                    <!-- <th>Provinsi</th> -->
+                    <!-- <th>Kabupaten/Kota</th> -->
                     <th>Kecamatan</th>
                     <th>Kelurahan</th>
-                    <th>Alamat</th>
+                    <!-- <th>Alamat</th> -->
+                    <th>Hari Pengiriman</th>
+                    <th>Jenis Pengiriman</th>
                 </tr>
               </thead>
               <tbody>
                   {% for data in OutletObject %}
                       <tr>
-                          <td scope="row">{{forloop.counter}}</td>
-                          <td>
-                            <input type="checkbox" value="{{ data.OutletCode }}">
+                          <td scope="row" class="text-center">{{forloop.counter}}</td>
+                          <td class="text-center">
+                            <input class="large-checkbox" type="checkbox" value="{{ data.OutletCode }}">
                           </td>
-                          <td>{{ data.OutletCode }}</td>
+                          <!-- <td>{{ data.OutletCode }}</td> -->
                           <td>{{ data.OutletName }}</td>
                           <td>{{ data.OutletType }}</td>
-                          <td>{{ data.Provinsi }}</td>
-                          <td>{{ data.Kabupaten }}</td>
+                          <!-- <td>{{ data.Provinsi }}</td> -->
+                          <!-- <td>{{ data.Kabupaten }}</td> -->
                           <td>{{ data.Kecamatan }}</td>
                           <td>{{ data.Kelurahan }}</td>
-                          <td>{{ data.Address }}</td>
+                          <!-- <td>{{ data.Address }}</td> -->
+                          <td>{{ data.Days }}</td>
+                          <td>{{ data.Delivery }}</td>
                       </tr>
                   {% endfor %}
               </tbody>
@@ -149,6 +129,20 @@
               sessionStorage.removeItem(id);
           }
       });
+
+      $('#select-all').click(function() {
+        var isChecked = this.checked;
+        $('input[type="checkbox"]').prop('checked', isChecked);
+
+        $('input[type="checkbox"]').each(function() {
+            var id = $(this).val();
+            if (isChecked) {
+                sessionStorage.setItem(id, 'checked');
+            } else {
+                sessionStorage.removeItem(id);
+            }
+        });
+    });
 
       // Collect all checked values before submitting the form
       $('#schedule-form').on('submit', function() {

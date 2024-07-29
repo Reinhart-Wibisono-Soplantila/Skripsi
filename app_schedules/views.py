@@ -18,14 +18,16 @@ def index(request):
             print('error')
 
         if not error:
-            population = [int(x) for x in CheckedList.split(',')]
+            population = [str(x) for x in CheckedList.split(',')]
             print('form is valid')
             print("POST Data:", CheckedList)
             print('')
             print('populasi :', population)
-            
-            best_individual = main(population)
-            print(best_individual)
+            print('')
+            # answer, genNumber  = main(population)
+            # print('answer=', answer[0])
+            # print('location=', answer[1])
+            # print(genNumber)
     context={
         # 'objectdatas' : OutletObject,
         # 'form' : form,

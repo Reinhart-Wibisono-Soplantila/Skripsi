@@ -78,6 +78,7 @@ def geneticAlgorithm(
     TARGET,
 ):
     max_gen = 200
+    targetCounter = 0
     gen_number = 0
     for i in range(max_gen):
         new_population = []
@@ -187,35 +188,6 @@ def main(cities):
         
         end = time.time()
         execution_time = end-start
-        print(execution_time)
-        # read= True
-        # if(read == True):
-        #     with open('AnalisisGA - MR08.json', 'r') as file:
-        #         data_GA = json.load(file)
-        # else:
-        #     data_GA = {}
-        # key = f"P-{POPULATION_SIZE}, G-{genNumber}, M-{MUTATION_RATE}, C-{CROSSOVER_RATE}, T-{TOURNAMENT_SELECTION_SIZE} - Count-{count}"
-        # if(key not in data_GA):
-        #     data_GA[key] = {'Test ke-':count,
-        #                     'Population': POPULATION_SIZE,
-        #                     'Generation': genNumber,
-        #                     'Mutation Rate': MUTATION_RATE,
-        #                     'Crossover Rate': CROSSOVER_RATE,
-        #                     'Tournamnet Size': TOURNAMENT_SELECTION_SIZE,
-        #                     'Distance': answer[0],
-        #                     'Execution Time': execution_time,
-        #                     'Locations': answer[1]}
-        
-        
-        # # Nama file untuk menyimpan data JSON
-        # nama_file = "AnalisisGA - MR08.json"
-        # # Menyimpan data ke dalam file JSON
-        # with open(nama_file, 'w') as file:
-        #     json.dump(data_GA, file)
-
-        # print("Data telah disimpan ke dalam file", nama_file)
-        count += 1
-    # drawMap(cities, answer)
-    # return tessspopulation, firstFitest
-
-# tessspopulation, firstFitest = main()
+        print( 'Time:',execution_time)
+        return  answer, genNumber 
+        count +=1
