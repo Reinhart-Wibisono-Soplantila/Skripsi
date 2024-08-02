@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from app_outlet.models import OutletModel
 from .algorithm.GA import GeneticAlgorithm 
+from .algorithm.SMO import SpiderMonkeyAlgorithm
 
 # Create your views here.
 def index(request):
@@ -36,16 +37,23 @@ def viewoutlets(request):
 def processoutlets(request):
     cities = request.session.get('cities', [])
     print('cities', cities)
-    GA = GeneticAlgorithm()
-    answer, genNumber  = GA.main(cities)
-    print('answer=', answer[0])
-    print('location=', answer[1])
-    print(genNumber)
+    # GA
+    # GA = GeneticAlgorithm()
+    # answer, genNumber  = GA.main(cities)
+    # print('answer=', answer[0])
+    # print('location=', answer[1])
+    # print(genNumber)
+    
+    # SMO
+    SMO = SpiderMonkeyAlgorithm()
+    location, fitness = SMO.main(cities)
+    request.session['locations'] = location
+    request.session['distance'] = fitness
             
     # Hapus data dari sesi jika tidak diperlukan lagi
-    request.session.pop('cities_ids', None)
-    request.session['locations'] = answer[1]
-    request.session['distance'] = answer[0]
+    # request.session.pop('cities_ids', None)
+    # request.session['locations'] = answer[1]
+    # request.session['distance'] = answer[0]
     return redirect('app_schedules:viewoutlets')
     # return render( request, 'schedule/selectedOutlets.html')
 def overview(request):
