@@ -22,7 +22,7 @@ class SpiderMonkeyAlgorithm:
 
     # pd.set_option('display.max_rows', None)
     # pd.set_option('display.max_columns', None)
-    def main(self, cities):
+    def main(self, outlets):
         run = 1
         max_runs = 1
         TARGET=100000000000
@@ -42,14 +42,14 @@ class SpiderMonkeyAlgorithm:
                 LL = []                                                                     # List that stores the local leaders of all groups
                 GL = [0,0]                                                                  # List that stores the group number and index of global leader
                 
-                def generate_TSP_tours(n, cities): # where n is the number of spider monkeys             #generates TSP tours
+                def generate_TSP_tours(n, outlets): # where n is the number of spider monkeys             #generates TSP tours
                     temp = []
                     for i in range(n):
-                        l = self.random.sample(cities,len(cities))
+                        l = self.random.sample(outlets,len(outlets))
                         temp.append(l)
                     SM.append(temp)
 
-                generate_TSP_tours(nSM, cities)
+                generate_TSP_tours(nSM, outlets)
                 def fitness(sm):
                     fit = 0
                     for j in range(len(sm)-1):
@@ -267,7 +267,7 @@ class SpiderMonkeyAlgorithm:
                             for i in range(len(SM[k])):
                                 u = self.random.uniform(0,1)
                                 if u >= pr:
-                                    l = self.random.sample(cities,len(cities))
+                                    l = self.random.sample(outlets,len(outlets))
                                     print(f'k={k}, i={i}, u={u}, l={l}')
                                     SM[k][i] = l
                                 else:

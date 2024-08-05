@@ -54,7 +54,7 @@
         <div class="d-flex align-items-center">
           <h4 class="card-title">Driver Table</h4>
           <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-            Select Vehicle
+            Select Driver
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@
         <div class="table-responsive">
           <form id="driver-form" method="POST">
             {% csrf_token %}            
-            <input type="hidden" id="selected-drivers" name="selected_drivers" value="">
+            <input type="hidden" id="selected_drivers" name="selected_drivers">
             <table id="basic-datatables" class="display table table-striped table-hover" >
               <thead>
                 <tr>
@@ -148,7 +148,7 @@
                 checkedIds.push(key);
             }
         }
-        $('#selected-drivers').val(checkedIds.join(','));
+        $('#selected_drivers').val(checkedIds.join(','));
 
         // Clear session storage after submitting the form
         sessionStorage.clear();
@@ -164,20 +164,7 @@
     });
 
     $("#basic-datatables").DataTable({});
-    $("#basic-datatables2").DataTable({});
 
-    $("#add-row").DataTable({
-      pageLength: 10,
-    });
-
-    var action =
-      '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-    $("#addRowButton").click(function () {
-      $("#add-row")
-        .dataTable()
-      $("#addRowModal").modal("hide");
-    });
   });
   </script>
 {% endblock scripts_app %}

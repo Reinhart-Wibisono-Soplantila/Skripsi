@@ -8,6 +8,6 @@ urlpatterns = [
     path('selected-outlets/process-outlets/', views.processoutlets, name='processoutlets'),
     path('select-vehicles/', views.vehicles, name='vehicles'),
     path('select-drivers/', views.drivers, name='drivers'),
-    # path('result/', views.result, name='results'),
+    path('result/', views.result, name='result'),
     # path('overview/', views.overview),
 ]

@@ -53,18 +53,18 @@ class ScheduleModel(models.Model):
         unique=True,
         default=generate_default_id,
     )
-    # Destination_outlet=models.ManyToManyField(
-    #     OutletModel, 
-    #     related_name='schedules_outlets'
-    # )
-    # Vehicle_used=models.ManyToManyField(
-    #     VehicleModel, 
-    #     related_name='schedules_vehicles'
-    # )
-    # Driver_used=models.ManyToManyField(
-    #     DriverModel, 
-    #     related_name='schedules_drivers'
-    # )
+    Destination_outlet=models.ManyToManyField(
+        OutletModel, 
+        related_name='schedules_outlets'
+    )
+    Vehicle_used=models.ManyToManyField(
+        VehicleModel, 
+        related_name='schedules_vehicles'
+    )
+    Driver_used=models.ManyToManyField(
+        DriverModel, 
+        related_name='schedules_drivers'
+    )
     Created_at=models.DateTimeField(
         auto_now_add=True
     )

@@ -24,27 +24,27 @@ class GeneticAlgorithm:
         except ImportError:
             print("Libary belum terimpor")
 
-    # calculating distance of the cities
-    def calcDistance(self, cities):
+    # calculating distance of the outlets
+    def calcDistance(self, outlets):
         fit = 0
-        for j in range(len(cities)-1):
+        for j in range(len(outlets)-1):
             if j == 0:
                 loc_source = '15000000000000000000000000'
-                loc_1 = cities[j]
-                loc_2 = cities[j+1]
+                loc_1 = outlets[j]
+                loc_2 = outlets[j+1]
                 fit += self.distance_df[loc_source][loc_1]
                 fit += self.distance_df[loc_1][loc_2]
             else:
-                loc_1 = cities[j]
-                loc_2 = cities[j+1]
+                loc_1 = outlets[j]
+                loc_2 = outlets[j+1]
                 fit += self.distance_df[loc_1][loc_2]
         return fit
 
     # selecting the population
-    def selectPopulation(self, cities, size):
+    def selectPopulation(self, outlets, size):
         population = []
         for i in range(size):
-            c = cities.copy()
+            c = outlets.copy()
             self.random.shuffle(c)
             distance = self.calcDistance(c)
             population.append([distance, c])
@@ -145,7 +145,7 @@ class GeneticAlgorithm:
         answer = sorted(population)[0]
         return answer, gen_number
 
-    def main(self, cities):
+    def main(self, outlets):
         count=1
         while count <=1:
             # initial values
@@ -154,12 +154,12 @@ class GeneticAlgorithm:
             MUTATION_RATE = 0.8
             CROSSOVER_RATE = 0.8
 
-            firstPopulation, firstFitest = self.selectPopulation(cities, POPULATION_SIZE)
+            firstPopulation, firstFitest = self.selectPopulation(outlets, POPULATION_SIZE)
             
             TARGET = firstFitest[0]# tessspopulation = copy.deepcopy(firstPopulation)
             answer, genNumber = self.geneticAlgorithm(
                 firstPopulation,
-                len(cities),
+                len(outlets),
                 TOURNAMENT_SELECTION_SIZE,
                 MUTATION_RATE,
                 CROSSOVER_RATE,

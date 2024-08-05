@@ -71,22 +71,22 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for VehicleDatas in OutletObject %}
+                  {% for OutletDatas in OutletObject %}
                       <tr>
                           <td scope="row" class="text-center">{{forloop.counter}}</td>
                           <td class="text-center">
-                            <input class="large-checkbox" type="checkbox" value="{{ VehicleDatas.OutletCode }}">
+                            <input class="large-checkbox" type="checkbox" value="{{ OutletDatas.OutletCode }}">
                           </td>
-                          <!-- <td>{{ VehicleDatas.OutletCode }}</td> -->
-                          <td>{{ VehicleDatas.OutletName }}</td>
-                          <td>{{ VehicleDatas.OutletType }}</td>
-                          <!-- <td>{{ VehicleDatas.Provinsi }}</td> -->
-                          <!-- <td>{{ VehicleDatas.Kabupaten }}</td> -->
-                          <td>{{ VehicleDatas.Kecamatan }}</td>
-                          <td>{{ VehicleDatas.Kelurahan }}</td>
-                          <!-- <td>{{ VehicleDatas.Address }}</td> -->
-                          <td>{{ VehicleDatas.Days }}</td>
-                          <td>{{ VehicleDatas.Delivery }}</td>
+                          <!-- <td>{{ OutletDatas.OutletCode }}</td> -->
+                          <td>{{ OutletDatas.OutletName }}</td>
+                          <td>{{ OutletDatas.OutletType }}</td>
+                          <!-- <td>{{ OutletDatas.Provinsi }}</td> -->
+                          <!-- <td>{{ OutletDatas.Kabupaten }}</td> -->
+                          <td>{{ OutletDatas.Kecamatan }}</td>
+                          <td>{{ OutletDatas.Kelurahan }}</td>
+                          <!-- <td>{{ OutletDatas.Address }}</td> -->
+                          <td>{{ OutletDatas.Days }}</td>
+                          <td>{{ OutletDatas.Delivery }}</td>
                       </tr>
                   {% endfor %}
               </tbody>
