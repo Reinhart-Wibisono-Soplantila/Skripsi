@@ -50,7 +50,7 @@
         <div class="table-responsive">        
           <form id="schedule-form" method="POST" > 
             {% if error.datas %}
-                <div class="error">{{ errorsdatas }}</div>
+                <div class="error">{{ errors.datas }}</div>
             {% endif %}
             <table id="add-row" class="display table table-striped table-hover">
             {% csrf_token %}
@@ -71,28 +71,28 @@
                 </tr>
               </thead>
               <tbody>
-                  {% for data in OutletObject %}
+                  {% for VehicleDatas in OutletObject %}
                       <tr>
                           <td scope="row" class="text-center">{{forloop.counter}}</td>
                           <td class="text-center">
-                            <input class="large-checkbox" type="checkbox" value="{{ data.OutletCode }}">
+                            <input class="large-checkbox" type="checkbox" value="{{ VehicleDatas.OutletCode }}">
                           </td>
-                          <!-- <td>{{ data.OutletCode }}</td> -->
-                          <td>{{ data.OutletName }}</td>
-                          <td>{{ data.OutletType }}</td>
-                          <!-- <td>{{ data.Provinsi }}</td> -->
-                          <!-- <td>{{ data.Kabupaten }}</td> -->
-                          <td>{{ data.Kecamatan }}</td>
-                          <td>{{ data.Kelurahan }}</td>
-                          <!-- <td>{{ data.Address }}</td> -->
-                          <td>{{ data.Days }}</td>
-                          <td>{{ data.Delivery }}</td>
+                          <!-- <td>{{ VehicleDatas.OutletCode }}</td> -->
+                          <td>{{ VehicleDatas.OutletName }}</td>
+                          <td>{{ VehicleDatas.OutletType }}</td>
+                          <!-- <td>{{ VehicleDatas.Provinsi }}</td> -->
+                          <!-- <td>{{ VehicleDatas.Kabupaten }}</td> -->
+                          <td>{{ VehicleDatas.Kecamatan }}</td>
+                          <td>{{ VehicleDatas.Kelurahan }}</td>
+                          <!-- <td>{{ VehicleDatas.Address }}</td> -->
+                          <td>{{ VehicleDatas.Days }}</td>
+                          <td>{{ VehicleDatas.Delivery }}</td>
                       </tr>
                   {% endfor %}
               </tbody>
             </table>
             
-            <input type="hidden" id="datas" name="datas">
+            <input type="hidden" id="selected_outlets" name="selected_outlets">
           </form>
         </div>
       </div>
@@ -102,7 +102,6 @@
 {% endblock Content %}
 
 {% block scripts_app %}
-{% load static %}
 <!-- Datatables -->
 <script src="{% static '/assets/js/core/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
@@ -155,7 +154,7 @@
                   checkedIds.push(key);
               }
           }
-          $('#datas').val(checkedIds.join(','));
+          $('#selected_outlets').val(checkedIds.join(','));
   
           // Clear session storage after submitting the form
           sessionStorage.clear();

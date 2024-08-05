@@ -35,63 +35,64 @@
     <li class="nav-item">
       <a href="#">Select Vehicle</a>
     </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="#">Select Driver</a>
+    </li>
   </ul>
 </div>
 {% endblock content_header %}
 
 {% block Content %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <h4 class="card-title">Vehicle Table</h4>
-            <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-              Select Vehicle
-            </button>
-          </div>
+{% comment %} Driver Table {% endcomment %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <h4 class="card-title">Driver Table</h4>
+          <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+            Select Vehicle
+          </button>
         </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <form id="vehicle-form" method="POST">
-              {% csrf_token %}
-                
-              {% if error.datas %}
-                  <div class="error">{{ errors.datas }}</div>
-              {% endif %}
-              <table id="add-row" class="display table table-striped table-hover" >
-                <thead>
-                  <tr>
-                    <th scope="col">No.</th>
-                    <th class="text-center">
-                      <input type="checkbox" id="select-all" class="large-checkbox">
-                    </th>
-                    <th scope="col">Unit Type</th>
-                    <th scope="col">Vehicle Number</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for VehicleDatas in VehicleObject %}
-                  <tr>
-                    <td scope="'row">{{forloop.counter}}</td>
-                    <td class="text-center">
-                      <input class="large-checkbox vehicle-checkbox" type="checkbox" value="{{ VehicleDatas.id }}">
-                    </td>
-                    <td>{{VehicleDatas.UnitType}}</td>
-                    <td>{{VehicleDatas.VehicleNumber}}</td>
-                    <td>{{VehicleDatas.Status}}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <input type="hidden" id="selected-vehicles" name="selected_vehicles">
-            </form>
-          </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <form id="driver-form" method="POST">
+            {% csrf_token %}            
+            <input type="hidden" id="selected-drivers" name="selected_drivers" value="">
+            <table id="basic-datatables" class="display table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th class="text-center">
+                    <input type="checkbox" id="select-all" class="large-checkbox">
+                  </th>
+                  <th scope="col">Driver</th>
+                  <th scope="col">Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for DriverDatas in DriverObject %}
+                <tr>
+                  <td scope="'row">{{forloop.counter}}</td>
+                  <td class="text-center">
+                    <input class="large-checkbox driver-checkbox" type="checkbox" value="{{ DriverDatas.id }}">
+                  </td>
+                  <td>{{DriverDatas.FullName}}</td>
+                  <td>{{DriverDatas.Phone}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>
 {% endblock Content %}
 
 {% block scripts_app %}
@@ -137,7 +138,7 @@
     });
 
     // Collect all checked values before submitting the form
-    $('#vehicle-form').on('submit', function() {
+    $('#driver-form').on('submit', function() {
         var checkedIds = [];
         // Collect checked ids from sessionStorage
         for (var i = 0; i < sessionStorage.length; i++) {
@@ -147,7 +148,7 @@
                 checkedIds.push(key);
             }
         }
-        $('#selected-vehicles').val(checkedIds.join(','));
+        $('#selected-drivers').val(checkedIds.join(','));
 
         // Clear session storage after submitting the form
         sessionStorage.clear();
@@ -159,10 +160,11 @@
     });
 
     $('#generate-schedule-btn').click(function() {
-      $('#vehicle-form').submit();
+      $('#driver-form').submit();
     });
 
     $("#basic-datatables").DataTable({});
+    $("#basic-datatables2").DataTable({});
 
     $("#add-row").DataTable({
       pageLength: 10,
