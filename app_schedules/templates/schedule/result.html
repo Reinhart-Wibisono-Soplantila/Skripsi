@@ -1,93 +1,110 @@
 {% extends "layout/base.html" %}
 {% load static %}
 
+{% block style_app %}
+<style>
+  .text-center {
+    text-align: center;
+    vertical-align: middle;
+  }
+  .large-checkbox {
+    width: 20px;
+    height: 20px;
+  }
+</style>
+{% endblock style_app %}
+
 {% block content_header %}
-<div class="page-header" >
-    <h3 class="fw-bold mb-3">Result Schedule</h3>
-    <ul class="breadcrumbs mb-3">
-        <li class="nav-home">
-          <a href="#">
-            <i class="icon-home"></i>
-          </a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Creating Schedule</a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Schedule Overview</a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Select Vehicles</a>
-        </li>
-        <li class="separator">
-          <i class="icon-arrow-right"></i>
-        </li>
-        <li class="nav-item">
-          <a href="#">Result</a>
-        </li>
-      </ul>
-  <div class="ms-md-auto py-2 py-md-0">
-    <a href="#" class="btn btn-label-info btn-round me-2">Cancel</a> 
-    <a href="#" class="btn btn-primary btn-round">Finish</a>
-  </div>
+<div class="page-header">
+  <h3 class="fw-bold mb-3">Creating Schedule</h3>
+  <ul class="breadcrumbs mb-3">
+    <li class="nav-home">
+      <a href="#">
+        <i class="icon-home"></i>
+      </a>
+    </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="#">Select Outlets</a>
+    </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="#">Select Vehicle</a>
+    </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="#">Select Driver</a>
+    </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="#">Result</a>
+    </li>
+  </ul>
+  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+    Finish
+  </button> -->
 </div>
 {% endblock content_header %}
 
 {% block Content %}
-{% comment %} Outlets report {% endcomment %}
+<form id="driver-form" method="POST">
+{% csrf_token %}
+{% comment %} Result Page Header {% endcomment %}
 <div class="row">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
         <div class="d-flex align-items-center">
-          <h4 class="card-title">Outlet Schedule</h4>
+          <div>
+            <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
+            <p class="my-0">Click Finish to save the results</p>
+          </div>
+          <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+            Finish
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Vehicle Table {% endcomment %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <h4 class="card-title">Vehicle Table</h4>
         </div>
       </div>
       <div class="card-body">
-        <div class="table-responsive">
-          <table
-            id="basic-datatables"
-            class="display table table-striped table-hover"
-          >
+        <div class="table-responsive">            
+          <table id="basic-datatables" class="display table table-striped table-hover" >
             <thead>
               <tr>
-                <th scope="col">Outlets</th>
-                <th scope="col" class="text-end">Outlet Type</th>
-                <th scope="col" class="text-end">PJP Day</th>
-                <th scope="col" class="text-end">Daily/Weekly</th>
-                <th scope="col" class="text-end">Status</th>
+                <th scope="col">No.</th>
+                <th scope="col">Unit Type</th>
+                <th scope="col">Vehicle Number</th>
+                <th scope="col">Status</th>
               </tr>
             </thead>
-            <tfoot>
-              <tr>
-                <th scope="col">Outlets</th>
-                <th scope="col" class="text-end">Outlet Type</th>
-                <th scope="col" class="text-end">PJP Day</th>
-                <th scope="col" class="text-end">Daily/Weekly</th>
-                <th scope="col" class="text-end">Status</th>
-              </tr>
-            </tfoot>
             <tbody>
+              {% for VehicleDatas in VehicleObject %}
               <tr>
-                <th scope="row">
-                  A.MAPPAINGA BAROMBONG-TPUY, IDM
-                </th>
-                <td class="text-end">Indomaret</td>
-                <td class="text-end">Friday</td>
-                <td class="text-end">Weekly</td>
-                <td class="text-end">
-                  <span class="badge badge-success">Completed</span>
-                </td>
+                <td scope="'row">{{forloop.counter}}</td>
+                <td>{{VehicleDatas.UnitType}}</td>
+                <td>{{VehicleDatas.VehicleNumber}}</td>
+                <td>{{VehicleDatas.Status}}</td>
               </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -95,54 +112,126 @@
     </div>
   </div>
 </div>
-{% comment %} Vehicle report {% endcomment %}
+
+{% comment %} Driver Table {% endcomment %}
 <div class="row">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
         <div class="d-flex align-items-center">
-          <h4 class="card-title">Selected Vehicle</h4>
+          <h4 class="card-title">Driver Table</h4>
+          <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+            Select Driver
+          </button> -->
         </div>
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table id="basic-datatables2" class="display table table-striped table-hover" >
-            <thead>
-              <tr>
-                <th scope="col">Unit Number</th>
-                <th scope="col" class="text-end">Driver</th>
-                <th scope="col" class="text-end">Ready/Repaired</th>
-                <th scope="col" class="text-end">Status</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th scope="col">Unit Number</th>
-                <th scope="col" class="text-end">Driver</th>
-                <th scope="col" class="text-end">Ready/Repaired</th>
-                <th scope="col" class="text-end">Status</th>
-              </tr>
-            </tfoot>
-            <tbody>
-              <tr>
-                <th scope="row">
-                  L.300/B 9323 SO
-                </th>
-                <td class="text-end">
-                  Rusliadi
-                </td>
-                <td class="text-end">
-                  Ready
-                </td>
-                <td class="text-end">
-                  <span class="badge badge-success">Existing</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <form id="driver-form" method="POST">
+            {% csrf_token %}            
+            <input type="hidden" id="selected_drivers" name="selected_drivers">
+            <table id="basic-datatables2" class="display table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th scope="col">Driver</th>
+                  <th scope="col">Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for DriverDatas in DriverObject %}
+                <tr>
+                  <td scope="'row">{{forloop.counter}}</td>
+                  <td>{{DriverDatas.FullName}}</td>
+                  <td>{{DriverDatas.Phone}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+{% comment %} Outlet Table {% endcomment %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <div>
+            <h4 class="card-title">Outlet Table</h4>
+            <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{distance|floatformat:3}} KM </p>
+          
+          </div>
+          <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+            Select Driver
+          </button> -->
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <form id="driver-form" method="POST">
+            {% csrf_token %}            
+            <input type="hidden" id="selected_drivers" name="selected_drivers">
+            <table id="basic-datatables3" class="display table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th>From </th>
+                  <th>-</th>
+                  <th>To</th>
+                  <th>Distance</th>
+                  <!-- <th>Provinsi</th> -->
+                  <!-- <th>Kabupaten/Kota</th> -->
+                  <!-- <th>Kecamatan</th> -->
+                  <!-- <th>Kelurahan</th> -->
+                  <!-- <th>Alamat</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, value in RouteListed.items %}
+                <tr>
+                  <td scope="'row">{{forloop.counter}}</td>
+                  <td>{{value.from.outlet_code}}</td>
+                  <td>-</td>
+                  <td>{{value.to.outlet_code}}</td>
+                  <td>{{value.jarak|floatformat:3}} KM</td>
+                </tr>
+                {% endfor %}
+                <!-- <tr> -->
+                  <!-- <td>{{OutletDatas.OutletName}}</td>
+                  <td>{{OutletDatas.OutletType}}</td>
+                  <td>{{OutletDatas.Kecamatan}}</td>
+                  <td>{{OutletDatas.Kelurahan}}</td> -->
+                <!-- </tr> -->
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
 {% endblock Content %}
+
+{% block scripts_app %}
+<!-- Datatables -->
+<script src="{% static '/assets/js/core/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $('#generate-schedule-btn').click(function() {
+      $('#driver-form').submit();
+    });
+
+    $("#basic-datatables").DataTable({});
+    $("#basic-datatables2").DataTable({});
+    $("#basic-datatables3").DataTable({});
+
+  });
+  </script>
+{% endblock scripts_app %}

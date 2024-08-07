@@ -21,7 +21,7 @@ class VehicleModel(models.Model):
     )
     
     def __str__(self):
-        return"{}. {}".format(self.VehicleNumber)
+        return"{}. {}".format(self.id, self.VehicleNumber)
     
 class DriverModel(models.Model):
     FullName=models.CharField(

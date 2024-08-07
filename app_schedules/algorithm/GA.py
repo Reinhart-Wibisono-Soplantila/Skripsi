@@ -25,18 +25,44 @@ class GeneticAlgorithm:
             print("Libary belum terimpor")
 
     # calculating distance of the outlets
-    def calcDistance(self, outlets):
+    def calcDistance1(self, outlets):
         fit = 0
+        print("")
+        print("***********")
+        print("")
         for j in range(len(outlets)-1):
             if j == 0:
                 loc_source = '15000000000000000000000000'
                 loc_1 = outlets[j]
                 loc_2 = outlets[j+1]
                 fit += self.distance_df[loc_source][loc_1]
+                print('loc_source', loc_source)
+                print('loc1', loc_1)
+                print('fit' ,fit)
                 fit += self.distance_df[loc_1][loc_2]
+                print('loc2', loc_2)
+                print(fit)
             else:
                 loc_1 = outlets[j]
                 loc_2 = outlets[j+1]
+                fit += self.distance_df[loc_1][loc_2]
+                print('loc1', loc_1)
+                print('loc2', loc_2)
+                print('fit', fit)
+                
+        return fit
+    def calcDistance(self, items):
+        fit = 0
+        for j in range(len(items)-1):
+            if j == 0:
+                loc_source = '15000000000000000000000000'
+                loc_1 = items[j]
+                loc_2 = items[j+1]
+                fit += self.distance_df[loc_source][loc_1]
+                fit += self.distance_df[loc_1][loc_2]
+            else:
+                loc_1 = items[j]
+                loc_2 = items[j+1]
                 fit += self.distance_df[loc_1][loc_2]
         return fit
 
@@ -79,6 +105,7 @@ class GeneticAlgorithm:
                 # CROSSOVER
                 random_number = self.random.random()
                 if random_number < CROSSOVER_RATE:
+                    # print('cross')
                     parent_chromosome1 = sorted(
                         self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE)
                     )[0]
@@ -104,6 +131,7 @@ class GeneticAlgorithm:
 
                 # MUTATION
                 if self.random.random() < MUTATION_RATE:
+                    # print('mutasi')
                     point1 = self.random.randint(0, lenCities - 1)
                     point2 = self.random.randint(0, lenCities - 1)
                     mutated_child_chromosome1 = child_chromosome1
@@ -119,30 +147,50 @@ class GeneticAlgorithm:
                         mutated_child_chromosome2[point2],
                         mutated_child_chromosome2[point1],
                     )
-                    if(self.calcDistance(child_chromosome1) > self.calcDistance(mutated_child_chromosome1)):
-                        child_chromosome1 = mutated_child_chromosome1
+                    distChild1 = self.calcDistance(child_chromosome1)
+                    distMutatedChild1 =  self.calcDistance(mutated_child_chromosome1)
+                    distChild2 = self.calcDistance(child_chromosome2)
+                    distMutatedChild2 =  self.calcDistance(mutated_child_chromosome2)
                     
-                    if(self.calcDistance(child_chromosome2) > self.calcDistance(mutated_child_chromosome2)):
-                        child_chromosome2 = mutated_child_chromosome2
+                    if distChild1>distMutatedChild1:
+                        new_population.append([distMutatedChild1, mutated_child_chromosome1])
+                    
+                    if distChild2 > distMutatedChild2:
+                        new_population.append([distMutatedChild2, mutated_child_chromosome2])
+                else:
+                    new_population.append([self.calcDistance(child_chromosome1), child_chromosome1])
+                    new_population.append([self.calcDistance(child_chromosome2), child_chromosome2])
 
-                new_population.append([self.calcDistance(child_chromosome1), child_chromosome1])
-                new_population.append([self.calcDistance(child_chromosome2), child_chromosome2])
+                # print(k)
+                # print(len(new_population))
+                # print('')
             population = new_population
             gen_number += 1
-
-            print(gen_number, sorted(population)[0][0])
-            best = sorted(population)[0][0] 
-            if targetCounter == 20:
+            
+            sortedlist = sorted(population, key=lambda x: x[0])
+            best = sortedlist[0]
+            
+            print('')
+            if(targetCounter == 0):
+                print('best:', best)
+            print('HITUNG:', self.calcDistance(best[1]))
+            print('best:', best[0])
+            print('best', best[1])
+            print('')
+            if targetCounter == 10:
                 stop_iteration == True
                 print('It was Stoped')
+                
+                print('jarak', self.calcDistance(best[1]))
+                print('best: ', best)
                 break
             else:
-                if best < TARGET:
-                    TARGET = best
+                if best[0] < TARGET:
+                    TARGET = best[0]
                     targetCounter=0
                 else:
                     targetCounter+=1
-        answer = sorted(population)[0]
+        answer = best
         return answer, gen_number
 
     def main(self, outlets):
@@ -150,12 +198,12 @@ class GeneticAlgorithm:
         while count <=1:
             # initial values
             POPULATION_SIZE =100
-            TOURNAMENT_SELECTION_SIZE = 10
+            TOURNAMENT_SELECTION_SIZE = 4
             MUTATION_RATE = 0.8
             CROSSOVER_RATE = 0.8
 
             firstPopulation, firstFitest = self.selectPopulation(outlets, POPULATION_SIZE)
-            
+            # print('len:  ',firstPopulation[0][1])
             TARGET = firstFitest[0]# tessspopulation = copy.deepcopy(firstPopulation)
             answer, genNumber = self.geneticAlgorithm(
                 firstPopulation,
@@ -167,15 +215,16 @@ class GeneticAlgorithm:
             )
 
             print("\n----------------------------------------------------------------")
-            print('Count:' + str(count))
-            print("Generation: " + str(genNumber))
-            print("Population : " + str(POPULATION_SIZE))
-            print("Fittest chromosome distance before training: " + str(firstFitest[0]))
-            print("Fittest chromosome distance after training: " + str(answer[0]))
-            print("The location: " + str(answer[1]))
+            # print('Count:' + str(count))
+            # print("Generation: " + str(genNumber))
+            # print("Population : " + str(POPULATION_SIZE))
+            # print("Fittest chromosome distance before training: " + str(firstFitest[0]))
+            # print("Fittest chromosome distance after training: " + str(answer[0]))
+            # print("The location: " + str(answer[1]))
             # print("Target distance: " + str(TARGET))
             print("----------------------------------------------------------------\n")
-            
+            # valll = self.calcDistance1(answer[1])
+                
             end = self.time.time()
             execution_time = end-self.start
             print( 'Time: ',execution_time)

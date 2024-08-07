@@ -1,4 +1,7 @@
+import json
 from django.shortcuts import render, redirect
+from django.db.models import Case, When
+from django.contrib.staticfiles import finders
 from app_outlet.models import OutletModel
 from app_vehicle.models import VehicleModel, DriverModel
 from .algorithm.GA import GeneticAlgorithm 
@@ -20,10 +23,14 @@ def index(request):
             request.session['outlets'] = outlets
             # messages.success(request, error['selected_outlets'])
             return redirect('app_schedules:viewoutlets')
+        print(outlets)
     context={
         'error' : error,
         'OutletObject' : OutletObject
     }
+    request.session.pop('locations', None)
+    
+    request.session.pop('distance', None)
     return render(request, 'schedule/index.html', context)
 
 def viewoutlets(request):
@@ -33,6 +40,7 @@ def viewoutlets(request):
     context={
         'OutletObject' : OutletObject
     }
+    print(OutletObject)
     return render(request, 'schedule/confirm.html', context)
 
 def processoutlets(request):
@@ -40,6 +48,8 @@ def processoutlets(request):
     # GA
     GA = GeneticAlgorithm()
     answer, genNumber  = GA.main(outlets)
+    answer[1].insert(0, '15000000000000000000000000')
+    
     print('answer=', answer[0])
     print('location=', answer[1])
     # print(genNumber)
@@ -96,16 +106,52 @@ def drivers(request):
     return render(request, 'schedule/driver.html', context)
 
 def result(request):
-    location = request.session.get('locations', [])
+    locations = request.session.get('locations', [])
     distance = request.session.get('distance', [])
     drivers = request.session.get('drivers', [])
     vehicles = request.session.get('vehicles', [])
-    vehiclesObj = VehicleModel.objects.filter(id__in=vehicles)
-    driversObj = DriverModel.objects.filter(id__in=drivers)
-    print('location:', location)
-    print('distance:', distance)
-    # print('drivers:', driversObj)
-    # print('vehicles:', vehiclesObj)
+    OutletObject = OutletModel.objects.filter(OutletCode__in=locations).order_by(
+        Case(*[When(OutletCode=id, then=pos) for pos, id in enumerate(locations)])
+        )
+    VehicleObject = VehicleModel.objects.filter(id__in=vehicles)
+    DriverObject = DriverModel.objects.filter(id__in=drivers)
+    # print('location:', locations)
+    # print('distance:', distance)
+    # print('drivers:', DriverObject)
+    # print('vehicles:', VehicleObject)
+    # print('locations:', OutletObject)
     
+    # Find the path to the JSON file
+    json_file_path = finders.find('files/RouteDetails.json')
+    data = {}
+    if json_file_path:
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
     
-    return render(request, 'schedule/result.html')
+    RouteListed={}
+    # print(OutletObject[0])
+    for iteration in range(len(OutletObject)-1):
+        firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
+        secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
+        searchedKey = f'{firstKey}, {secondKey}'
+        FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
+        RouteListed[searchedKey] = FilteredDict[searchedKey]
+        # RouteListed.append(FilteredDict)
+    RouteListed_length = len(RouteListed)
+    # for key, value in RouteListed.items():
+    #     # for subkey, value in subdict.items():
+    #         print(key)
+    #         # print(subkey)   
+    #         print(type(value['jarak'])) 
+    # for index in RouteListed:
+    #     for key, value in index.items():
+    #         print(key)
+    context ={
+        'OutletObject' : OutletObject,
+        'distance' : distance,
+        'DriverObject' : DriverObject,
+        'VehicleObject' : VehicleObject,
+        'RouteListed' : RouteListed,
+        'TotalLocation' : RouteListed_length
+    }
+    return render(request, 'schedule/result.html', context)
