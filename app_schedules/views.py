@@ -3,16 +3,19 @@ from django.shortcuts import render, redirect
 from django.db.models import Case, When
 from django.contrib.staticfiles import finders
 from app_outlet.models import OutletModel
-# from app_schedules.models import ScheduleModel
+from app_schedules.models import ScheduleModel
 from app_vehicle.models import VehicleModel, DriverModel
 from .algorithm.GA import GeneticAlgorithm 
 from .algorithm.SMO import SpiderMonkeyAlgorithm
+from django.utils import timezone
+from datetime import datetime
 
 # Create your views here.
 def index(request):
     # OutletObject = OutletModel.objects.all()
     OutletObject = OutletModel.objects.all()
     error={}
+    
     if request.method == 'POST':
         CheckedList = request.POST.get('selected_outlets', '')
         
@@ -144,7 +147,9 @@ def result(request):
         schedule = ScheduleModel()
         schedule.save()
         
-        schedule.Destination_outlet.add(*OutletObject)
+        # schedule.Destination_outlet.add(*OutletObject)
+        for outlet in OutletObject:
+            schedule.Destination_outlet.add(outlet)
         schedule.Vehicle_used.add(*VehicleObject)
         schedule.Driver_used.add(*DriverObject)
         schedule.save()
