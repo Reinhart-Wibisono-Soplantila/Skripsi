@@ -57,164 +57,164 @@
 {% block Content %}
 <form id="driver-form" method="POST">
 {% csrf_token %}
-{% comment %} Result Page Header {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <div>
-            <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
-            <p class="my-0">Click Finish to save the results</p>
+  {% comment %} Result Page Header {% endcomment %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <div>
+              <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
+              <p class="my-0">Click Finish to save the results</p>
+            </div>
+            <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+              Finish
+            </button>
           </div>
-          <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-            Finish
-          </button>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-{% comment %} Vehicle Table {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <h4 class="card-title">Vehicle Table</h4>
+  {% comment %} Vehicle Table {% endcomment %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <h4 class="card-title">Vehicle Table</h4>
+          </div>
         </div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">            
-          <table id="basic-datatables" class="display table table-striped table-hover" >
-            <thead>
-              <tr>
-                <th scope="col">No.</th>
-                <th scope="col">Unit Type</th>
-                <th scope="col">Vehicle Number</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for VehicleDatas in VehicleObject %}
-              <tr>
-                <td scope="'row">{{forloop.counter}}</td>
-                <td>{{VehicleDatas.UnitType}}</td>
-                <td>{{VehicleDatas.VehicleNumber}}</td>
-                <td>{{VehicleDatas.Status}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% comment %} Driver Table {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <h4 class="card-title">Driver Table</h4>
-          <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-            Select Driver
-          </button> -->
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <form id="driver-form" method="POST">
-            {% csrf_token %}            
-            <input type="hidden" id="selected_drivers" name="selected_drivers">
-            <table id="basic-datatables2" class="display table table-striped table-hover" >
+        <div class="card-body">
+          <div class="table-responsive">            
+            <table id="basic-datatables" class="display table table-striped table-hover" >
               <thead>
                 <tr>
                   <th scope="col">No.</th>
-                  <th scope="col">Driver</th>
-                  <th scope="col">Phone</th>
+                  <th scope="col">Unit Type</th>
+                  <th scope="col">Vehicle Number</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {% for DriverDatas in DriverObject %}
+                {% for VehicleDatas in VehicleObject %}
                 <tr>
                   <td scope="'row">{{forloop.counter}}</td>
-                  <td>{{DriverDatas.FullName}}</td>
-                  <td>{{DriverDatas.Phone}}</td>
+                  <td>{{VehicleDatas.UnitType}}</td>
+                  <td>{{VehicleDatas.VehicleNumber}}</td>
+                  <td>{{VehicleDatas.Status}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% comment %} Outlet Table {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <div>
-            <h4 class="card-title">Outlet Table</h4>
-            <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{distance|floatformat:3}} KM </p>
-          
           </div>
-          <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-            Select Driver
-          </button> -->
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <form id="driver-form" method="POST">
-            {% csrf_token %}            
-            <input type="hidden" id="selected_drivers" name="selected_drivers">
-            <table id="basic-datatables3" class="display table table-striped table-hover" >
-              <thead>
-                <tr>
-                  <th scope="col">No.</th>
-                  <th>From </th>
-                  <th>-</th>
-                  <th>To</th>
-                  <th>Distance</th>
-                  <!-- <th>Provinsi</th> -->
-                  <!-- <th>Kabupaten/Kota</th> -->
-                  <!-- <th>Kecamatan</th> -->
-                  <!-- <th>Kelurahan</th> -->
-                  <!-- <th>Alamat</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                {% for key, value in RouteListed.items %}
-                <tr>
-                  <td scope="'row">{{forloop.counter}}</td>
-                  <td>{{value.from.outlet_code}}</td>
-                  <td>-</td>
-                  <td>{{value.to.outlet_code}}</td>
-                  <td>{{value.jarak|floatformat:3}} KM</td>
-                </tr>
-                {% endfor %}
-                <!-- <tr> -->
-                  <!-- <td>{{OutletDatas.OutletName}}</td>
-                  <td>{{OutletDatas.OutletType}}</td>
-                  <td>{{OutletDatas.Kecamatan}}</td>
-                  <td>{{OutletDatas.Kelurahan}}</td> -->
-                <!-- </tr> -->
-              </tbody>
-            </table>
-          </form>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  {% comment %} Driver Table {% endcomment %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <h4 class="card-title">Driver Table</h4>
+            <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+              Select Driver
+            </button> -->
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <form id="driver-form" method="POST">
+              {% csrf_token %}            
+              <input type="hidden" id="selected_drivers" name="selected_drivers">
+              <table id="basic-datatables2" class="display table table-striped table-hover" >
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Driver</th>
+                    <th scope="col">Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for DriverDatas in DriverObject %}
+                  <tr>
+                    <td scope="'row">{{forloop.counter}}</td>
+                    <td>{{DriverDatas.FullName}}</td>
+                    <td>{{DriverDatas.Phone}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Outlet Table {% endcomment %}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <div>
+              <h4 class="card-title">Outlet Table</h4>
+              <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{distance|floatformat:3}} KM </p>
+            
+            </div>
+            <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+              Select Driver
+            </button> -->
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <form id="driver-form" method="POST">
+              {% csrf_token %}            
+              <input type="hidden" id="selected_drivers" name="selected_drivers">
+              <table id="basic-datatables3" class="display table table-striped table-hover" >
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th>From </th>
+                    <th>-</th>
+                    <th>To</th>
+                    <th>Distance</th>
+                    <!-- <th>Provinsi</th> -->
+                    <!-- <th>Kabupaten/Kota</th> -->
+                    <!-- <th>Kecamatan</th> -->
+                    <!-- <th>Kelurahan</th> -->
+                    <!-- <th>Alamat</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for key, value in RouteListed.items %}
+                  <tr>
+                    <td scope="'row">{{forloop.counter}}</td>
+                    <td>{{value.from.outlet_code}}</td>
+                    <td>-</td>
+                    <td>{{value.to.outlet_code}}</td>
+                    <td>{{value.jarak|floatformat:3}} KM</td>
+                  </tr>
+                  {% endfor %}
+                  <!-- <tr> -->
+                    <!-- <td>{{OutletDatas.OutletName}}</td>
+                    <td>{{OutletDatas.OutletType}}</td>
+                    <td>{{OutletDatas.Kecamatan}}</td>
+                    <td>{{OutletDatas.Kelurahan}}</td> -->
+                  <!-- </tr> -->
+                </tbody>
+              </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>
 {% endblock Content %}
 

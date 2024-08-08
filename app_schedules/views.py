@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Case, When
 from django.contrib.staticfiles import finders
 from app_outlet.models import OutletModel
+# from app_schedules.models import ScheduleModel
 from app_vehicle.models import VehicleModel, DriverModel
 from .algorithm.GA import GeneticAlgorithm 
 from .algorithm.SMO import SpiderMonkeyAlgorithm
@@ -115,10 +116,10 @@ def result(request):
         )
     VehicleObject = VehicleModel.objects.filter(id__in=vehicles)
     DriverObject = DriverModel.objects.filter(id__in=drivers)
-    # print('location:', locations)
+    print('location:', locations)
     # print('distance:', distance)
-    # print('drivers:', DriverObject)
-    # print('vehicles:', VehicleObject)
+    print('drivers:', DriverObject)
+    print('vehicles:', VehicleObject)
     # print('locations:', OutletObject)
     
     # Find the path to the JSON file
@@ -138,14 +139,20 @@ def result(request):
         RouteListed[searchedKey] = FilteredDict[searchedKey]
         # RouteListed.append(FilteredDict)
     RouteListed_length = len(RouteListed)
-    # for key, value in RouteListed.items():
-    #     # for subkey, value in subdict.items():
-    #         print(key)
-    #         # print(subkey)   
-    #         print(type(value['jarak'])) 
-    # for index in RouteListed:
-    #     for key, value in index.items():
-    #         print(key)
+    
+    if request.method == 'POST':
+        schedule = ScheduleModel()
+        schedule.save()
+        
+        schedule.Destination_outlet.add(*OutletObject)
+        schedule.Vehicle_used.add(*VehicleObject)
+        schedule.Driver_used.add(*DriverObject)
+        schedule.save()
+        # request.session.pop('outlet_ids', None)
+        # request.session.pop('driver_ids', None)
+        # request.session.pop('vehicle_ids', None)
+        return redirect('app_schedules:index')
+        
     context ={
         'OutletObject' : OutletObject,
         'distance' : distance,

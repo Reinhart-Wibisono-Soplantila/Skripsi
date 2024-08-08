@@ -11,13 +11,13 @@ from app_vehicle.models import DriverModel, VehicleModel
 
 def generate_default_id():
     # Mendapatkan tanggal saat ini dalam format YYYYMMDD
-    date_str = timezone.now().strftime('%d%m%Y')
+    date_str = timezone.now().strftime("%Y-%m-%d")
     # Menentukan awalan huruf dan nomor urut
     prefix = 'A'
     max_number = 9  # Maksimal nomor urut sebelum huruf berubah
     
     # Mencari ID terakhir dengan tanggal yang sama
-    last_id = ScheduleModel.objects.filter(Created_at=date_str).order_by('id_jadwal').last()
+    last_id = ScheduleModel.objects.filter(Created_at=date_str).order_by('Schedule_id').last()
     
     if last_id:
         # Mengambil bagian huruf dan nomor urut
