@@ -1,6 +1,3 @@
-from django.db import models
-
-# Create your models here.
 import random
 import string
 from django.db import models
@@ -14,7 +11,7 @@ def generate_default_id():
     date_str = timezone.now().strftime("%Y-%m-%d")
     # Menentukan awalan huruf dan nomor urut
     prefix = ['A', 'B', 'C', 'D', 'E']
-    max_number = 2  # Maksimal nomor urut sebelum huruf berubah
+    max_number = 99  # Maksimal nomor urut sebelum huruf berubah
     
     # Mencari ID terakhir dengan tanggal yang sama
     last_id = ScheduleModel.objects.filter(Created_at__date=date_str).order_by('Schedule_id').last()
@@ -62,6 +59,7 @@ class ScheduleModel(models.Model):
         primary_key=True,
         default=generate_default_id,
     )
+    Distance = models.FloatField()
     Destination_outlet=models.ManyToManyField(
         OutletModel, 
         related_name='schedules_outlets'

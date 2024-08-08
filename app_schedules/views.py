@@ -144,18 +144,16 @@ def result(request):
     RouteListed_length = len(RouteListed)
     
     if request.method == 'POST':
-        schedule = ScheduleModel()
+        schedule = ScheduleModel(Distance=distance)
         schedule.save()
         
-        # schedule.Destination_outlet.add(*OutletObject)
         for outlet in OutletObject:
             schedule.Destination_outlet.add(outlet)
         schedule.Vehicle_used.add(*VehicleObject)
         schedule.Driver_used.add(*DriverObject)
-        schedule.save()
-        # request.session.pop('outlet_ids', None)
-        # request.session.pop('driver_ids', None)
-        # request.session.pop('vehicle_ids', None)
+        request.session.pop('outlet_ids', None)
+        request.session.pop('driver_ids', None)
+        request.session.pop('vehicle_ids', None)
         return redirect('app_schedules:index')
         
     context ={

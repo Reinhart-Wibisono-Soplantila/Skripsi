@@ -16,7 +16,7 @@
 
 {% block content_header %}
 <div class="page-header">
-  <h3 class="fw-bold mb-3">Creating Schedule</h3>
+  <h3 class="fw-bold mb-3">Report</h3>
   <ul class="breadcrumbs mb-3">
     <li class="nav-home">
       <a href="#">
@@ -27,25 +27,19 @@
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Select Outlets</a>
+      <a href="#">List of Reports</a>
     </li>
     <li class="separator">
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Select Vehicle</a>
+      <a href="#">View Report</a>
     </li>
     <li class="separator">
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Select Driver</a>
-    </li>
-    <li class="separator">
-      <i class="icon-arrow-right"></i>
-    </li>
-    <li class="nav-item">
-      <a href="#">Result</a>
+      <a href="#">{{ScheduleObject.Schedule_id}}</a>
     </li>
   </ul>
   <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
@@ -55,27 +49,6 @@
 {% endblock content_header %}
 
 {% block Content %}
-<form id="driver-form" method="POST">
-{% csrf_token %}
-  {% comment %} Result Page Header {% endcomment %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <div>
-              <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
-              <p class="my-0">Click Finish to save the results</p>
-            </div>
-            <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-              Finish
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   {% comment %} Vehicle Table {% endcomment %}
   <div class="row">
     <div class="col-md-12">
@@ -97,7 +70,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for VehicleDatas in VehicleObject %}
+                {% for VehicleDatas in ScheduleObject.Vehicle_used.all %}
                 <tr>
                   <td scope="'row">{{forloop.counter}}</td>
                   <td>{{VehicleDatas.UnitType}}</td>
@@ -139,7 +112,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for DriverDatas in DriverObject %}
+                  {% for DriverDatas in ScheduleObject.Driver_used.all %}
                   <tr>
                     <td scope="'row">{{forloop.counter}}</td>
                     <td>{{DriverDatas.FullName}}</td>
@@ -163,13 +136,11 @@
           <div class="d-flex align-items-center">
             <div>
               <h4 class="card-title">Outlet Table</h4>
-              <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{distance|floatformat:3}} KM </p>
-            
+              <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{ScheduleObject.Distance|floatformat:3}} KM </p>
             </div>
           </div>
-        </div>
         <div class="card-body">
-          <div class="table-responsive">          
+          <div class="table-responsive">
               <input type="hidden" id="selected_drivers" name="selected_drivers">
               <table id="basic-datatables3" class="display table table-striped table-hover" >
                 <thead>
@@ -196,7 +167,7 @@
       </div>
     </div>
   </div>
-</form>
+
 {% endblock Content %}
 
 {% block scripts_app %}
