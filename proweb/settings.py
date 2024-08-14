@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'app_outlet',
     'app_report',
     'app_vehicle',
+    'app_user',
 ]
 
 MIDDLEWARE = [
