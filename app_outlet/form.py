@@ -98,7 +98,7 @@ class OutletForm(forms.ModelForm):
             'Address' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Alamat 2"
+                    'placeholder' : "Masukkan Alamat"
                 }
             ),
             'Provinsi' : forms.TextInput(
