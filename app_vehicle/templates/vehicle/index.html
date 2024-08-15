@@ -1,6 +1,24 @@
 {% extends "layout/base.html" %}
 {% load static %}
 
+{% block style_app %}
+<style>
+table .vehicle .btn{
+  width: 100%;
+  margin: 0;
+}
+
+table .vehicle .btn:nth-child(2){
+  margin-left: 10px
+}
+
+table .driver a{
+  width: 100%;
+  margin-right: 10px;
+}
+</style>
+{% endblock style_app %}
+
 {% block content_header %}
 <div class="page-header">
   <h3 class="fw-bold mb-3">{{PageHeader}}</h3>
@@ -54,21 +72,20 @@
                 <td>{{vehicleData.UnitType}}</td>
                 <td>{{vehicleData.VehicleNumber}}</td>
                 <td>{{vehicleData.Status}}</td>
-                <td>
-                  <div class="form-button-action">
-                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                      <a href="{% url 'app_vehicle:vehicleUpdate' vehicleNumber=vehicleData.VehicleNumber %}">
-                        <i class="fa fa-edit fa-lg"></i>
-                      </a>
+                <td class="d-flex vehicle">
+                  <a href="{% url 'app_vehicle:vehicleUpdate' vehicleNumber=vehicleData.VehicleNumber %}">
+                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                      Edit
                     </button>
-                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove">
-                      <a href="{% url 'app_vehicle:vehicleDelete' vehicleNumber=vehicleData.VehicleNumber %}">
-                        <span style="color: red;">
-                          <i class="fa fa-times fa-lg"></i>
-                        </span>
-                      </a>
-                    </button>
-                  </div>
+                  </a>
+                  <button 
+                      type="button" 
+                      class="btn btn-danger" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deleteModal" 
+                      data-url="{% url 'app_vehicle:vehicleDelete' vehicleNumber=vehicleData.VehicleNumber %}">
+                      Delete
+                  </button>
                 </td>
               </tr>
               {% endfor %} 
@@ -112,26 +129,25 @@
                   <td scope="'row">{{forloop.counter}}</td>
                   <td>{{driverdata.FullName}}</td>
                   <td>{{driverdata.Phone}}</td>
-                  <td>
-                    <div class="form-button-action">
-                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                        <a href="{% url 'app_vehicle:driverView' driverId=driverdata.id %}">
-                          <i class="fas fa-eye fa-lg"></i>
-                        </a>
+                  <td class="d-flex driver">
+                    <a href="{% url 'app_vehicle:driverView' driverId=driverdata.id %}">
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                        View
                       </button>
-                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                         <a href="{% url 'app_vehicle:driverUpdate' driverId=driverdata.id %}"> 
-                          <i class="fa fa-edit fa-lg"></i>
-                        </a>
+                    </a>
+                    <a href="{% url 'app_vehicle:driverUpdate' driverId=driverdata.id %}"> 
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                        Edit
                       </button>
-                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove">
-                        <a href="{% url 'app_vehicle:driverDelete' driverId=driverdata.id %}">  
-                          <span style="color: red;">
-                            <i class="fa fa-times fa-lg"></i>
-                          </span>
-                        </a>
-                      </button>
-                    </div>
+                    </a>
+                    <button 
+                      type="button" 
+                      class="btn btn-danger" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deleteModal" 
+                      data-url="{% url 'app_vehicle:driverDelete' driverId=driverdata.id %}">
+                      Delete
+                    </button>
                   </td>
                 </tr>
               {% endfor %}
@@ -140,6 +156,24 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Penghapusan</h5>
+          </div>
+          <div class="modal-body">
+              Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+              <button type="button" class="btn btn-danger" id="confirmDelete">Ya, Hapus</button>
+          </div>
+      </div>
   </div>
 </div>
 {% endblock Content %}
@@ -151,6 +185,18 @@
 
 <script>
     $(document).ready(function () {
+      var deleteUrl = '';
+
+      // Atur URL hapus saat modal ditampilkan
+      document.getElementById('deleteModal').addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget; // Tombol yang memicu modal
+          deleteUrl = button.getAttribute('data-url'); // Mengambil data-url dari tombol
+      });
+
+      // Hapus data saat pengguna mengkonfirmasi
+      document.getElementById('confirmDelete').addEventListener('click', function() {
+          window.location.href = deleteUrl;
+      });
       $("#basic-datatables").DataTable({});
       $("#basic-datatables2").DataTable({});
 
