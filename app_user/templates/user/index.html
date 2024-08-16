@@ -23,7 +23,7 @@
 
 {% block content_header %}
 <div class="page-header">
-  <h3 class="fw-bold mb-3">Report</h3>
+  <h3 class="fw-bold mb-3">User</h3>
   <ul class="breadcrumbs mb-3">
     <li class="nav-home">
       <a href="#">
@@ -34,7 +34,7 @@
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">List of Reports</a>
+      <a href="#">List of User</a>
     </li>
   </ul>
   <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
@@ -51,6 +51,12 @@
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">List of Reports</h4>
+          <a class="ms-auto" href="{% url "app_user:register" %}">
+            <button class="btn btn-primary btn-round" >
+              <i class="fa fa-plus"></i>
+              Add User
+            </button>
+          </a>
         </div>
       </div>
       <div class="card-body">
@@ -59,21 +65,20 @@
             <thead>
               <tr>
                 <th scope="col">No.</th>
-                <th scope="col">ScheduleCode</th>
-                <th scope="col">Date Created</th>
-                <th scope="col">Time Created</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
-              {% for ScheduleDatas in ScheduleObject %}
+              {% for UserDatas in UserObject %}
               <tr>
                 <td scope="'row">{{forloop.counter}}</td>
-                <td>{{ScheduleDatas.Schedule_id}}</td>
-                <td>{{ScheduleDatas.Created_at|date:"F j, Y"}}</td>
-                <td>{{ScheduleDatas.Created_at|date:"F j, Y, g:i a" }}</td>
+                <td>{{UserDatas.username}}</td>
+                <td>{{UserDatas.email}}</td>
                 <td>
-                  <div class="form-button-action">
-                    <a href="{% url 'app_report:view' Schedule_id=ScheduleDatas.Schedule_id %}" class="btn btn-primary">
+                  {% comment %} <div class="form-button-action">
+                    <a href="{% url 'app_user:view' user_id=UserDatas.ID %}" class="btn btn-primary">
                       View
                     </a>
                     <button 
@@ -81,9 +86,9 @@
                     class="btn btn-danger" 
                     data-bs-toggle="modal" 
                     data-bs-target="#deleteModal" 
-                    data-url="{% url 'app_report:delete' Schedule_id=ScheduleDatas.Schedule_id %}">
+                    data-url="{% url 'app_user:delete' user_id=UserDatas.ID %}">
                     Delete
-                </button>
+                </button> {% endcomment %}
                   </div>
                 </td>
               </tr>

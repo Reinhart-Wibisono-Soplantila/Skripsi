@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render, redirect
 from django.db.models import Case, When
 from django.contrib.staticfiles import finders
+from django.contrib import messages
 from app_outlet.models import OutletModel
 from app_schedules.models import ScheduleModel
 from app_vehicle.models import VehicleModel, DriverModel
@@ -21,13 +22,13 @@ def index(request):
         
         if not CheckedList:
             error['selected_outlets'] = "You must select at least one option."
-            print('error')
+            messages.error(request, error['selected_outlets'])
         if not error:
             outlets = [str(x) for x in CheckedList.split(',')]
             request.session['outlets'] = outlets
             # messages.success(request, error['selected_outlets'])
             return redirect('app_schedules:viewoutlets')
-        print(outlets)
+        
     context={
         'error' : error,
         'OutletObject' : OutletObject
@@ -78,7 +79,7 @@ def vehicles(request):
         CheckedList = request.POST.get('selected_vehicles', '')
         if not CheckedList:
             error['selected_vehicles'] = "You must select at least one option."
-            print("ERRRRROOOOOORRRRR")
+            messages.error(request, error['selected_vehicles'])
         if not error:
             print('check: ',CheckedList)
             Vehicles = [int(x) for x in CheckedList.split(',')]
@@ -98,7 +99,7 @@ def drivers(request):
         # CheckedList = request.POST.get('datas', '')
         if not CheckedList:
             error['selected_drivers'] = "You must select at least one option."
-            print('error')
+            messages.error(request, error['selected_drivers'])
         if not error:
             print('check:', CheckedList)
             Drivers = [int(x) for x in CheckedList.split(',')]

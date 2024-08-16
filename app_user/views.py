@@ -3,6 +3,14 @@ from django.contrib.auth import login, authenticate
 from .form import RegisterForm, LoginForm
 from django.contrib import messages
 from django.views import View
+from django.contrib.auth.models import User
+
+def index(request):
+    userObject = User.objects.all()
+    context={
+        'UserObject' : userObject
+    }
+    return render(request, 'user/index.html', context)
 
 class RegisterView(View):
     def get(self, request):
@@ -48,5 +56,5 @@ class LoginView(View):
             else:
                 messages.error(request, "Wrong Username or Wrong Password.")
         else:
-            messages.error(request, "Wrong Username or Wrong Password.")
+            messages.error(request, "Invalid Input.")
         return render(request, 'user/login.html', context)

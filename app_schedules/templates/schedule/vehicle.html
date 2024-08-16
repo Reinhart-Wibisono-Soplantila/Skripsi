@@ -14,6 +14,18 @@
 </style>
 {% endblock style_app %}
 
+{% block messages %}
+  <div id="flashMessages" class="flash-messages bootstrap-alert">
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-danger" role="alert">
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+  </div>
+{% endblock messages %}
+
 {% block content_header %}
 <div class="page-header">
   <h3 class="fw-bold mb-3">Creating Schedule</h3>

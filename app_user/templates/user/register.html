@@ -1,0 +1,88 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+{% block content_header %}
+<div class="page-header">
+    <h3 class="fw-bold mb-3">Add Outlet</h3>
+    <ul class="breadcrumbs mb-3">
+      <li class="nav-home">
+        <a href="#">
+          <i class="icon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">List of User</a>
+      </li>
+      <li class="separator">
+        <i class="icon-arrow-right"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Add USer</a>
+      </li>
+    </ul>
+  </div>
+{% endblock content_header %}
+
+{% block Content %}
+<div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">{{pageHeader}} Form</div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 col-lg-4">
+              <form action="" method='POST'>
+                {% csrf_token %}
+                <label class="mb-3"><b>General Info</b></label>
+                 <div class="form-group">
+                    {{form.username.label}}
+                    {{form.username}}
+                    {% if error.username %}
+                      {% for error in error.username %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.email.label}}
+                    {{form.email}}
+                    {% if error.email %}
+                      {% for error in error.email %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.password1.label}}
+                    {{form.password1}}
+                    {% if error.password1 %}
+                      {% for error in error.password1 %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{form.password2.label}}
+                    {{form.password2}}
+                    {% if error.password2 %}
+                      {% for error in error.password2 %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="card-action">
+                  <button class="btn btn-success" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock Content %}

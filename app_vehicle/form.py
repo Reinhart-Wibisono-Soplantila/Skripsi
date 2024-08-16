@@ -20,15 +20,15 @@ class DriverForm(forms.ModelForm):
         
         error_messages ={
             'FullName' : {
-                'max_length' : 'FullName terlalu panjang'
+                'max_length' : 'Nama terlalu panjang'
             },
             'Email' : {
-                'max_length': 'Email terlalu panjang',
-                'unique': "Email sudah digunakan",
+                'max_length': '*Email terlalu panjang',
+                'unique': "*Email sudah digunakan",
             },'Phone' : {
-                'max_length' : 'Phone terlalu panjang'
+                'max_length' : '*Nomor Telepon terlalu panjang'
             },'Address' : {
-                'max_length' : 'Address terlalu panjang'
+                'max_length' : '*Alamat terlalu panjang'
             },
         }
         

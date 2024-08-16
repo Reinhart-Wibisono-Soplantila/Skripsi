@@ -3,16 +3,6 @@
 
 {% block style_app %}
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-<style>
-  .text-center {
-    text-align: center;
-    vertical-align: middle;
-  }
-  .large-checkbox {
-    width: 20px;
-    height: 20px;
-  }
-</style>
 {% endblock style_app %}
 
 {% block content_header %}
@@ -34,6 +24,18 @@
 </div>
 {% endblock content_header %}
 
+{% block messages %}
+  <div id="flashMessages" class="flash-messages bootstrap-alert">
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-danger" role="alert">
+                  {{ message }}
+              </div>
+          {% endfor %}
+      {% endif %}
+  </div>
+{% endblock messages %}
+
 {% block Content %}
 <div class="row">
   <div class="col-md-12">
@@ -49,9 +51,7 @@
       <div class="card-body">
         <div class="table-responsive">        
           <form id="schedule-form" method="POST" > 
-            {% if error.datas %}
-                <div class="error">{{ errors.datas }}</div>
-            {% endif %}
+            
             <table id="add-row" class="display table table-striped table-hover">
             {% csrf_token %}
               <thead>
@@ -169,6 +169,15 @@
         $('#schedule-form').submit();
       });
 
+      const flashMessages = document.getElementById('flashMessages');
+      if (flashMessages) {
+          setTimeout(function() {
+              flashMessages.style.opacity = '0';
+              setTimeout(function() {
+                  flashMessages.remove();
+              }, 500); // Hapus elemen setelah transisi selesai
+          }, 3000); // Waktu tampil 3000 ms atau 3 detik
+      }
       
       $("#basic-datatables").DataTable({});
 

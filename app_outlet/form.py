@@ -74,67 +74,67 @@ class OutletForm(forms.ModelForm):
             'OutletNumber' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Nomor Toko"
+                    'placeholder' : "*Masukkan Nomor Toko"
                 }
             ),
             'OutletCode' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Kode Toko"
+                    'placeholder' : "*Masukkan Kode Toko"
                 }
             ),
             'OutletName' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Nama Toko"
+                    'placeholder' : "*Masukkan Nama Toko"
                 }
             ),
             'OutletType' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Tipe Toko"
+                    'placeholder' : "*Masukkan Tipe Toko"
                 }
             ),
             'Address' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Alamat"
+                    'placeholder' : "*Masukkan Alamat"
                 }
             ),
             'Provinsi' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Provinsi"
+                    'placeholder' : "*Masukkan Provinsi"
                 }
             ),
             'Kabupaten' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Kabupaten"
+                    'placeholder' : "*Masukkan Kabupaten"
                 }
             ),
             'Kecamatan' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Kecamatan"
+                    'placeholder' : "*Masukkan Kecamatan"
                 }
             ),
             'Kelurahan' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Kelurahan"
+                    'placeholder' : "*Masukkan Kelurahan"
                 }
             ),
             'Latitude' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Koordinat Latitude"
+                    'placeholder' : "*Masukkan Koordinat Latitude"
                 }
             ),
             'Longitude' : forms.TextInput(
                 attrs = {
                     'class' : 'form-control',
-                    'placeholder' : "Masukkan Koordinat Longitude"
+                    'placeholder' : "*Masukkan Koordinat Longitude"
                 }
             ),
         }

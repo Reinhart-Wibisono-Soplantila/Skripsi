@@ -1,11 +1,21 @@
 import json
+import pytz
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
     ScheduleObject = ScheduleModel.objects.all()
+    # Konversi waktu UTC ke zona waktu lokal pengguna
+    display_timezone = pytz.timezone('Asia/Makassar')
+    for item in ScheduleObject:
+        print(f"UTC Time: {item.Created_at}, Local Time: {item.Created_at.astimezone(display_timezone)}")
+        
+        item.Created_at = item.Created_at.astimezone(display_timezone)
+        print(item.Created_at)
+    print('')
     context = {
         'ScheduleObject' : ScheduleObject,
     }
