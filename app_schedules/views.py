@@ -14,7 +14,7 @@ from datetime import datetime
 # Create your views here.
 def index(request):
     # OutletObject = OutletModel.objects.all()
-    OutletObject = OutletModel.objects.all()
+    OutletObject = OutletModel.objects.exclude(OutletType='Source')
     error={}
     
     if request.method == 'POST':
@@ -34,8 +34,9 @@ def index(request):
         'OutletObject' : OutletObject
     }
     request.session.pop('locations', None)
-    
     request.session.pop('distance', None)
+    request.session.pop('drivers', None)
+    request.session.pop('vehicles', None)
     return render(request, 'schedule/index.html', context)
 
 def viewoutlets(request):

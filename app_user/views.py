@@ -22,12 +22,19 @@ class RegisterView(View):
     
     def post(self, request):
         form = RegisterForm(request.POST or None)
+        error={}
+        print(request.POST)
         if form.is_valid():
             user=form.save()
             login(request, user)
+            print('success')
             return redirect('app_dashboard:home')
+        else:
+            print('failed')
+            error=form.errors
         context={
-            'form':form
+            'form':form,
+            'error':error
         }
         return render(request, 'user/register.html', context)
     

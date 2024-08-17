@@ -31,6 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 USE_TZ = True
+# LOGIN_URL = 'app_user:login'# Halaman login yang digunakan
+# LOGIN_REDIRECT_URL = 'app_dahsboard:home'# URL setelah berhasil login
 
 ALLOWED_HOSTS = []
 
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'proweb.middleware.LoginRequiredMiddleware'
 ]
 
 ROOT_URLCONF = 'proweb.urls'

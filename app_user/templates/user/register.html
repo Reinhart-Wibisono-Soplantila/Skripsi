@@ -42,8 +42,8 @@
                  <div class="form-group">
                     {{form.username.label}}
                     {{form.username}}
-                    {% if error.username %}
-                      {% for error in error.username %}
+                    {% if form.username.errors %}
+                      {% for error in form.username.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
@@ -51,8 +51,8 @@
                 <div class="form-group">
                     {{form.email.label}}
                     {{form.email}}
-                    {% if error.email %}
-                      {% for error in error.email %}
+                    {% if form.email.errors %}
+                      {% for error in form.email.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
@@ -60,8 +60,8 @@
                 <div class="form-group">
                     {{form.password1.label}}
                     {{form.password1}}
-                    {% if error.password1 %}
-                      {% for error in error.password1 %}
+                    {% if form.password1.errors %}
+                      {% for error in form.password1.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
@@ -69,11 +69,17 @@
                 <div class="form-group">
                     {{form.password2.label}}
                     {{form.password2}}
-                    {% if error.password2 %}
-                      {% for error in error.password2 %}
+                    {% if form.password2.errors %}
+                      {% for error in form.password2.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="showPassword"> 
+                    Show Password
+                  </label>
                 </div>
                 <div class="card-action">
                   <button class="btn btn-success" type="submit">Submit</button>
@@ -86,3 +92,22 @@
     </div>
   </div>
 {% endblock Content %}
+
+{% block scripts_app %}
+<script>
+  $(document).ready(function () {
+    document.getElementById('showPassword').addEventListener('change', function() {
+    var password1 = document.getElementById('id_password1');
+    var password2 = document.getElementById('id_password2');
+    if (this.checked) {
+        password1.type = 'text';
+        password2.type = 'text';
+    } else {
+        password1.type = 'password';
+        password2.type = 'password';
+    }
+  });
+})
+</script>
+
+{% endblock scripts_app %}
