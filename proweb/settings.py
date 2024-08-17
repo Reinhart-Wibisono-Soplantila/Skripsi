@@ -31,8 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 USE_TZ = True
-# LOGIN_URL = 'app_user:login'# Halaman login yang digunakan
-# LOGIN_REDIRECT_URL = 'app_dahsboard:home'# URL setelah berhasil login
+LOGIN_URL = 'app_user:login'# Halaman login yang digunakan
+LOGIN_REDIRECT_URL = 'app_dashboard:home'# URL setelah berhasil login
 
 ALLOWED_HOSTS = []
 
