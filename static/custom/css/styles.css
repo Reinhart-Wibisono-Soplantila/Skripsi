@@ -28,11 +28,22 @@
   transition: opacity 0.5s ease-in-out;
 }
 
+
+
 .bootstrap-alert .alert {
-  background-color: #f8d7da; /* Warna latar belakang dari Bootstrap */
-  color: #721c24; /* Warna teks dari Bootstrap */
+  background-color: #d4edda; /* Warna latar belakang dari Bootstrap */
+  color: #155724; /* Warna teks dari Bootstrap */
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid #f5c6cb; /* Warna border dari Bootstrap */
   border-radius: 4px;
 }
+
+/* .bootstrap-alert .alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+} */

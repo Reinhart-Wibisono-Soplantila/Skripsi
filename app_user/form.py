@@ -1,7 +1,36 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model=User
+        fields=['username', 'email']
+        widgets={
+            'username':forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'email':forms.EmailInput(
+                attrs={
+                    'class':'form-control'
+                }
+            )
+        } 
+        labels={
+            'username':'Username',
+            'email' : 'Email'
+        }
+        help_texts = {
+            'username': '',
+        }
+    # def clean_username(self):
+    #     new_username = self.cleaned_data.get('username')
+    #     if new_username == self.instance.username:
+    #         raise forms.ValidationError("Username cannot be same.")
+    #     return new_username
 
 class RegisterForm(UserCreationForm):
     email=forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class':'form-control'}))
@@ -48,3 +77,10 @@ class LoginForm(AuthenticationForm):
             }
         )
     )
+    
+class MyPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(MyPasswordChangeForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['placeholder'] = field.label

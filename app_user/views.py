@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from .form import RegisterForm, LoginForm
-from django.contrib import messages
-from django.views import View
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from .form import RegisterForm, LoginForm, ProfileForm, MyPasswordChangeForm
 
 def index(request):
     userObject = User.objects.all()
@@ -11,6 +12,31 @@ def index(request):
         'UserObject' : userObject
     }
     return render(request, 'user/index.html', context)
+
+def profile(request):
+    profileForm = ProfileForm(instance=request.user)
+    passwordForm = MyPasswordChangeForm(user=request.user)
+    if request.method == 'POST':
+        if 'updateProfile' in request.POST:
+            profileForm = ProfileForm(request.POST, instance=request.user)
+            if profileForm.is_valid():
+                profileForm.save()
+                messages.success(request, 'Your profile was successfully updated!')
+                return redirect('app_user:profile')
+        elif 'changePassword' in request.POST:
+            passwordForm = MyPasswordChangeForm(user=request.user, data=request.POST)
+            if passwordForm.is_valid():
+                user = passwordForm.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your password was successfully updated!')
+                return redirect('app_user:profile')
+            else:
+                print(passwordForm.errors)
+    context={
+        'profileForm':profileForm,
+        'passwordForm':passwordForm
+    }
+    return render(request, 'user/profile.html', context)
 
 class RegisterView(View):
     def get(self, request):
