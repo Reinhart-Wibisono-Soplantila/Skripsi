@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel
 from django.utils import timezone
+from django.utils.timezone import make_naive
 
 # Create your views here.
 def index(request):
@@ -13,12 +14,16 @@ def index(request):
     for item in ScheduleObject:
         print(f"UTC Time: {item.Created_at}, Local Time: {item.Created_at.astimezone(display_timezone)}")
         
-        item.Created_at = item.Created_at.astimezone(display_timezone)
+        # item.Created_at = item.Created_at.astimezone(display_timezone)
+        item.Created_at = make_naive(item.Created_at, display_timezone)
         print(item.Created_at)
     print('')
+    for item in ScheduleObject:
+        print(item.Created_at)
     context = {
         'ScheduleObject' : ScheduleObject,
     }
+    print(context)
     return render(request, 'report/index.html', context)
 
 def view(request, Schedule_id):
