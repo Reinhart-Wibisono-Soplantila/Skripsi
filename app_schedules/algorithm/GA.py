@@ -24,33 +24,6 @@ class GeneticAlgorithm:
         except ImportError:
             print("Libary belum terimpor")
 
-    # calculating distance of the outlets
-    def calcDistance1(self, outlets):
-        fit = 0
-        print("")
-        print("***********")
-        print("")
-        for j in range(len(outlets)-1):
-            if j == 0:
-                loc_source = '15000000000000000000000000'
-                loc_1 = outlets[j]
-                loc_2 = outlets[j+1]
-                fit += self.distance_df[loc_source][loc_1]
-                print('loc_source', loc_source)
-                print('loc1', loc_1)
-                print('fit' ,fit)
-                fit += self.distance_df[loc_1][loc_2]
-                print('loc2', loc_2)
-                print(fit)
-            else:
-                loc_1 = outlets[j]
-                loc_2 = outlets[j+1]
-                fit += self.distance_df[loc_1][loc_2]
-                print('loc1', loc_1)
-                print('loc2', loc_2)
-                print('fit', fit)
-                
-        return fit
     def calcDistance(self, items):
         fit = 0
         for j in range(len(items)-1):
@@ -96,22 +69,42 @@ class GeneticAlgorithm:
         gen_number = 0
         while(stop_iteration == False):
             new_population = []
-
+            temp_population = []
+            print('gen number:', gen_number)
             # selecting two of the best options we have (elitism)
-            new_population.append(sorted(population)[0])
-            new_population.append(sorted(population)[1])
-
+            firstElitism = sorted(population, key=lambda x: x[0])[0]
+            firstElitism = self.copy.deepcopy(firstElitism)
+            distFirstElitism = self.calcDistance(firstElitism[1])
+            
+            secondElitism = sorted(population, key=lambda x: x[0])[1]
+            secondElitism  =self.copy.deepcopy(secondElitism)
+            distSecondElitism = self.calcDistance(secondElitism[1])
+            
+            print(f"ELITISIM1 = {firstElitism[0]} -- {distFirstElitism}")
+            print(f"ELITISIM2 = {secondElitism[0]} -- {distSecondElitism}")
+            
+            new_population.append([distFirstElitism, firstElitism[1]])
+            new_population.append([distSecondElitism, secondElitism[1]])
+           
+            print('')
+            print(f'new_population[0] : {self.calcDistance(new_population[0][1])}')
+            print(f'new_population[1] : {self.calcDistance(new_population[1][1])}')
+            print('')
+            print('NEW POPULATION')
             for k in range(int((len(population) - 2) / 2)):
                 # CROSSOVER
                 random_number = self.random.random()
                 if random_number < CROSSOVER_RATE:
                     # print('cross')
                     parent_chromosome1 = sorted(
-                        self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE)
+                        self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE), key=lambda x: x[0]
                     )[0]
+                    parent_chromosome1 = self.copy.deepcopy(parent_chromosome1)
                     parent_chromosome2 = sorted(
-                        self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE)
+                        self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE), key=lambda x: x[0]
                     )[0]
+                    
+                    parent_chromosome2 = self.copy.deepcopy(parent_chromosome2)
                     point = self.random.randint(0, lenCities - 1)
 
                     child_chromosome1 = parent_chromosome1[1][0:point]
@@ -123,74 +116,96 @@ class GeneticAlgorithm:
                     for j in parent_chromosome1[1]:
                         if (j in child_chromosome2) == False:
                             child_chromosome2.append(j)
-
                 # If crossover not happen
                 else:
                     child_chromosome1 = self.random.choices(population)[0][1]
                     child_chromosome2 = self.random.choices(population)[0][1]
-
+                    
+                child_chromosome1 = self.copy.deepcopy(child_chromosome1)
+                child_chromosome2 = self.copy.deepcopy(child_chromosome2)
+                
                 # MUTATION
                 if self.random.random() < MUTATION_RATE:
-                    # print('mutasi')
                     point1 = self.random.randint(0, lenCities - 1)
                     point2 = self.random.randint(0, lenCities - 1)
-                    mutated_child_chromosome1 = child_chromosome1
-                    mutated_child_chromosome1[point1], mutated_child_chromosome1[point2] = (
-                        mutated_child_chromosome1[point2],
-                        mutated_child_chromosome1[point1],
+                    child_chromosome1[point1], child_chromosome1[point2] = (
+                        child_chromosome1[point2],
+                        child_chromosome1[point1],
                     )
 
                     point1 = self.random.randint(0, lenCities - 1)
                     point2 = self.random.randint(0, lenCities - 1)
-                    mutated_child_chromosome2 = child_chromosome2
-                    mutated_child_chromosome2[point1], mutated_child_chromosome2[point2] = (
-                        mutated_child_chromosome2[point2],
-                        mutated_child_chromosome2[point1],
+                    child_chromosome2[point1], child_chromosome2[point2] = (
+                        child_chromosome2[point2],
+                        child_chromosome2[point1],
                     )
-                    distChild1 = self.calcDistance(child_chromosome1)
-                    distMutatedChild1 =  self.calcDistance(mutated_child_chromosome1)
-                    distChild2 = self.calcDistance(child_chromosome2)
-                    distMutatedChild2 =  self.calcDistance(mutated_child_chromosome2)
-                    
-                    if distChild1>distMutatedChild1:
-                        new_population.append([distMutatedChild1, mutated_child_chromosome1])
-                    
-                    if distChild2 > distMutatedChild2:
-                        new_population.append([distMutatedChild2, mutated_child_chromosome2])
-                else:
-                    new_population.append([self.calcDistance(child_chromosome1), child_chromosome1])
-                    new_population.append([self.calcDistance(child_chromosome2), child_chromosome2])
-
-                # print(k)
-                # print(len(new_population))
-                # print('')
+                temp_population.append([self.calcDistance(child_chromosome1), child_chromosome1])
+                temp_population.append([self.calcDistance(child_chromosome2), child_chromosome2])
+                for i in range(len(temp_population)):
+                    cekl = self.calcDistance(temp_population[i][1])
+                    orrri = temp_population[i][0]
+                    if cekl != orrri:
+                        print(f"{k}=={cekl} -- {orrri} -- TIDAK SAMA")
+            # print(len(new_population))
+            for item in range(len(temp_population)):
+                new_population.append(temp_population[item])
+            # print(len(new_population))
+            # print('')
+            # print('NEW POPULATION')
+            # for i in range(len(new_population)):
+            #     cek= self.calcDistance(new_population[i][1])
+            #     ori = new_population[i][0]
+            #     if ori != cek:
+            #         print(f"{i} == {ori} -- {cek}")
+            #         print("TIDAK SAMAAAA")
             population = new_population
             gen_number += 1
+            # print('')
+            # print('POPULATION')
+            # for i in range(len(population)):
+            #     cek= self.calcDistance(population[i][1])
+            #     ori = population[i][0]
+            #     if ori != cek:
+            #         print(f"{i} == {ori} -- {cek}")
+            #         print("TIDAK SAMAAAA")
+            # print('')
+            # print('')
+            # print('after len(population): ', len(population))
+            population = sorted(population, key=lambda x: x[0])
+            tempBestanswer = population[0]
+            # print(f" temp = ", tempBestanswer)
+            # tempBestanswer = sortedlist[0]
             
-            sortedlist = sorted(population, key=lambda x: x[0])
-            best = sortedlist[0]
-            
-            print('')
-            if(targetCounter == 0):
-                print('best:', best)
-            print('HITUNG:', self.calcDistance(best[1]))
-            print('best:', best[0])
-            print('best', best[1])
-            print('')
             if targetCounter == 10:
                 stop_iteration == True
                 print('It was Stoped')
                 
-                print('jarak', self.calcDistance(best[1]))
-                print('best: ', best)
+                print('jarak', self.calcDistance(bestAnswer[1]))
+                print('best: ', bestAnswer)
                 break
             else:
-                if best[0] < TARGET:
-                    TARGET = best[0]
+                if tempBestanswer[0] < TARGET:
+                    print('Change Best ANswer')
+                    TARGET = tempBestanswer[0]
+                    bestAnswer = tempBestanswer
+                    print('HITUNG:', self.calcDistance(bestAnswer[1]))
+                    print('bestAnswer:', bestAnswer[0])
+                    
                     targetCounter=0
                 else:
+                    print('')
+                    print('TARGETCOUNTERRR')
+                    for i in range(len(population)):
+                        cek= self.calcDistance(population[i][1])
+                        ori = population[i][0]
+                        if ori != cek:
+                            print(f"{i} == {ori} -- {cek} -- TIDAK SAMA")
+                        else:
+                            print(f"{i} == {ori} -- {cek}")
+                    print('')
                     targetCounter+=1
-        answer = best
+                    print('targetCounter: ', targetCounter)
+        answer = bestAnswer
         return answer, gen_number
 
     def main(self, outlets):

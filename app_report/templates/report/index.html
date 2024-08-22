@@ -70,7 +70,7 @@
                 <td scope="'row">{{forloop.counter}}</td>
                 <td>{{ScheduleDatas.Schedule_id}}</td>
                 <td>{{ScheduleDatas.Created_at|date:"F j, Y"}}</td>
-                <td>{{ScheduleDatas.Created_at|date:"F j, Y, g:i a" }}</td>
+                <td>{{ScheduleDatas.Created_at|date:"g:i a" }}</td>
                 <td>
                   <div class="form-button-action">
                     <a href="{% url 'app_report:view' Schedule_id=ScheduleDatas.Schedule_id %}" class="btn btn-primary">
