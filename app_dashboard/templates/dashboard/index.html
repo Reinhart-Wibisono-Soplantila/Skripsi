@@ -14,6 +14,14 @@
 </div>
 {% endblock content_header %}
 
+{% block style_app %}
+<style>
+  table .badge{
+    font-size:medium;
+  }
+</style>
+{% endblock style_app %}
+
 {% block Content %}
 {% comment %} Outlets report {% endcomment %}
 <div class="row">
@@ -28,38 +36,34 @@
         <div class="table-responsive">
           <table
             id="basic-datatables"
-            class="display table table-striped table-hover"
-          >
+            class="display table table-striped table-hover">
             <thead>
               <tr>
-                <th scope="col">Outlets</th>
-                <th scope="col" class="text-end">Outlet Type</th>
-                <th scope="col" class="text-end">PJP Day</th>
-                <th scope="col" class="text-end">Daily/Weekly</th>
-                <th scope="col" class="text-end">Status</th>
+                <th scope="col">No. </th>
+                <th scope="col">Outlet Name</th>
+                <th scope="col">Outlet Type</th>
+                <th scope="col">Alamat</th>
+                <th scope="col">PJP Day</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
-            <tfoot>
-              <tr>
-                <th scope="col">Outlets</th>
-                <th scope="col" class="text-end">Outlet Type</th>
-                <th scope="col" class="text-end">PJP Day</th>
-                <th scope="col" class="text-end">Daily/Weekly</th>
-                <th scope="col" class="text-end">Status</th>
-              </tr>
-            </tfoot>
             <tbody>
-              <tr>
-                <th scope="row">
-                  A.MAPPAINGA BAROMBONG-TPUY, IDM
-                </th>
-                <td class="text-end">Indomaret</td>
-                <td class="text-end">Friday</td>
-                <td class="text-end">Weekly</td>
-                <td class="text-end">
-                  <span class="badge badge-success">Completed</span>
-                </td>
-              </tr>
+                {% for OutletData in OutletObject %}
+                <tr>
+                  <td scope="row">{{forloop.counter}}</td>
+                  <td>{{OutletData.OutletName}}</td>
+                  <td>{{OutletData.OutletType}}</td>
+                  <td>{{OutletData.Address}}</td>
+                  <td>{{OutletData.Days}}</td>
+                  <td>
+                    <a href="{% url "app_outlet:outletView" outletCode=OutletData.OutletCode %}">
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="View Task">
+                          View
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
             </tbody>
           </table>
         </div>
@@ -81,35 +85,27 @@
           <table id="basic-datatables2" class="display table table-striped table-hover" >
             <thead>
               <tr>
-                <th scope="col">Unit Number</th>
-                <th scope="col" class="text-end">Driver</th>
-                <th scope="col" class="text-end">Ready/Repaired</th>
-                <th scope="col" class="text-end">Status</th>
+                <th scope="col">No.</th>
+                <th scope="col">Unit Type</th>
+                <th scope="col">Vehicle Number</th>
+                <th scope=>Status</th>
               </tr>
             </thead>
-            <tfoot>
-              <tr>
-                <th scope="col">Unit Number</th>
-                <th scope="col" class="text-end">Driver</th>
-                <th scope="col" class="text-end">Ready/Repaired</th>
-                <th scope="col" class="text-end">Status</th>
-              </tr>
-            </tfoot>
             <tbody>
+              {% for vehicleData in VehicleObject %}
               <tr>
-                <th scope="row">
-                  L.300/B 9323 SO
-                </th>
-                <td class="text-end">
-                  Rusliadi
-                </td>
-                <td class="text-end">
-                  Ready
-                </td>
-                <td class="text-end">
-                  <span class="badge badge-success">Existing</span>
+                <td scope="'row">{{forloop.counter}}</td>
+                <td>{{vehicleData.UnitType}}</td>
+                <td>{{vehicleData.VehicleNumber}}</td>
+                <td>
+                  <h1>
+                    <span class="badge badge-success">
+                      {{vehicleData.Status}}
+                    </span>
+                  </h1>
                 </td>
               </tr>
+              {% endfor %} 
             </tbody>
           </table>
         </div>
@@ -117,89 +113,58 @@
     </div>
   </div>
 </div>
-<div class="row row-card-no-pd mt--2">
-  <div class="card-title mb-4">Delivery Report</div>
 
-  <div class="col-12 col-sm-12 col-md-12 col-xl-4">
+{% comment %} Driver report {% endcomment %}
+<div class="row">
+  <div class="col-md-12">
     <div class="card">
+      <div class="card-header">
+        <div class="d-flex align-items-center">
+          <h4 class="card-title">Vehicle Report</h4>
+        </div>
+      </div>
       <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h5><b>Total Success</b></h5>
-          </div>
-          <h3 class="text-success fw-bold">20 Outlets</h3>
-        </div>
-        <div class="progress progress-sm">
-          <div
-            class="progress-bar bg-success w-25"
-            role="progressbar"
-            aria-valuenow="25"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-        <div class="d-flex justify-content-between mt-2">
-          <p class="text-muted mb-0">Percentage</p>
-          <p class="text-muted mb-0">25%</p>
+        <div class="table-responsive">
+          <table id="basic-datatables3" class="display table table-striped table-hover" >
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Driver</th>
+                <th scope="col">Phone</th>
+                <th style="width: 10%">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for driverdata in DriverObject %}
+                <tr>
+                  <td scope="'row">{{forloop.counter}}</td>
+                  <td>{{driverdata.FullName}}</td>
+                  <td>{{driverdata.Phone}}</td>
+                  <td class="d-flex driver">
+                    <a href="{% url 'app_vehicle:driverView' driverId=driverdata.id %}">
+                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                        View
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-12 col-sm-12 col-md-12 col-xl-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h5><b>Total Pending</b></h5>
-            {% comment %} <p class="text-muted">All Customs Value</p> {% endcomment %}
-          </div>
-          <h3 class="text-warning fw-bold">20 Outlets</h3>
-        </div>
-        <div class="progress progress-sm">
-          <div
-            class="progress-bar bg-warning w-75"
-            role="progressbar"
-            aria-valuenow="75"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-        <div class="d-flex justify-content-between mt-2">
-          <p class="text-muted mb-0">Percentage</p>
-          <p class="text-muted mb-0">75%</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-12 col-sm-12 col-md-12 col-xl-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between">
-          <div>
-            <h5><b>Total Failed</b></h5>
-          </div>
-          <h3 class="text-danger fw-bold">15 Outlets</h3>
-        </div>
-        <div class="progress progress-sm">
-          <div
-            class="progress-bar bg-danger w-50"
-            role="progressbar"
-            aria-valuenow="50"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-        <div class="d-flex justify-content-between mt-2">
-          <p class="text-muted mb-0">Percentage</p>
-          <p class="text-muted mb-0">15%</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 {% endblock Content %}
 
 {% block scripts_app %}
-{% include "dashboard/includes/scripts.html" %}
+<script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    $("#basic-datatables").DataTable({});
+    $("#basic-datatables2").DataTable({});
+    $("#basic-datatables3").DataTable({});
+  });
+</script>
 {% endblock scripts_app %}
