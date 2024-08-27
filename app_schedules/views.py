@@ -153,6 +153,11 @@ def result(request):
             schedule.Destination_outlet.add(outlet)
         schedule.Vehicle_used.add(*VehicleObject)
         schedule.Driver_used.add(*DriverObject)
+        
+        for vehicle in VehicleObject:
+            vehicle.Status = 'Used'  # Perbarui status kendaraan menjadi 'used'
+            vehicle.save()  # Simpan perubahan status
+        
         request.session.pop('outlet_ids', None)
         request.session.pop('driver_ids', None)
         request.session.pop('vehicle_ids', None)
@@ -166,4 +171,4 @@ def result(request):
         'RouteListed' : RouteListed,
         'TotalLocation' : RouteListed_length
     }
-    return render(request, 'schedule/result.html', context)
+    return redirect('app_report:index')

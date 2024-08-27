@@ -64,6 +64,7 @@ class VehicleForm(forms.ModelForm):
     StatusChoices=(
         ("Ready", 'Ready'),
         ('Repaired', 'Repaired'),
+        ('Used', 'Used'),
     )
     Status = forms.ChoiceField(
         choices=StatusChoices,
