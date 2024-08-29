@@ -1,11 +1,7 @@
 {% load static %}
 <script src="{% static '/assets/js/core/jquery-3.7.1.min.js' %}"></script>
-{% comment %} <script src="{% static '/assets/js/core/jquery-3.7.1.min.js' %}"></script> {% endcomment %}
 <script src="{% static '/assets/js/core/popper.min.js' %}"></script>
 <script src="{% static '/assets/js/core/bootstrap.min.js' %}"></script>
-
-{% comment %} <script src="{% static '/assets/js/core/popper.min.js' %}"></script>
-<script src="{% static '/assets/js/core/bootstrap.min.js' %}"></script> {% endcomment %}
 
 <!-- jQuery Scrollbar -->
 <script src="{% static 'assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
@@ -34,3 +30,25 @@
 
 <!-- Kaiadmin JS -->
 <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ambil URL dari halaman saat ini
+        var currentUrl = window.location.pathname;
+        console.log("URL saat ini:", currentUrl); // Debug: cek URL saat ini
+    
+        // Ambil semua elemen <a> dalam navigasi
+        var menuItems = document.querySelectorAll("nav ul li a");
+    
+        // Loop melalui setiap elemen <a> untuk mencocokkan URL saat ini
+        menuItems.forEach(function(item) {
+            console.log("Memeriksa href:", item.getAttribute("href")); // Debug: cek setiap href
+    
+            if (item.getAttribute("href") === currentUrl) {
+                console.log("Menemukan kecocokan:", item.getAttribute("href")); // Debug: konfirmasi kecocokan
+                // Tambahkan kelas 'active' pada parent <li> jika URL cocok
+                item.parentElement.classList.add("active");
+            }
+        });
+    });
+</script>

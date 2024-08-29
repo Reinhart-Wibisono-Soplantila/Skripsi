@@ -156,6 +156,7 @@ def result(request):
         
         for vehicle in VehicleObject:
             vehicle.Status = 'Used'  # Perbarui status kendaraan menjadi 'used'
+            vehicle.Used_at = timezone.now()
             vehicle.save()  # Simpan perubahan status
         
         request.session.pop('outlet_ids', None)
