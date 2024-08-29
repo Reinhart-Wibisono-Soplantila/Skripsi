@@ -162,7 +162,7 @@ def result(request):
         request.session.pop('outlet_ids', None)
         request.session.pop('driver_ids', None)
         request.session.pop('vehicle_ids', None)
-        return redirect('app_schedules:index')
+        return redirect('app_report:index')
         
     context ={
         'OutletObject' : OutletObject,
@@ -172,4 +172,4 @@ def result(request):
         'RouteListed' : RouteListed,
         'TotalLocation' : RouteListed_length
     }
-    return redirect('app_report:index')
+    return render(request, 'schedule/result.html', context)

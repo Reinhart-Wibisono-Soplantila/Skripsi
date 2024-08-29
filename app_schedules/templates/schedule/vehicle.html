@@ -31,7 +31,7 @@
   <h3 class="fw-bold mb-3">Creating Schedule</h3>
   <ul class="breadcrumbs mb-3">
     <li class="nav-home">
-      <a href="#">
+      <a href="{% url breadcrumbs.dashboard.url %}">
         <i class="icon-home"></i>
       </a>
     </li>
@@ -39,13 +39,19 @@
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Select Outlets</a>
+      <a href="{% url breadcrumbs.schedule.index.url %}">{{breadcrumbs.schedule.index.name}}</a>
     </li>
     <li class="separator">
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Select Vehicle</a>
+      <a href="{% url breadcrumbs.schedule.view.url %}">{{breadcrumbs.schedule.view.name}}</a>
+    </li>
+    <li class="separator">
+      <i class="icon-arrow-right"></i>
+    </li>
+    <li class="nav-item">
+      <a href="{% url breadcrumbs.schedule.vehicle.url %}">{{breadcrumbs.schedule.vehicle.name}}</a>
     </li>
   </ul>
 </div>

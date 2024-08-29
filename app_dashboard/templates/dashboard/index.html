@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content_header %}
-<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
+<!-- <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
   <div>
     <h3 class="fw-bold mb-3">Welcome</h3>
     <h6 class="op-7 mb-2">Today we have 60 outlets left to go</h6>
@@ -11,6 +11,19 @@
     {% comment %} <a href="#" class="btn btn-label-info btn-round me-2">Manage</a> {% endcomment %}
     <a href="#" class="btn btn-primary btn-round">Create Schedule</a>
   </div>
+</div> -->
+<div class="page-header">
+  <h3 class="fw-bold mb-3">Dashboard</h3>
+  <ul class="breadcrumbs mb-3">
+    <li class="nav-home">
+      <a href="{% url breadcrumbs.dashboard.url %}">
+        <i class="icon-home"></i>
+      </a>
+    </li>
+  </ul>
+  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+    Finish
+  </button> -->
 </div>
 {% endblock content_header %}
 

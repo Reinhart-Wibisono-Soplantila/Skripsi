@@ -3,13 +3,13 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
       <!-- Logo Header -->
-      <div class="logo-header" data-background-color="dark">
+      <div class="logo-header" data-background-color="white">
         <a href="{% url 'app_dashboard:home' %}" class="logo">
           <img
-            src="{% static 'assets/img/kaiadmin/logo_light.svg' %}"
+            src="{% static 'assets/img/kalla-logistic-logo.png' %}"
             alt="navbar brand"
             class="navbar-brand"
-            height="20"
+            height="60"
           />
         </a>
         <div class="nav-toggle">
@@ -29,7 +29,7 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
       <div class="sidebar-content">
         <ul class="nav nav-secondary">
-          <li class="nav-item {% if current_url == 'app_dashboard:home' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_dashboard' %}active{% endif %}">
             <a
               href="{% url 'app_dashboard:home' %}"
             >
@@ -37,7 +37,7 @@
               <p>Dashboard</p>
             </a>
           </li>
-          <li class="nav-item {% if current_url == 'app_outlet:outletIndex' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_outlet' %}active{% endif %}">
             <a
               href="{% url 'app_outlet:outletIndex' %}"
             >
@@ -45,7 +45,7 @@
               <p>Outlets</p>
             </a>
           </li>
-          <li class="nav-item {% if current_url == 'app_vehicle:vehicleIndex' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_vehicle' %}active{% endif %}">
             <a
               href="{% url 'app_vehicle:vehicleIndex' %}"
             >
@@ -53,7 +53,7 @@
               <p>Vehicles</p>
             </a>
           </li>
-          <li class="nav-item {% if current_url == 'app_schedules:index' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_schedules' %}active{% endif %}">
             <a
               href="{% url 'app_schedules:index' %}"
             >
@@ -61,7 +61,7 @@
               <p>Schedule</p>
             </a>
           </li>
-          <li class="nav-item {% if current_url == 'app_report:index' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_report' %}active{% endif %}">
             <a
               href="{% url "app_report:index" %}"
             >
@@ -69,7 +69,7 @@
               <p>Report</p>
             </a>
           </li>
-          <li class="nav-item {% if current_url == 'app_user:index' %}active{% endif %}">
+          <li class="nav-item {% if current_namespace == 'app_user' %}active{% endif %}">
             <a
               href="{% url "app_user:index" %}"
             >

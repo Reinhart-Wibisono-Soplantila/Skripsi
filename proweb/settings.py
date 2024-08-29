@@ -78,6 +78,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'proweb.context_processors.active_menu',
+                'proweb.context_processors.current_day_and_date',
+                'proweb.context_processors.breadcrumb_context',
             ],
         },
     },

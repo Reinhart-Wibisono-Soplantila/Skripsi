@@ -24,7 +24,7 @@ table .driver a{
   <h3 class="fw-bold mb-3">{{PageHeader}}</h3>
   <ul class="breadcrumbs mb-3">
     <li class="nav-home">
-      <a href="#">
+      <a href="{% url breadcrumbs.dashboard.url %}">
         <i class="icon-home"></i>
       </a>
     </li>
@@ -32,7 +32,7 @@ table .driver a{
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">Vehicle & Driver Overview</a>
+      <a href="{% url breadcrumbs.vehicle.index.url %}">{{breadcrumbs.vehicle.index.name}}</a>
     </li>
   </ul>
 </div>

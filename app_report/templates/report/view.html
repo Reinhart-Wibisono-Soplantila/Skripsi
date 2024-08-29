@@ -19,7 +19,7 @@
   <h3 class="fw-bold mb-3">Report</h3>
   <ul class="breadcrumbs mb-3">
     <li class="nav-home">
-      <a href="#">
+      <a href="{% url breadcrumbs.dashboard.url %}">
         <i class="icon-home"></i>
       </a>
     </li>
@@ -27,19 +27,19 @@
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">List of Reports</a>
+      <a href="{% url breadcrumbs.report.index.url %}">{{breadcrumbs.report.index.name}}</a>
     </li>
     <li class="separator">
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">View Report</a>
+      <a>{{breadcrumbs.report.view.name}}</a>
     </li>
     <li class="separator">
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a href="#">{{ScheduleObject.Schedule_id}}</a>
+      <a>{{ScheduleObject.Schedule_id}}</a>
     </li>
   </ul>
   <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
