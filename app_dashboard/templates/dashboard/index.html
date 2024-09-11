@@ -29,6 +29,9 @@
 
 {% block style_app %}
 <style>
+  .fixed-height{
+    height: 200px !important;
+  }
   table .badge{
     font-size:medium;
   }
@@ -36,132 +39,149 @@
 {% endblock style_app %}
 
 {% block Content %}
-{% comment %} Outlets report {% endcomment %}
+
 <div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <h4 class="card-title">Outlet Report</h4>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table
-            id="basic-datatables"
-            class="display table table-striped table-hover">
-            <thead>
-              <tr>
-                <th scope="col">No. </th>
-                <th scope="col">Outlet Name</th>
-                <th scope="col">Outlet Type</th>
-                <th scope="col">Alamat</th>
-                <th scope="col">PJP Day</th>
-                <th scope="col">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-                {% for OutletData in OutletObject %}
-                <tr>
-                  <td scope="row">{{forloop.counter}}</td>
-                  <td>{{OutletData.OutletName}}</td>
-                  <td>{{OutletData.OutletType}}</td>
-                  <td>{{OutletData.Address}}</td>
-                  <td>{{OutletData.Days}}</td>
-                  <td>
-                    <a href="{% url "app_outlet:outletView" outletCode=OutletData.OutletCode %}">
-                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="View Task">
-                          View
-                      </button>
-                    </a>
-                  </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-          </table>
+  <div class="col-md-3">
+    <div class="card-header">
+      <div class="card fixed-height">
+        <div class="card-body">
+          <h5 class="card-title">Outlets</h5>
+          <p class="card-text">Information about our outlets we served</p>
+          <a href="{% url 'app_outlet:outletIndex'%}" class="btn btn-primary">See <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
   </div>
-</div>
-{% comment %} Vehicle report {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <h4 class="card-title">Vehicle Report</h4>
+  <div class="col-md-3">
+    <div class="card-header">
+      <div class="card fixed-height">
+        <div class="card-body">
+          <h5 class="card-title">Vehicle & Drivers</h5>
+          <p class="card-text">Information about our vehicles and drivers</p>
+          <a href="{% url 'app_vehicle:vehicleIndex' %}" class="btn btn-primary">See <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table id="basic-datatables2" class="display table table-striped table-hover" >
-            <thead>
-              <tr>
-                <th scope="col">No.</th>
-                <th scope="col">Unit Type</th>
-                <th scope="col">Vehicle Number</th>
-                <th scope=>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for vehicleData in VehicleObject %}
-              <tr>
-                <td scope="'row">{{forloop.counter}}</td>
-                <td>{{vehicleData.UnitType}}</td>
-                <td>{{vehicleData.VehicleNumber}}</td>
-                <td>
-                  <h1>
-                    <span class="badge badge-success">
-                      {{vehicleData.Status}}
-                    </span>
-                  </h1>
-                </td>
-              </tr>
-              {% endfor %} 
-            </tbody>
-          </table>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card-header">
+      <div class="card fixed-height">
+        <div class="card-body">
+          <h5 class="card-title">Schedule</h5>
+          <p class="card-text">Generate scehdule</p>
+          <a href="{% url 'app_schedules:index' %}" class="btn btn-primary">See <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card-header">
+      <div class="card fixed-height">
+        <div class="card-body">
+          <h5 class="card-title">Report</h5>
+          <p class="card-text">Information about schedule information</p>
+          <a href="{% url "app_report:index" %}" class="btn btn-primary">See <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-{% comment %} Driver report {% endcomment %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="d-flex align-items-center">
-          <h4 class="card-title">Vehicle Report</h4>
-        </div>
-      </div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">This Week Chart</div>
+  </div>
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas id="thisWeekChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Last Week Chart</div>
+  </div>
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas id="lastWeekChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Monthly Chart</div>
+  </div>
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas id="monthlyChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Laporan Pengiriman Harian Minggu Ini</div>
+  </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-center md-2" style="gap: 20px;">
+      <a href="#" class="btn btn-primary">Monday</a>
+      <a href="#" class="btn btn-outline-primary">Tuesday</a>
+      <a href="#" class="btn btn-outline-primary">Wedenesday</a>
+      <a href="#" class="btn btn-outline-primary">Thursday</a>
+      <a href="#" class="btn btn-outline-primary">Friday</a>
+      <a href="#" class="btn btn-outline-primary">Saturday</a>
+    </div>
+    <div>
       <div class="card-body">
+        
+    <div class="card-header">
+      <div class="card-title text-center">Laporan Hari Senin, 07 September 2024</div>
+    </div>
         <div class="table-responsive">
-          <table id="basic-datatables3" class="display table table-striped table-hover" >
+          <table
+            id="basic-datatables"
+            class="display table table-striped table-hover"
+          >
             <thead>
               <tr>
-                <th scope="col">No.</th>
-                <th scope="col">Driver</th>
-                <th scope="col">Phone</th>
-                <th style="width: 10%">Action</th>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
               </tr>
             </thead>
+            <tfoot>
+              <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+              </tr>
+            </tfoot>
             <tbody>
-              {% for driverdata in DriverObject %}
-                <tr>
-                  <td scope="'row">{{forloop.counter}}</td>
-                  <td>{{driverdata.FullName}}</td>
-                  <td>{{driverdata.Phone}}</td>
-                  <td class="d-flex driver">
-                    <a href="{% url 'app_vehicle:driverView' driverId=driverdata.id %}">
-                      <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
-                        View
-                      </button>
-                    </a>
-                  </td>
-                </tr>
-              {% endfor %}
+              <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+              </tr>
+              <tr>
+                <td>Garrett Winters</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>63</td>
+                <td>2011/07/25</td>
+                <td>$170,750</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -173,11 +193,203 @@
 
 {% block scripts_app %}
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+
+<!-- Chart JS -->
 <script>
   $(document).ready(function () {
     $("#basic-datatables").DataTable({});
     $("#basic-datatables2").DataTable({});
     $("#basic-datatables3").DataTable({});
+  });
+</script>
+
+<script>
+  var schedule_by_day_this_week = JSON.parse('{{ schedule_by_day_this_week_json|safe }}'),
+  schedule_by_day_last_week = JSON.parse('{{ schedule_by_day_this_last_json|safe }}');
+
+  var thisWeekChart = document.getElementById("thisWeekChart").getContext("2d"),
+  lastWeekChart = document.getElementById("lastWeekChart").getContext("2d"),
+  monthlyChart = document.getElementById("monthlyChart").getContext("2d")
+
+  var myLineChart = new Chart(thisWeekChart, {
+    type: "line",
+    data: {
+      labels: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      datasets: [
+        {
+          label: "Active Users",
+          borderColor: "#1d7af3",
+          pointBorderColor: "#FFF",
+          pointBackgroundColor: "#1d7af3",
+          pointBorderWidth: 2,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 1,
+          pointRadius: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          borderWidth: 2,
+          data: [
+            schedule_by_day_this_week['Monday'].count, 
+            schedule_by_day_this_week['Tuesday'].count, 
+            schedule_by_day_this_week['Wednesday'].count, 
+            schedule_by_day_this_week['Thursday'].count, 
+            schedule_by_day_this_week['Friday'].count, 
+            schedule_by_day_this_week['Saturday'].count
+          ],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: "bottom",
+        labels: {
+          padding: 10,
+          fontColor: "#1d7af3",
+        },
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      layout: {
+        padding: { left: 15, right: 15, top: 15, bottom: 15 },
+      },
+    },
+  });
+
+  var myLineChart = new Chart(lastWeekChart, {
+    type: "line",
+    data: {
+      labels: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+      datasets: [
+        {
+          label: "Active Users",
+          borderColor: "#1d7af3",
+          pointBorderColor: "#FFF",
+          pointBackgroundColor: "#1d7af3",
+          pointBorderWidth: 2,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 1,
+          pointRadius: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          borderWidth: 2,
+          data: [
+            schedule_by_day_last_week['Monday'].count, 
+            schedule_by_day_last_week['Tuesday'].count, 
+            schedule_by_day_last_week['Wednesday'].count, 
+            schedule_by_day_last_week['Thursday'].count, 
+            schedule_by_day_last_week['Friday'].count, 
+            schedule_by_day_last_week['Saturday'].count
+          ],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: "bottom",
+        labels: {
+          padding: 10,
+          fontColor: "#1d7af3",
+        },
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      layout: {
+        padding: { left: 15, right: 15, top: 15, bottom: 15 },
+      },
+    },
+  });
+
+  var myLineChart = new Chart(monthlyChart, {
+    type: "line",
+    data: {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      datasets: [
+        {
+          label: "Active Users",
+          borderColor: "#1d7af3",
+          pointBorderColor: "#FFF",
+          pointBackgroundColor: "#1d7af3",
+          pointBorderWidth: 2,
+          pointHoverRadius: 4,
+          pointHoverBorderWidth: 1,
+          pointRadius: 4,
+          backgroundColor: "transparent",
+          fill: true,
+          borderWidth: 2,
+          data: [
+            542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900,
+          ],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        position: "bottom",
+        labels: {
+          padding: 10,
+          fontColor: "#1d7af3",
+        },
+      },
+      tooltips: {
+        bodySpacing: 4,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        xPadding: 10,
+        yPadding: 10,
+        caretPadding: 10,
+      },
+      layout: {
+        padding: { left: 15, right: 15, top: 15, bottom: 15 },
+      },
+    },
   });
 </script>
 {% endblock scripts_app %}
