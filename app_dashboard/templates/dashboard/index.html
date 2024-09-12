@@ -205,7 +205,8 @@
 
 <script>
   var schedule_by_day_this_week = JSON.parse('{{ schedule_by_day_this_week_json|safe }}'),
-  schedule_by_day_last_week = JSON.parse('{{ schedule_by_day_this_last_json|safe }}');
+  schedule_by_day_last_week = JSON.parse('{{ schedule_by_day_this_last_json|safe }}'),
+  schedule_by_year = JSON.parse('{{ schedule_by_year_json|safe }}');
 
   var thisWeekChart = document.getElementById("thisWeekChart").getContext("2d"),
   lastWeekChart = document.getElementById("lastWeekChart").getContext("2d"),
@@ -224,7 +225,7 @@
       ],
       datasets: [
         {
-          label: "Active Users",
+          label: "Total Scheduled Outlet",
           borderColor: "#1d7af3",
           pointBorderColor: "#FFF",
           pointBackgroundColor: "#1d7af3",
@@ -236,14 +237,14 @@
           fill: true,
           borderWidth: 2,
           data: [
-            schedule_by_day_this_week['Monday'].count, 
-            schedule_by_day_this_week['Tuesday'].count, 
-            schedule_by_day_this_week['Wednesday'].count, 
-            schedule_by_day_this_week['Thursday'].count, 
-            schedule_by_day_this_week['Friday'].count, 
-            schedule_by_day_this_week['Saturday'].count
+            schedule_by_day_this_week['Monday'].Count, 
+            schedule_by_day_this_week['Tuesday'].Count, 
+            schedule_by_day_this_week['Wednesday'].Count, 
+            schedule_by_day_this_week['Thursday'].Count, 
+            schedule_by_day_this_week['Friday'].Count, 
+            schedule_by_day_this_week['Saturday'].Count
           ],
-        },
+        }
       ],
     },
     options: {
@@ -284,7 +285,7 @@
       ],
       datasets: [
         {
-          label: "Active Users",
+          label: "Total Scheduled Outlet",
           borderColor: "#1d7af3",
           pointBorderColor: "#FFF",
           pointBackgroundColor: "#1d7af3",
@@ -296,12 +297,12 @@
           fill: true,
           borderWidth: 2,
           data: [
-            schedule_by_day_last_week['Monday'].count, 
-            schedule_by_day_last_week['Tuesday'].count, 
-            schedule_by_day_last_week['Wednesday'].count, 
-            schedule_by_day_last_week['Thursday'].count, 
-            schedule_by_day_last_week['Friday'].count, 
-            schedule_by_day_last_week['Saturday'].count
+            schedule_by_day_last_week['Monday'].Count, 
+            schedule_by_day_last_week['Tuesday'].Count, 
+            schedule_by_day_last_week['Wednesday'].Count, 
+            schedule_by_day_last_week['Thursday'].Count, 
+            schedule_by_day_last_week['Friday'].Count, 
+            schedule_by_day_last_week['Saturday'].Count
           ],
         },
       ],
@@ -350,7 +351,7 @@
       ],
       datasets: [
         {
-          label: "Active Users",
+          label: "Total Scheduled Outlet",
           borderColor: "#1d7af3",
           pointBorderColor: "#FFF",
           pointBackgroundColor: "#1d7af3",
@@ -362,7 +363,18 @@
           fill: true,
           borderWidth: 2,
           data: [
-            542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900,
+            schedule_by_year['January'].Count, 
+            schedule_by_year['February'].Count, 
+            schedule_by_year['March'].Count, 
+            schedule_by_year['April'].Count, 
+            schedule_by_year['May'].Count, 
+            schedule_by_year['June'].Count, 
+            schedule_by_year['July'].Count, 
+            schedule_by_year['August'].Count, 
+            schedule_by_year['September'].Count, 
+            schedule_by_year['October'].Count, 
+            schedule_by_year['November'].Count, 
+            schedule_by_year['December'].Count,
           ],
         },
       ],
