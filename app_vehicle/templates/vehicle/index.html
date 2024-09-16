@@ -1,5 +1,6 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block style_app %}
 <style>
@@ -45,12 +46,14 @@ table .driver a{
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">Vehicle Table</h4>
+          {% if user|has_group:"Admin" %}
           <a class="ms-auto" href="{% url VehicleLink %}">
             <button class="btn btn-primary btn-round" >
               <i class="fa fa-plus"></i>
               {{VehicleButton}}
             </button>
           </a>
+          {%endif%}
         </div>
       </div>
       <div class="card-body">
@@ -62,7 +65,10 @@ table .driver a{
                 <th scope="col">Unit Type</th>
                 <th scope="col">Vehicle Number</th>
                 <th scope="col">Status</th>
+                
+                {% if user|has_group:"Admin" %}
                 <th style="width: 10%">Action</th>
+                {%endif%}
               </tr>
             </thead>
             <tbody>
@@ -72,7 +78,9 @@ table .driver a{
                 <td>{{vehicleData.UnitType}}</td>
                 <td>{{vehicleData.VehicleNumber}}</td>
                 <td>{{vehicleData.Status}}</td>
+                {% if user|has_group:"Admin" %}
                 <td class="d-flex vehicle">
+                  
                   <a href="{% url 'app_vehicle:vehicleUpdate' vehicleNumber=vehicleData.VehicleNumber %}">
                     <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
                       Edit
@@ -87,6 +95,7 @@ table .driver a{
                       Delete
                   </button>
                 </td>
+                {%endif%}
               </tr>
               {% endfor %} 
             </tbody>
@@ -104,12 +113,15 @@ table .driver a{
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">Driver Table</h4>
+          
+          {% if user|has_group:"Admin" %}
           <a class="ms-auto" href="{% url DriverLink %}">
             <button class="btn btn-primary btn-round" >
               <i class="fa fa-plus"></i>
               {{DriverButton}}
             </button>
           </a>
+          {%endif%}
         </div>
       </div>
       <div class="card-body">
@@ -135,6 +147,8 @@ table .driver a{
                         View
                       </button>
                     </a>
+                    
+                    {% if user|has_group:"Admin" %}
                     <a href="{% url 'app_vehicle:driverUpdate' driverId=driverdata.id %}"> 
                       <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
                         Edit
@@ -148,6 +162,7 @@ table .driver a{
                       data-url="{% url 'app_vehicle:driverDelete' driverId=driverdata.id %}">
                       Delete
                     </button>
+                    {%endif%}
                   </td>
                 </tr>
               {% endfor %}

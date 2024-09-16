@@ -1,17 +1,8 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block content_header %}
-<!-- <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4" >
-  <div>
-    <h3 class="fw-bold mb-3">Welcome</h3>
-    <h6 class="op-7 mb-2">Today we have 60 outlets left to go</h6>
-  </div>
-  <div class="ms-md-auto py-2 py-md-0">
-    {% comment %} <a href="#" class="btn btn-label-info btn-round me-2">Manage</a> {% endcomment %}
-    <a href="#" class="btn btn-primary btn-round">Create Schedule</a>
-  </div>
-</div> -->
 <div class="page-header">
   <h3 class="fw-bold mb-3">Dashboard</h3>
   <ul class="breadcrumbs mb-3">
@@ -21,9 +12,6 @@
       </a>
     </li>
   </ul>
-  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-    Finish
-  </button> -->
 </div>
 {% endblock content_header %}
 
@@ -40,6 +28,7 @@
 
 {% block Content %}
 
+{% if user|has_group:"Admin" %}
 <div class="row">
   <div class="col-md-3">
     <div class="card-header">
@@ -86,7 +75,7 @@
     </div>
   </div>
 </div>
-
+{%endif%}
 
 <div class="card">
   <div class="card-header">
@@ -121,7 +110,7 @@
   </div>
 </div>
 
-<div class="card">
+<!-- <div class="card">
   <div class="card-header">
     <div class="card-title">Laporan Pengiriman Harian Minggu Ini</div>
   </div>
@@ -134,61 +123,185 @@
       <a href="#" class="btn btn-outline-primary">Friday</a>
       <a href="#" class="btn btn-outline-primary">Saturday</a>
     </div>
-    <div>
-      <div class="card-body">
-        
+  </div>
+  <div class="card-body">
+    <div class="d-flex md-2" style="gap: 20px;">
+      <div class="row text-center">
+        <div class="col-md-12 my-2" style="gap: 20px;">
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+        </div>
+        <div class="col-md-12 my-2" style="gap: 20px;">
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+          <a href="#" class="btn btn-primary">Monday</a>
+        </div>
+      </div>
+  </div>
+
+  <div class="card-body"> 
     <div class="card-header">
       <div class="card-title text-center">Laporan Hari Senin, 07 September 2024</div>
     </div>
-        <div class="table-responsive">
-          <table
-            id="basic-datatables"
-            class="display table table-striped table-hover"
-          >
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-              </tr>
-            </tfoot>
-            <tbody>
-              <tr>
-                <td>Tiger Nixon</td>
-                <td>System Architect</td>
-                <td>Edinburgh</td>
-                <td>61</td>
-                <td>2011/04/25</td>
-                <td>$320,800</td>
-              </tr>
-              <tr>
-                <td>Garrett Winters</td>
-                <td>Accountant</td>
-                <td>Tokyo</td>
-                <td>63</td>
-                <td>2011/07/25</td>
-                <td>$170,750</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
+    <div class="table-responsive">
+      <div class="card-header">
+        <div class="card-title">Laporan Kendaraan</div>
       </div>
+      <table id="basic-datatables" class="display table table-striped table-hover" >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td>2011/04/25</td>
+            <td>$320,800</td>
+          </tr>
+          <tr>
+            <td>Garrett Winters</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>63</td>
+            <td>2011/07/25</td>
+            <td>$170,750</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+
+    <div class="table-responsive my-5">
+      <div class="card-header"></div>
+      <div class="card-header">
+        <div class="card-title">Laporan Pengemudi</div>
+      </div>
+      <table id="basic-datatables" class="display table table-striped table-hover" >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td>2011/04/25</td>
+            <td>$320,800</td>
+          </tr>
+          <tr>
+            <td>Garrett Winters</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>63</td>
+            <td>2011/07/25</td>
+            <td>$170,750</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-responsive">
+      <div class="card-header"></div>
+      <div class="card-header">
+        <div class="card-title">Laporan Outlet</div>
+      </div>
+      <table id="basic-datatables" class="display table table-striped table-hover" >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          <tr>
+            <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td>2011/04/25</td>
+            <td>$320,800</td>
+          </tr>
+          <tr>
+            <td>Garrett Winters</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>63</td>
+            <td>2011/07/25</td>
+            <td>$170,750</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
   </div>
-</div>
+</div> -->
 {% endblock Content %}
 
 {% block scripts_app %}

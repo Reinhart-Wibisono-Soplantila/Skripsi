@@ -1,5 +1,6 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block content_header %}
 <div class="page-header">
@@ -39,12 +40,15 @@ table td .btn:nth-child(1){
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">Add Row</h4>
+          
+          {% if user|has_group:"Admin" %}
           <a class="ms-auto" href="{% url link %}">
             <button class="btn btn-primary btn-round" >
               <i class="fa fa-plus"></i>
               {{linkButton}}
             </button>
           </a>
+          {%endif%}
         </div>
       </div>
       <div class="card-body">
@@ -79,20 +83,22 @@ table td .btn:nth-child(1){
                             View
                         </button>
                       </a>
-
-                      <a href="{% url 'app_outlet:outletUpdate' outletCode=data.OutletCode %}"> 
-                        <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
-                            Edit
-                        </button>
-                      </a>
-                      <button 
-                        type="button" 
-                        class="btn btn-danger" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#deleteModal" 
-                        data-url="{% url 'app_outlet:outletDelete' outletCode=data.OutletCode %}">
-                        Delete
-                    </button>
+                      
+                      {% if user|has_group:"Admin" %}
+                        <a href="{% url 'app_outlet:outletUpdate' outletCode=data.OutletCode %}"> 
+                          <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                              Edit
+                          </button>
+                        </a>
+                        <button 
+                          type="button" 
+                          class="btn btn-danger" 
+                          data-bs-toggle="modal" 
+                          data-bs-target="#deleteModal" 
+                          data-url="{% url 'app_outlet:outletDelete' outletCode=data.OutletCode %}">
+                          Delete
+                      </button>
+                      {%endif%}
                     </td>
                   </tr>
                 {% endfor %}

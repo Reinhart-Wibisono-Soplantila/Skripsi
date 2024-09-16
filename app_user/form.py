@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Group, Permission
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -61,7 +62,7 @@ class RegisterForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists.")
         return email
-        
+             
 class LoginForm(AuthenticationForm):
     username=forms.CharField(
         label='Username', widget=forms.TextInput(

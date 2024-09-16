@@ -10,8 +10,9 @@ from .algorithm.GA import GeneticAlgorithm
 from .algorithm.SMO import SpiderMonkeyAlgorithm
 from django.utils import timezone
 from datetime import datetime
+from proweb.decorators import group_required
 
-# Create your views here.
+@group_required('Admin')
 def index(request):
     # OutletObject = OutletModel.objects.all()
     OutletObject = OutletModel.objects.exclude(OutletType='Source')
@@ -39,6 +40,7 @@ def index(request):
     request.session.pop('vehicles', None)
     return render(request, 'schedule/index.html', context)
 
+@group_required('Admin')
 def viewoutlets(request):
     # Ambil ID dari sesi
     citiesId = request.session.get('outlets', [])
@@ -49,6 +51,7 @@ def viewoutlets(request):
     print(OutletObject)
     return render(request, 'schedule/confirm.html', context)
 
+@group_required('Admin')
 def processoutlets(request):
     outlets = request.session.get('outlets', [])
     # GA
@@ -72,6 +75,7 @@ def processoutlets(request):
     # request.session.pop('cities_ids', None)
     return redirect('app_schedules:vehicles')
 
+@group_required('Admin')
 def vehicles(request):
     VehicleObject = VehicleModel.objects.all()
     error = {}
@@ -91,6 +95,7 @@ def vehicles(request):
     }
     return render(request, 'schedule/vehicle.html', context)
 
+@group_required('Admin')
 def drivers(request):
     DriverObject = DriverModel.objects.all()
     error = {}
@@ -111,6 +116,7 @@ def drivers(request):
     }
     return render(request, 'schedule/driver.html', context)
 
+@group_required('Admin')
 def result(request):
     locations = request.session.get('locations', [])
     distance = request.session.get('distance', [])

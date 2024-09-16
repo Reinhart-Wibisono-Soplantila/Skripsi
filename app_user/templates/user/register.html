@@ -40,37 +40,37 @@
                 {% csrf_token %}
                 <label class="mb-3"><b>General Info</b></label>
                  <div class="form-group">
-                    {{form.username.label}}
-                    {{form.username}}
-                    {% if form.username.errors %}
-                      {% for error in form.username.errors %}
+                    {{register_form.username.label}}
+                    {{register_form.username}}
+                    {% if register_form.username.errors %}
+                      {% for error in register_form.username.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.email.label}}
-                    {{form.email}}
-                    {% if form.email.errors %}
-                      {% for error in form.email.errors %}
+                    {{register_form.email.label}}
+                    {{register_form.email}}
+                    {% if register_form.email.errors %}
+                      {% for error in register_form.email.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.password1.label}}
-                    {{form.password1}}
-                    {% if form.password1.errors %}
-                      {% for error in form.password1.errors %}
+                    {{register_form.password1.label}}
+                    {{register_form.password1}}
+                    {% if register_form.password1.errors %}
+                      {% for error in register_form.password1.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.password2.label}}
-                    {{form.password2}}
-                    {% if form.password2.errors %}
-                      {% for error in form.password2.errors %}
+                    {{register_form.password2.label}}
+                    {{register_form.password2}}
+                    {% if register_form.password2.errors %}
+                      {% for error in register_form.password2.errors %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}

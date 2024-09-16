@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import OutletModel
 from .form import OutletForm
+from proweb.decorators import group_required
 
 # Create your views here.
 # Outlet Views
+@group_required('Admin', 'Driver')
 def outlet_index(request):
     OutletObject = OutletModel.objects.all()
     context={
@@ -14,6 +16,7 @@ def outlet_index(request):
     }
     return render(request, 'outlet/index.html', context)
 
+@group_required('Admin')
 def outlet_create(request):
     OutletForm_Create = OutletForm(request.POST or None)
     error = None
@@ -31,6 +34,7 @@ def outlet_create(request):
     }
     return render(request, 'outlet/create.html', context)
 
+@group_required('Admin')
 def outlet_update(request, outletCode):
     updated_data = get_object_or_404(OutletModel, OutletCode = outletCode)
     OutletForm_updated = OutletForm(request.POST or None, instance=updated_data)
@@ -48,6 +52,7 @@ def outlet_update(request, outletCode):
     }
     return render(request, 'outlet/update.html', context)
 
+@group_required('Admin', 'Driver')
 def outlet_view(request, outletCode):
     selected_data = get_object_or_404(OutletModel, OutletCode = outletCode)
     OutletForm_selected = OutletForm(instance=selected_data)
@@ -60,7 +65,7 @@ def outlet_view(request, outletCode):
     }
     return render(request, 'outlet/view.html', context)
 
-
+@group_required('Admin')
 def outlet_delete(request, outletCode):
     OutletModel.objects.filter(OutletCode=outletCode).delete()
     return redirect('app_outlet:outletIndex')

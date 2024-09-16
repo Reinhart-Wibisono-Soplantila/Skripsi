@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'app_report',
     'app_vehicle',
     'app_user',
+    'proweb'
 ]
 
 MIDDLEWARE = [

@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import DriverModel, VehicleModel
 from .form import DriverForm, VehicleForm
-
+from proweb.decorators import group_required
 # Create your views here.
 
 # vehicle views
+@group_required('Admin', 'Driver')
 def vehicle_index(request):
     VehicleObject = VehicleModel.objects.all()
     DriverObject = DriverModel.objects.all()
@@ -19,6 +20,7 @@ def vehicle_index(request):
     }
     return render(request, 'vehicle/index.html', context)
 
+@group_required('Admin')
 def vehicle_create(request):
     VehicleForm_Create = VehicleForm(request.POST or None)
     error = None
@@ -35,6 +37,7 @@ def vehicle_create(request):
     }
     return render(request, 'vehicle/create.html', context)
 
+@group_required('Admin')
 def vehicle_update(request, vehicleNumber):
     updated_data = get_object_or_404(VehicleModel, VehicleNumber=vehicleNumber)
     VehicleForm_updated = VehicleForm(request.POST or None, instance=updated_data)
@@ -52,11 +55,13 @@ def vehicle_update(request, vehicleNumber):
     }
     return render(request, 'vehicle/update.html', context)
 
+@group_required('Admin')
 def vehicle_delete(request, vehicleNumber):
     VehicleModel.objects.filter(VehicleNumber = vehicleNumber).delete()
     return redirect('app_vehicle:vehicleIndex')
 
 # driver views
+@group_required('Admin')
 def driver_create(request):
     DriverForm_Create = DriverForm(request.POST or None)
     error = None
@@ -74,6 +79,7 @@ def driver_create(request):
     }
     return render(request, 'driver/create.html', context)
 
+@group_required('Admin')
 def driver_update(request, driverId):
     updated_data = get_object_or_404(DriverModel, id=driverId)
     DriverForm_updated = DriverForm(request.POST or None, instance=updated_data)
@@ -91,6 +97,7 @@ def driver_update(request, driverId):
     }
     return render(request, 'driver/update.html', context)
 
+@group_required('Admin', 'Driver')
 def driver_view(request, driverId):
     selected_data = get_object_or_404(DriverModel, id=driverId)
     DriverForm_selected = DriverForm(instance=selected_data)
@@ -104,6 +111,7 @@ def driver_view(request, driverId):
     }
     return render(request, 'driver/view.html', context)
 
+@group_required('Admin')
 def driver_delete(request, driverId):
     DriverModel.objects.filter(id=driverId).delete()
     return redirect('app_vehicle:vehicleIndex')

@@ -5,7 +5,10 @@ from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from .form import RegisterForm, LoginForm, ProfileForm, MyPasswordChangeForm
+from proweb.decorators import group_required
+from proweb.mixins import AdminRequiredMixin
 
+@group_required('Admin')
 def index(request):
     userObject = User.objects.all()
     context={
@@ -13,6 +16,7 @@ def index(request):
     }
     return render(request, 'user/index.html', context)
 
+@group_required('Admin')
 def profile(request):
     profileForm = ProfileForm(instance=request.user)
     passwordForm = MyPasswordChangeForm(user=request.user)
@@ -38,28 +42,29 @@ def profile(request):
     }
     return render(request, 'user/profile.html', context)
 
-class RegisterView(View):
+class RegisterView(AdminRequiredMixin, View):
     def get(self, request):
-        form = RegisterForm()
+        register_form = RegisterForm()
         context={
-            'form' : form,
+            'register_form' : register_form,
         }
         return render(request, 'user/register.html', context)
     
     def post(self, request):
-        form = RegisterForm(request.POST or None)
+        register_form = RegisterForm(request.POST or None)
         error={}
         print(request.POST)
-        if form.is_valid():
-            user=form.save()
+        if register_form.is_valid() :
+            user=register_form.save()
+            # Save group data and associate with user
             login(request, user)
             print('success')
             return redirect('app_dashboard:home')
         else:
             print('failed')
-            error=form.errors
+            error=register_form.errors
         context={
-            'form':form,
+            'register_form':register_form,
             'error':error
         }
         return render(request, 'user/register.html', context)

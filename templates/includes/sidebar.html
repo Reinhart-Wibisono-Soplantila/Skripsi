@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
@@ -29,6 +30,7 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
       <div class="sidebar-content">
         <ul class="nav nav-secondary">
+            
           <li class="nav-item {% if current_namespace == 'app_dashboard' %}active{% endif %}">
             <a
               href="{% url 'app_dashboard:home' %}"
@@ -37,6 +39,7 @@
               <p>Dashboard</p>
             </a>
           </li>
+          
           <li class="nav-item {% if current_namespace == 'app_outlet' %}active{% endif %}">
             <a
               href="{% url 'app_outlet:outletIndex' %}"
@@ -50,9 +53,10 @@
               href="{% url 'app_vehicle:vehicleIndex' %}"
             >
               <i class="fas fa-truck"></i>
-              <p>Vehicles</p>
+              <p>Vehicles & Drivers</p>
             </a>
           </li>
+          {% if user|has_group:"Admin" %}
           <li class="nav-item {% if current_namespace == 'app_schedules' %}active{% endif %}">
             <a
               href="{% url 'app_schedules:index' %}"
@@ -61,6 +65,7 @@
               <p>Schedule</p>
             </a>
           </li>
+          {% endif %}
           <li class="nav-item {% if current_namespace == 'app_report' %}active{% endif %}">
             <a
               href="{% url "app_report:index" %}"
@@ -69,6 +74,7 @@
               <p>Report</p>
             </a>
           </li>
+          {% if user|has_group:"Admin" %}
           <li class="nav-item {% if current_namespace == 'app_user' %}active{% endif %}">
             <a
               href="{% url "app_user:index" %}"
@@ -77,6 +83,7 @@
               <p>User</p>
             </a>
           </li>
+          {% endif %}
         </ul>
       </div>
     </div>

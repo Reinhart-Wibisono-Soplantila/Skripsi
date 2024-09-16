@@ -1,5 +1,6 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block style_app %}
 <style>
@@ -76,14 +77,17 @@
                     <a href="{% url 'app_report:view' Schedule_id=ScheduleDatas.Schedule_id %}" class="btn btn-primary">
                       View
                     </a>
-                    <button 
-                    type="button" 
-                    class="btn btn-danger" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#deleteModal" 
-                    data-url="{% url 'app_report:delete' Schedule_id=ScheduleDatas.Schedule_id %}">
-                    Delete
-                </button>
+                    
+                    {% if user|has_group:"Admin" %}
+                      <button 
+                        type="button" 
+                        class="btn btn-danger" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#deleteModal" 
+                        data-url="{% url 'app_report:delete' Schedule_id=ScheduleDatas.Schedule_id %}">
+                        Delete
+                      </button>
+                    {%endif%}
                   </div>
                 </td>
               </tr>

@@ -5,8 +5,10 @@ from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel
 from django.utils import timezone
 from django.utils.timezone import make_naive
+from proweb.decorators import group_required
 
 # Create your views here.
+@group_required('Admin', 'Driver')
 def index(request):
     ScheduleObject = ScheduleModel.objects.all()
     # Konversi waktu UTC ke zona waktu lokal pengguna
@@ -26,6 +28,7 @@ def index(request):
     print(context)
     return render(request, 'report/index.html', context)
 
+@group_required('Admin', 'Driver')
 def view(request, Schedule_id):
     ScheduleObject = get_object_or_404(ScheduleModel, Schedule_id=Schedule_id)
     OutletObject = ScheduleObject.Destination_outlet.all()
@@ -52,6 +55,7 @@ def view(request, Schedule_id):
     }
     return render(request, 'report/view.html', context)
 
+@group_required('Admin')
 def delete(request, Schedule_id):
     ScheduleObject = ScheduleModel.objects.get(pk=Schedule_id)
 
