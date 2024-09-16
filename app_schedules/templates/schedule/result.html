@@ -190,9 +190,9 @@
                   {% for key, value in RouteListed.items %}
                   <tr>
                     <td scope="'row">{{forloop.counter}}</td>
-                    <td>{{value.from.outlet_code}}</td>
-                    <td>{{value.to.outlet_code}}</td>
-                    <td>{{value.jarak|floatformat:3}} KM</td>
+                    <td>{{value.firstOutlet}}</td>
+                    <td>{{value.secondOutlet}}</td>
+                    <td>{{value.distance|floatformat:3}} KM</td>
                   </tr>
                   {% endfor %}
                 </tbody>

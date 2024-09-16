@@ -147,7 +147,15 @@ def result(request):
         secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
         searchedKey = f'{firstKey}, {secondKey}'
         FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
-        RouteListed[searchedKey] = FilteredDict[searchedKey]
+        dist = FilteredDict.get(searchedKey, {})
+        dist = dist.get('jarak')
+        firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+        secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+        RouteListed[searchedKey] = {
+            'distance' : dist,
+            'firstOutlet' : firstOutlet,
+            'secondOutlet' : secondOutlet
+            }
         # RouteListed.append(FilteredDict)
     RouteListed_length = len(RouteListed)
     

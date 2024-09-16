@@ -3,6 +3,7 @@ import pytz
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel
+from app_outlet.models import OutletModel
 from django.utils import timezone
 from django.utils.timezone import make_naive
 from proweb.decorators import group_required
@@ -46,8 +47,18 @@ def view(request, Schedule_id):
         secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
         searchedKey = f'{firstKey}, {secondKey}'
         FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
-        RouteListed[searchedKey] = FilteredDict[searchedKey]
-    
+        dist = FilteredDict.get(searchedKey, {})
+        dist = dist.get('jarak')
+        firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+        secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+        RouteListed[searchedKey] = {
+            'distance' : dist,
+            'firstOutlet' : firstOutlet,
+            'secondOutlet' : secondOutlet
+            }
+
+    for key in RouteListed:
+        print(f"{RouteListed[key]}")
     context = {
         'ScheduleObject' : ScheduleObject,
         'RouteListed' : RouteListed,
