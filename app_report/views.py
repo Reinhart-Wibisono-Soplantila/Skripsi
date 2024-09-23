@@ -69,11 +69,5 @@ def view(request, Schedule_id):
 @group_required('Admin')
 def delete(request, Schedule_id):
     ScheduleObject = ScheduleModel.objects.get(pk=Schedule_id)
-
-    # Menghapus semua relasi ManyToMany terkait secara manual sebelum menghapus instance
-    ScheduleObject.Destination_outlet.clear()
-    ScheduleObject.Vehicle_used.clear()
-    ScheduleObject.Driver_used.clear()
-    
     ScheduleObject.delete()
     return redirect('app_report:index')

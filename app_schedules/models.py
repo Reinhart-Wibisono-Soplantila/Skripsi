@@ -59,13 +59,14 @@ class ScheduleModel(models.Model):
         primary_key=True,
         default=generate_default_id,
     )
-    Distance = models.FloatField()
-    Destination_outlet=models.ManyToManyField(
+    Destination_outlet = models.ManyToManyField(
         OutletModel, 
+        through='ScheduleOutlet',
         related_name='schedules_outlets'
     )
     Vehicle_used=models.ManyToManyField(
         VehicleModel, 
+        through='ScheduleVehicle',
         related_name='schedules_vehicles'
     )
     Created_at=models.DateTimeField(
@@ -74,3 +75,18 @@ class ScheduleModel(models.Model):
     Updated_at=models.DateTimeField(
         auto_now=True
     )
+
+class ScheduleOutlet(models.Model):
+    Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)
+    Outlet = models.ForeignKey(OutletModel, on_delete=models.CASCADE)
+    Group = models.CharField(max_length=255)  
+    
+class ScheduleVehicle(models.Model):
+    Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)
+    Vehicle = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
+    Group = models.CharField(max_length=255)  
+
+class ScheduleDistance(models.Model):
+    Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE, related_name='distance')
+    Group = models.CharField(max_length=255)
+    Total_distance = models.FloatField()

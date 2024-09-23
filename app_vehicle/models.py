@@ -22,6 +22,10 @@ class VehicleModel(models.Model):
     Updated_at=models.DateTimeField(
         auto_now=True
     )
+    Used_at=models.DateTimeField(
+        blank=True,
+        null=True
+    )
     
     def __str__(self):
         return"{}. {}".format(self.id, self.VehicleNumber)

@@ -5,7 +5,7 @@ from django.db.models import Case, When
 from django.contrib.staticfiles import finders
 from django.contrib import messages
 from app_outlet.models import OutletModel
-from app_schedules.models import ScheduleModel
+from app_schedules.models import ScheduleModel, ScheduleDistance, ScheduleVehicle, ScheduleOutlet
 from app_vehicle.models import VehicleModel
 from .algorithm.GA import GeneticAlgorithm 
 from .algorithm.SMO import SpiderMonkeyAlgorithm
@@ -35,9 +35,7 @@ def index(request):
         'error' : error,
         'OutletObject' : OutletObject
     }
-    request.session.pop('locations', None)
-    request.session.pop('distance', None)
-    # request.session.pop('drivers', None)
+    request.session.pop('ScheduleResult', None)
     request.session.pop('vehicles', None)
     return render(request, 'schedule/index.html', context)
 
@@ -56,6 +54,7 @@ def viewoutlets(request):
 def vehicles(request):
     VehicleObject = VehicleModel.objects.all()
     error = {}
+    VehicleList = []
     if request.method == 'POST':
         
         CheckedList = request.POST.get('selected_vehicles', '')
@@ -63,10 +62,12 @@ def vehicles(request):
             error['selected_vehicles'] = "You must select at least one option."
             messages.error(request, error['selected_vehicles'])
         if not error:
-            print('check: ',CheckedList)
+            # print('check: ',CheckedList)
             Vehicles = [int(x) for x in CheckedList.split(',')]
-            request.session['vehicles'] = Vehicles
-            print(vehicles)
+            for i in Vehicles:
+                VehicleList.append(VehicleObject.get(id=i).VehicleNumber)
+            print(VehicleList)
+            request.session['vehicles'] = VehicleList
             return redirect('app_schedules:processoutlets')
             # return redirect('app_schedules:drivers')
     context={
@@ -98,23 +99,32 @@ def vehicles(request):
 @group_required('Admin')
 def processoutlets(request):
     outlets = request.session.get('outlets', [])
-    vehicle_length = len(request.session.get('vehicles', []))
+    vehicles = request.session.get('vehicles', [])
+    vehicle_length = len(vehicles)
     print( vehicle_length)
     if vehicle_length > 1:
-        divided_outlets = np.array_split(outlets, vehicle_length)
+        divided_outlets_numpy = np.array_split(outlets, vehicle_length)
+        divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
     for sublist in divided_outlets:
         print(list(sublist))
-        print()
-    # GA
-    # GA = GeneticAlgorithm()
-    # answer, genNumber  = GA.main(outlets)
-    # answer[1].insert(0, '15000000000000000000000000')
+        print(len(sublist))
+        print('')
     
-    # print('answer=', answer[0])
-    # print('location=', answer[1])
-    # # print(genNumber)
-    # request.session['locations'] = answer[1]
-    # request.session['distance'] = answer[0]
+    group=0
+    DeliveryList={}
+    while group<vehicle_length:
+        
+        # GA
+        GA = GeneticAlgorithm()
+        result, genNumber  = GA.main(divided_outlets[group])
+        result[1].insert(0, '15000000000000000000000000')
+    
+        print('answer=', result[0])
+        print('location=', result[1])
+        DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
+        group+=1
+    print(DeliveryList)
+    request.session['ScheduleResult'] = DeliveryList
     
     # SMO
     # SMO = SpiderMonkeyAlgorithm()
@@ -124,26 +134,13 @@ def processoutlets(request):
             
     # Hapus data dari sesi jika tidak diperlukan lagi
     # request.session.pop('cities_ids', None)
-    # return redirect('app_schedules:result')
-    return redirect('app_schedules:vehicles')
+    return redirect('app_schedules:result')
+    # return redirect('app_schedules:vehicles')
 
 @group_required('Admin')
 def result(request):
-    locations = request.session.get('locations', [])
-    distance = request.session.get('distance', [])
-    # drivers = request.session.get('drivers', [])
+    schedule = request.session.get('ScheduleResult', [])
     vehicles = request.session.get('vehicles', [])
-    OutletObject = OutletModel.objects.filter(OutletCode__in=locations).order_by(
-        Case(*[When(OutletCode=id, then=pos) for pos, id in enumerate(locations)])
-        )
-    VehicleObject = VehicleModel.objects.filter(id__in=vehicles)
-    # DriverObject = DriverModel.objects.filter(id__in=drivers)
-    print('location:', locations)
-    # print('distance:', distance)
-    # print('drivers:', DriverObject)
-    print('vehicles:', VehicleObject)
-    # print('locations:', OutletObject)
-    
     # Find the path to the JSON file
     json_file_path = finders.find('files/RouteDetails.json')
     data = {}
@@ -151,50 +148,71 @@ def result(request):
         with open(json_file_path, 'r') as json_file:
             data = json.load(json_file)
     
-    RouteListed={}
-    # print(OutletObject[0])
-    for iteration in range(len(OutletObject)-1):
-        firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
-        secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
-        searchedKey = f'{firstKey}, {secondKey}'
-        FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
-        dist = FilteredDict.get(searchedKey, {})
-        dist = dist.get('jarak')
-        firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
-        secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
-        RouteListed[searchedKey] = {
-            'distance' : dist,
-            'firstOutlet' : firstOutlet,
-            'secondOutlet' : secondOutlet
+    for key, subkey in schedule.items():
+        OutletObject = OutletModel.objects.filter(OutletCode__in=schedule[key]['outlets']).order_by(
+            Case(*[When(OutletCode=id, then=pos) for pos, id in enumerate(schedule[key]['outlets'])])
+            )
+        if 'detailsRoute' not in subkey:
+            subkey['detailsRoute'] = {}
+        VehicleObject = VehicleModel.objects.get(VehicleNumber = key)
+        print(VehicleObject)
+        for iteration in range(len(OutletObject)-1):
+            firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
+            secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
+            searchedKey = f'{firstKey}, {secondKey}'
+            FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
+            distance = FilteredDict.get(searchedKey, {})
+            distance = distance.get('jarak')
+            firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+            secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+            subkey['detailsRoute'][searchedKey] = {
+                    'firstOutlet' : firstOutlet,
+                    'secondOutlet' : secondOutlet,
+                    'distance' : distance
+                }
+            subkey['detailsVehicle']={
+                'id' : VehicleObject.id,
+                'VehicleNumber' : VehicleObject.VehicleNumber,
+                'VehicleType' : VehicleObject.UnitType,
+                'DriverName' : VehicleObject.DriverName,
             }
-        # RouteListed.append(FilteredDict)
-    RouteListed_length = len(RouteListed)
+            subkey['TotalOutlets'] = len(schedule[key]['outlets'])-1
     
     if request.method == 'POST':
-        schedule = ScheduleModel(Distance=distance)
-        schedule.save()
+        scheduleModel = ScheduleModel()
+        scheduleModel.save()
         
-        for outlet in OutletObject:
-            schedule.Destination_outlet.add(outlet)
-        schedule.Vehicle_used.add(*VehicleObject)
-        # schedule.Driver_used.add(*DriverObject)
-        
+        for key in schedule:
+            for outlet in schedule[key]['outlets']:
+                ScheduleOutlet.objects.create(
+                    Outlet_id = outlet,
+                    Group = key,
+                    Schedule = scheduleModel
+                )
+            ScheduleVehicle.objects.create(
+                Vehicle_id = schedule[key]['detailsVehicle']['id'],
+                Group = key,
+                Schedule = scheduleModel
+            )
+            ScheduleDistance.objects.create(                
+                Total_distance = schedule[key]['TotalOutlets'],
+                Group = key,
+                Schedule = scheduleModel
+            )
+            
+        VehicleObject = VehicleModel.objects.filter(VehicleNumber__in=vehicles)
         for vehicle in VehicleObject:
-            vehicle.Status = 'Used'  # Perbarui status kendaraan menjadi 'used'
+            vehicle.Status = 'Used'
             vehicle.Used_at = timezone.now()
-            vehicle.save()  # Simpan perubahan status
-        
-        request.session.pop('outlet_ids', None)
-        request.session.pop('driver_ids', None)
-        request.session.pop('vehicle_ids', None)
-        return redirect('app_report:index')
+            vehicle.save()
+            
+            request.session.pop('ScheduleResult', None)
+            request.session.pop('vehicles', None)
+            request.session.pop('outlets', None)
+            return redirect('app_report:index')
         
     context ={
-        'OutletObject' : OutletObject,
-        'distance' : distance,
-        # 'DriverObject' : DriverObject,
-        'VehicleObject' : VehicleObject,
-        'RouteListed' : RouteListed,
-        'TotalLocation' : RouteListed_length
+        'schedule' : schedule
     }
     return render(request, 'schedule/result.html', context)
+    # return render(request, 'schedule/result.html')
