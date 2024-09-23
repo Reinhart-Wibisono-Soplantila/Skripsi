@@ -66,6 +66,7 @@
                   <th scope="col">No.</th>
                   <th scope="col">Unit Type</th>
                   <th scope="col">Vehicle Number</th>
+                  <th scope="col">Driver</th>
                   <th scope="col">Status</th>
                 </tr>
               </thead>
@@ -75,53 +76,12 @@
                   <td scope="'row">{{forloop.counter}}</td>
                   <td>{{VehicleDatas.UnitType}}</td>
                   <td>{{VehicleDatas.VehicleNumber}}</td>
+                  <td>{{VehicleDatas.DriverName}}</td>
                   <td>{{VehicleDatas.Status}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {% comment %} Driver Table {% endcomment %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <h4 class="card-title">Driver Table</h4>
-            <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-              Select Driver
-            </button> -->
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <form id="driver-form" method="POST">
-              {% csrf_token %}            
-              <input type="hidden" id="selected_drivers" name="selected_drivers">
-              <table id="basic-datatables2" class="display table table-striped table-hover" >
-                <thead>
-                  <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">Driver</th>
-                    <th scope="col">Phone</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for DriverDatas in ScheduleObject.Driver_used.all %}
-                  <tr>
-                    <td scope="'row">{{forloop.counter}}</td>
-                    <td>{{DriverDatas.FullName}}</td>
-                    <td>{{DriverDatas.Phone}}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </form>
           </div>
         </div>
       </div>

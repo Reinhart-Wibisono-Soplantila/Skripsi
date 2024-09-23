@@ -3,7 +3,7 @@ import string
 from django.db import models
 from django.utils import timezone
 from app_outlet.models import OutletModel
-from app_vehicle.models import DriverModel, VehicleModel
+from app_vehicle.models import VehicleModel
 # Create your models here.
 
 def generate_default_id():
@@ -67,10 +67,6 @@ class ScheduleModel(models.Model):
     Vehicle_used=models.ManyToManyField(
         VehicleModel, 
         related_name='schedules_vehicles'
-    )
-    Driver_used=models.ManyToManyField(
-        DriverModel, 
-        related_name='schedules_drivers'
     )
     Created_at=models.DateTimeField(
         auto_now_add=True

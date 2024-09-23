@@ -58,6 +58,15 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
+                    {{form.DriverName.label}}
+                    {{form.DriverName}}
+                    {% if error.DriverName %}
+                      {% for error in error.DriverName  %}
+                        <span class="errorlist">{{error}}</span>
+                      {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{form.Status.label}}
                     {{form.Status}}
                 </div>

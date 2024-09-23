@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from app_outlet.models import OutletModel
 from app_schedules.models import ScheduleModel
-from app_vehicle.models import VehicleModel, DriverModel
+from app_vehicle.models import VehicleModel
 from datetime import datetime, timedelta
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
@@ -84,41 +84,4 @@ def index(request):
         'schedule_by_year_json': json.dumps(schedule_by_year),
     }
     return render(request, 'dashboard/index.html', context)
-
-# Create your views here.
-class Dashboard(View):
-    template_name = 'dashboard/index.html'
-    
-    def get(self, request):
-        OutletObject = OutletModel.objects.exclude(OutletType='Source')
-        VehicleObject = VehicleModel.objects.all()
-        DriverObject = DriverModel.objects.all()
-        
-        today = datetime.today()
-        monday_this_week = today - timedelta(days=today.weekday())  # Mulai Senin minggu ini
-        # monday_last_week = monday_this_week - timedelta(weeks=1)
-        print('today: ', today)
-        print('monday_this_week : ', monday_this_week)
-        # first_day_last_month = today.replace(day=1) - timedelta(days=1)
-        # first_day_last_month = first_day_last_month.replace(day=1)
-        
-        # Ambil data pengiriman dan jumlah toko untuk tiap rentang waktu
-        ScheduleObject = ScheduleModel.objects.all()
-        shipments_this_week = ScheduleObject.objects.filter(date__gte=monday_this_week).values_list('Schedule_id', flat=True)
-        print('shipments_this_week : ',shipments_this_week)
-        # shipments_last_week = ScheduleObject.Destination_outlet.objects.filter(date__gte=monday_last_week, date__lt=monday_this_week).values('date').annotate(count=Count('store'))
-        # shipments_last_month = ScheduleObject.Destination_outlet.objects.filter(date__gte=first_day_last_month, date__lt=first_day_last_month + timedelta(days=30)).values('date').annotate(count=Count('store'))
-
-        # Format data sesuai kebutuhan untuk ditampilkan di Chart.js
-        labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        this_week_data = [0, 0, 0, 0, 0, 0]  # Placeholder untuk data minggu ini
-        last_week_data = [0, 0, 0, 0, 0, 0]  # Placeholder untuk data minggu lalu
-        last_month_data = [0, 0, 0, 0, 0, 0]  # Placeholder untuk data bulan lalu
-    
-        context = {
-            'OutletObject' : OutletObject,
-            'VehicleObject' : VehicleObject,
-            'DriverObject' : DriverObject,
-        }
-        return render(request, self.template_name, context)
 

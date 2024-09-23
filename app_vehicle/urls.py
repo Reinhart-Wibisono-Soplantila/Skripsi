@@ -9,8 +9,8 @@ urlpatterns = [
     path('update/<str:vehicleNumber>', views.vehicle_update, name='vehicleUpdate'),
     path('delete/<str:vehicleNumber>', views.vehicle_delete, name='vehicleDelete'),
     
-    path('driver/create', views.driver_create, name='driverCreate'),
-    path('driver/update/<str:driverId>', views.driver_update, name='driverUpdate'),
-    path('driver/view/<str:driverId>', views.driver_view, name='driverView'),
-    path('driver/delete/<str:driverId>', views.driver_delete, name='driverDelete'),
+    # path('driver/create', views.driver_create, name='driverCreate'),
+    # path('driver/update/<str:driverId>', views.driver_update, name='driverUpdate'),
+    # path('driver/view/<str:driverId>', views.driver_view, name='driverView'),
+    # path('driver/delete/<str:driverId>', views.driver_delete, name='driverDelete'),
 ]

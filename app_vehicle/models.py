@@ -9,6 +9,9 @@ class VehicleModel(models.Model):
         max_length=20,
         unique=True
     )
+    DriverName=models.CharField(
+        max_length=255
+    )
     Status=models.CharField(
         max_length=20,
         default='Ready'
@@ -23,27 +26,24 @@ class VehicleModel(models.Model):
     def __str__(self):
         return"{}. {}".format(self.id, self.VehicleNumber)
     
-class DriverModel(models.Model):
-    FullName=models.CharField(
-        max_length=255
-    )
-    Phone=models.CharField(
-        max_length=30
-    )
-    Email=models.EmailField(
-        unique=True
-    )
-    Address=models.TextField()
-    Created_at=models.DateTimeField(
-        auto_now_add=True
-    )
-    Updated_at=models.DateTimeField(
-        auto_now=True
-    )
-    Used_at=models.DateTimeField(
-        blank=True,
-        null=True
-    )
+# class DriverModel(models.Model):
+#     FullName=models.CharField(
+#         max_length=255
+#     )
+#     Phone=models.CharField(
+#         max_length=30
+#     )
+#     Address=models.TextField()
+#     Created_at=models.DateTimeField(
+#         auto_now_add=True
+#     )
+#     Updated_at=models.DateTimeField(
+#         auto_now=True
+#     )
+#     Used_at=models.DateTimeField(
+#         blank=True,
+#         null=True
+#     )
     
-    def __str__(self):
-        return"{}. {}".format(self.id, self.FullName)
+#     def __str__(self):
+#         return"{}. {}".format(self.id, self.FullName)
