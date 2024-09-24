@@ -95,7 +95,7 @@
                   <tr>
                     <td scope="'row">{{forloop.counter}}</td>
                     <td class="text-center">
-                      <input class="large-checkbox " type="checkbox" value="{{VehicleDatas.id}}">
+                      <input class="large-checkbox " type="checkbox" value="{{VehicleDatas.VehicleNumber}}">
                     </td>
                     <td>{{VehicleDatas.UnitType}}</td>
                     <td>{{VehicleDatas.VehicleNumber}}</td>
@@ -126,6 +126,7 @@
     // Restore checked checkboxes from session storage
     $('input[type="checkbox"]').each(function() {
         var id = $(this).val();
+        console.log(id)
         if (sessionStorage.getItem(id)) {
             $(this).prop('checked', true);
         }
@@ -162,9 +163,7 @@
         for (var i = 0; i < sessionStorage.length; i++) {
             var key = sessionStorage.key(i);
             // Validate if key is a valid ID format
-            if (/^\d+$/.test(key)) {
-                checkedIds.push(key);
-            }
+            checkedIds.push(key);
         }
         $('#selected-vehicles').val(checkedIds.join(','));
 

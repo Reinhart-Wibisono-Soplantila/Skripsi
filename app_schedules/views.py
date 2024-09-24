@@ -5,7 +5,7 @@ from django.db.models import Case, When
 from django.contrib.staticfiles import finders
 from django.contrib import messages
 from app_outlet.models import OutletModel
-from app_schedules.models import ScheduleModel, ScheduleDistance, ScheduleVehicle, ScheduleOutlet
+from app_schedules.models import ScheduleModel, ScheduleVehicle, ScheduleOutlet
 from app_vehicle.models import VehicleModel
 from .algorithm.GA import GeneticAlgorithm 
 from .algorithm.SMO import SpiderMonkeyAlgorithm
@@ -27,7 +27,9 @@ def index(request):
             messages.error(request, error['selected_outlets'])
         if not error:
             outlets = [str(x) for x in CheckedList.split(',')]
-            request.session['outlets'] = outlets
+            request.session.pop('ScheduleResult', None)
+            request.session.pop('vehicles', None)
+            request.session.pop('outlets', None)
             # messages.success(request, error['selected_outlets'])
             return redirect('app_schedules:viewoutlets')
         
@@ -54,7 +56,6 @@ def viewoutlets(request):
 def vehicles(request):
     VehicleObject = VehicleModel.objects.all()
     error = {}
-    VehicleList = []
     if request.method == 'POST':
         
         CheckedList = request.POST.get('selected_vehicles', '')
@@ -62,39 +63,14 @@ def vehicles(request):
             error['selected_vehicles'] = "You must select at least one option."
             messages.error(request, error['selected_vehicles'])
         if not error:
-            # print('check: ',CheckedList)
-            Vehicles = [int(x) for x in CheckedList.split(',')]
-            for i in Vehicles:
-                VehicleList.append(VehicleObject.get(id=i).VehicleNumber)
-            print(VehicleList)
-            request.session['vehicles'] = VehicleList
+            print('check: ',CheckedList)
+            VehiclesList = CheckedList.split(',')
+            request.session['vehicles'] = VehiclesList
             return redirect('app_schedules:processoutlets')
-            # return redirect('app_schedules:drivers')
     context={
         'VehicleObject' : VehicleObject,
     }
     return render(request, 'schedule/vehicle.html', context)
-
-# @group_required('Admin')
-# def drivers(request):
-#     DriverObject = DriverModel.objects.all()
-#     error = {}
-#     if request.method == 'POST':
-        
-#         CheckedList = request.POST.get('selected_drivers', '')
-#         # CheckedList = request.POST.get('datas', '')
-#         if not CheckedList:
-#             error['selected_drivers'] = "You must select at least one option."
-#             messages.error(request, error['selected_drivers'])
-#         if not error:
-#             print('check:', CheckedList)
-#             Drivers = [int(x) for x in CheckedList.split(',')]
-#             request.session['drivers'] = Drivers
-#             return redirect('app_schedules:processoutlets')
-#     context={
-#         'DriverObject' : DriverObject,
-#     }
-#     return render(request, 'schedule/driver.html', context)
 
 @group_required('Admin')
 def processoutlets(request):
@@ -105,10 +81,6 @@ def processoutlets(request):
     if vehicle_length > 1:
         divided_outlets_numpy = np.array_split(outlets, vehicle_length)
         divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
-    for sublist in divided_outlets:
-        print(list(sublist))
-        print(len(sublist))
-        print('')
     
     group=0
     DeliveryList={}
@@ -171,7 +143,6 @@ def result(request):
                     'distance' : distance
                 }
             subkey['detailsVehicle']={
-                'id' : VehicleObject.id,
                 'VehicleNumber' : VehicleObject.VehicleNumber,
                 'VehicleType' : VehicleObject.UnitType,
                 'DriverName' : VehicleObject.DriverName,
@@ -180,24 +151,21 @@ def result(request):
     
     if request.method == 'POST':
         scheduleModel = ScheduleModel()
+        scheduleModel.Total_location = len(request.session.get('outlets', []))
         scheduleModel.save()
         
         for key in schedule:
             for outlet in schedule[key]['outlets']:
                 ScheduleOutlet.objects.create(
-                    Outlet_id = outlet,
-                    Group = key,
+                    OutletCode_id = outlet,
+                    Group_vehicle_number = key,
                     Schedule = scheduleModel
                 )
             ScheduleVehicle.objects.create(
-                Vehicle_id = schedule[key]['detailsVehicle']['id'],
-                Group = key,
-                Schedule = scheduleModel
-            )
-            ScheduleDistance.objects.create(                
-                Total_distance = schedule[key]['TotalOutlets'],
-                Group = key,
-                Schedule = scheduleModel
+                VehicleNumber_id = schedule[key]['detailsVehicle']['VehicleNumber'],
+                Total_location_each_vehicle = schedule[key]['TotalOutlets'],
+                Schedule = scheduleModel,
+                Total_distance_each_vehicle=schedule[key]['distance']
             )
             
         VehicleObject = VehicleModel.objects.filter(VehicleNumber__in=vehicles)

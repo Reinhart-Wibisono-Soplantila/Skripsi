@@ -2,7 +2,8 @@ import json
 import pytz
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
-from app_schedules.models import ScheduleModel
+from app_schedules.models import ScheduleModel, ScheduleOutlet, ScheduleVehicle
+from app_vehicle.models import VehicleModel
 from app_outlet.models import OutletModel
 from django.utils import timezone
 from django.utils.timezone import make_naive
@@ -31,9 +32,10 @@ def index(request):
 
 @group_required('Admin', 'Driver')
 def view(request, Schedule_id):
-    ScheduleObject = get_object_or_404(ScheduleModel, Schedule_id=Schedule_id)
-    OutletObject = ScheduleObject.Destination_outlet.all()
-    TotalLocation = len(OutletObject)
+    OutletObject = ScheduleOutlet.objects.filter(Schedule_id=Schedule_id)
+    VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
+    # OutletObject = ScheduleObject.Destination_outlet.all()
+    # TotalLocation = len(OutletObject)
     # Find the path to the JSON file
     json_file_path = finders.find('files/RouteDetails.json')
     data = {}
@@ -42,27 +44,34 @@ def view(request, Schedule_id):
             data = json.load(json_file)
     
     RouteListed={}
-    for iteration in range(len(OutletObject)-1):
-        firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
-        secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
-        searchedKey = f'{firstKey}, {secondKey}'
-        FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
-        dist = FilteredDict.get(searchedKey, {})
-        dist = dist.get('jarak')
-        firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
-        secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
-        RouteListed[searchedKey] = {
-            'distance' : dist,
-            'firstOutlet' : firstOutlet,
-            'secondOutlet' : secondOutlet
+    for vehicle in VehicleSchedule:
+        key = vehicle.VehicleNumber_id
+        RouteListed[key] = {
+            'NumberLocation':vehicle.Total_location_each_vehicle, 
+            'detailsVehicle':{
+                'VehicleNumber' : vehicle.VehicleNumber,
+                'VehicleType' : VehicleModel.objects.get(VehicleNumber=key).UnitType,
+                'DriverName' : VehicleModel.objects.get(VehicleNumber=key).DriverName,
             }
-
-    for key in RouteListed:
-        print(f"{RouteListed[key]}")
+        }
+        if 'detailsRoute' not in RouteListed[key]:
+            RouteListed[key]['detailsRoute'] = {}
+        for iteration in range(len(OutletObject)-1):
+            firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
+            secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
+            searchedKey = f'{firstKey}, {secondKey}'
+            FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
+            distance = FilteredDict.get(searchedKey, {})
+            distance = distance.get('jarak')
+            firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+            secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+            RouteListed[key]['detailsRoute'][searchedKey]={
+                'firstOutlet' : firstOutlet,
+                'secondOutlet' : secondOutlet,
+                'distance' : distance
+            }
     context = {
-        'ScheduleObject' : ScheduleObject,
         'RouteListed' : RouteListed,
-        'TotalLocation' : TotalLocation,
     }
     return render(request, 'report/view.html', context)
 

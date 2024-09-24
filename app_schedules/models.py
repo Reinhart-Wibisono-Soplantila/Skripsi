@@ -1,5 +1,3 @@
-import random
-import string
 from django.db import models
 from django.utils import timezone
 from app_outlet.models import OutletModel
@@ -59,15 +57,16 @@ class ScheduleModel(models.Model):
         primary_key=True,
         default=generate_default_id,
     )
+    Total_location = models.IntegerField()
     Destination_outlet = models.ManyToManyField(
         OutletModel, 
         through='ScheduleOutlet',
-        related_name='schedules_outlets'
+        related_name='outlets_sc'
     )
     Vehicle_used=models.ManyToManyField(
         VehicleModel, 
         through='ScheduleVehicle',
-        related_name='schedules_vehicles'
+        related_name='vehicles_sc'
     )
     Created_at=models.DateTimeField(
         auto_now_add=True
@@ -78,15 +77,11 @@ class ScheduleModel(models.Model):
 
 class ScheduleOutlet(models.Model):
     Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)
-    Outlet = models.ForeignKey(OutletModel, on_delete=models.CASCADE)
-    Group = models.CharField(max_length=255)  
-    
+    OutletCode = models.ForeignKey(OutletModel, on_delete=models.CASCADE)
+    Group_vehicle_number = models.CharField(max_length=255)  
+
 class ScheduleVehicle(models.Model):
     Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)
-    Vehicle = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
-    Group = models.CharField(max_length=255)  
-
-class ScheduleDistance(models.Model):
-    Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE, related_name='distance')
-    Group = models.CharField(max_length=255)
-    Total_distance = models.FloatField()
+    VehicleNumber = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
+    Total_location_each_vehicle = models.IntegerField()
+    Total_distance_each_vehicle = models.FloatField(default=0.0)

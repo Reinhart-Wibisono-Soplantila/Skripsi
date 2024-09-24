@@ -60,11 +60,14 @@ table td .btn:nth-child(1){
             <thead>
               <tr>
                 <th scope="col">No.</th>
-                <th scope="col">Outlet Code</th>
+                <!-- <th scope="col">Outlet Code</th> -->
                 <th scope="col">Outet Name</th>
                 <th scope="col">Outlet Type</th>
                 <th scope="col">Provinsi</th>
                 <th scope="col">Kabupaten/Kota</th>
+                <th scope="col">Kecamatan</th>
+                <th scope="col">Kelurahan</th>
+                <th scope="col">PJP Day</th>
                 <th scope="col" style="width: 10%">Action</th>
               </tr>
             </thead>
@@ -72,11 +75,14 @@ table td .btn:nth-child(1){
                 {% for data in OutletDatas %}
                   <tr>
                     <td scope="row">{{forloop.counter}}</td>
-                    <td>{{data.OutletCode}}</td>
+                    <!-- <td>{{data.OutletCode}}</td> -->
                     <td>{{data.OutletName}}</td>
                     <td>{{data.OutletType}}</td>
                     <td>{{data.Provinsi}}</td>
                     <td>{{data.Kabupaten}}</td>
+                    <td>{{data.Kecamatan}}</td>
+                    <td>{{data.Kelurahan}}</td>
+                    <td>{{data.Days}}</td>
                     <td>
                       <a href="{% url "app_outlet:outletView" outletCode=data.OutletCode %}">
                         <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="View Task">

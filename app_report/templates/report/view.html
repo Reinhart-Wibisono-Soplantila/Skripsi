@@ -49,45 +49,27 @@
 {% endblock content_header %}
 
 {% block Content %}
-  {% comment %} Vehicle Table {% endcomment %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <h4 class="card-title">Vehicle Table</h4>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">            
-            <table id="basic-datatables" class="display table table-striped table-hover" >
-              <thead>
-                <tr>
-                  <th scope="col">No.</th>
-                  <th scope="col">Unit Type</th>
-                  <th scope="col">Vehicle Number</th>
-                  <th scope="col">Driver</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for VehicleDatas in ScheduleObject.Vehicle_used.all %}
-                <tr>
-                  <td scope="'row">{{forloop.counter}}</td>
-                  <td>{{VehicleDatas.UnitType}}</td>
-                  <td>{{VehicleDatas.VehicleNumber}}</td>
-                  <td>{{VehicleDatas.DriverName}}</td>
-                  <td>{{VehicleDatas.Status}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+
+<form id="driver-form" method="POST">
+  {% csrf_token %}
+    {% comment %} Result Page Header {% endcomment %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div>
+                <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
+                <p class="my-0">Click Finish to save the results</p>
+              </div>
+              <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+                Finish
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
   {% comment %} Outlet Table {% endcomment %}
   <div class="row">
     <div class="col-md-12">
@@ -95,39 +77,52 @@
         <div class="card-header">
           <div class="d-flex align-items-center">
             <div>
-              <h4 class="card-title">Outlet Table</h4>
-              <p class="my-0">There are {{TotalLocation}} locations to go with a total distance of {{ScheduleObject.Distance|floatformat:3}} KM </p>
-            </div>
-          </div>
-        <div class="card-body">
-          <div class="table-responsive">
-              <input type="hidden" id="selected_drivers" name="selected_drivers">
-              <table id="basic-datatables3" class="display table table-striped table-hover" >
-                <thead>
-                  <tr>
-                    <th scope="col">No.</th>
-                    <th>From </th>
-                    <th>To</th>
-                    <th>Distance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for key, value in RouteListed.items %}
-                  <tr>
-                    <td scope="'row">{{forloop.counter}}</td>
-                    <td>{{value.firstOutlet}}</td>
-                    <td>{{value.secondOutlet}}</td>
-                    <td>{{value.distance|floatformat:3}} KM</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+              <h4 class="card-title">Delivery Table</h4>
           </div>
         </div>
+        {% for key, subkey in RouteListed.items %}
+          <div class="card-header">
+            <hr>
+            <div class="d-flex flex-column">
+              <h3 class="text-center">Route {{forloop.counter}}</h3>
+              <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.distance|floatformat:3}} Km </p>
+              <br>
+              <div class="d-flex flex-column">
+                <p></p>
+                <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
+                <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
+                <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
+              </div>
+          </div>  
+        <div class="card-body">
+            <div class="table-responsive">          
+                <table  class="display table table-striped table-hover" >
+                  <thead>
+                    <tr>
+                      <th scope="col">No.</th>
+                      <th>From </th>
+                      <th>To</th>
+                      <th>Distance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for outletskey, value in subkey.detailsRoute.items %}
+                      <tr>
+                        <td scope="'row">{{forloop.counter}}</td>
+                        <td>{{value.firstOutlet}}</td>
+                        <td>{{value.secondOutlet}}</td>
+                        <td>{{value.distance|floatformat:3}} KM</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+          </div>
+          {%endfor%}
       </div>
     </div>
   </div>
-
+</form>
 {% endblock Content %}
 
 {% block scripts_app %}

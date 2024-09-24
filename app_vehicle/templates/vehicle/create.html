@@ -50,19 +50,19 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.DriverName.label}}
-                    {{form.DriverName}}
-                    {% if error.DriverName %}
-                      {% for error in error.DriverName %}
+                    {{form.VehicleNumber.label}}
+                    {{form.VehicleNumber}}
+                    {% if error.VehicleNumber %}
+                      {% for error in error.VehicleNumber  %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    {{form.VehicleNumber.label}}
-                    {{form.VehicleNumber}}
-                    {% if error.VehicleNumber %}
-                      {% for error in error.VehicleNumber  %}
+                    {{form.DriverName.label}}
+                    {{form.DriverName}}
+                    {% if error.DriverName %}
+                      {% for error in error.DriverName %}
                         <span class="errorlist">{{error}}</span>
                       {% endfor %}
                     {% endif %}
