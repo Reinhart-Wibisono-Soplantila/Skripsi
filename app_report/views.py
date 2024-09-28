@@ -7,6 +7,7 @@ from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel, ScheduleOutlet, ScheduleVehicle
 from app_vehicle.models import VehicleModel
 from app_outlet.models import OutletModel
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.timezone import make_naive
 from proweb.decorators import group_required
@@ -43,7 +44,6 @@ def map(request):
 
 @group_required('Admin', 'Driver')
 def view(request, Schedule_id):
-    OutletObject = ScheduleOutlet.objects.filter(Schedule_id=Schedule_id)
     VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
     
     json_file_path = finders.find('files/RouteDetails.json')
@@ -55,6 +55,8 @@ def view(request, Schedule_id):
     RouteListed={}
     for vehicle in VehicleSchedule:
         key = vehicle.VehicleNumber_id
+        OutletObject = ScheduleOutlet.objects.filter(
+            Q(Group_vehicle_number=key) & Q(Schedule_id=Schedule_id))
         vehicleObject = VehicleModel.objects.get(VehicleNumber=key)
         RouteListed[key] = {
             'NumberLocation':vehicle.Total_location_each_vehicle, 
@@ -62,7 +64,8 @@ def view(request, Schedule_id):
                 'VehicleNumber' : vehicle.VehicleNumber,
                 'VehicleType' : vehicleObject.UnitType,
                 'DriverName' : vehicleObject.DriverName,
-                'TotalDistance' : vehicle.Total_distance_each_vehicle
+                'TotalDistance' : vehicle.Total_distance_each_vehicle,
+                'TotalOutlets' : vehicle.Total_location_each_vehicle
             }
         }
         if 'detailsRoute' not in RouteListed[key]:
@@ -85,6 +88,7 @@ def view(request, Schedule_id):
         'RouteListed' : RouteListed,
         'Schedule_id' : Schedule_id
     }
+    print(RouteListed)
     return render(request, 'report/view.html', context)
 
 @group_required('Admin')

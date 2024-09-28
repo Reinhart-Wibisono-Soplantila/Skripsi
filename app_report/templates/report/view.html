@@ -49,9 +49,17 @@
 {% endblock content_header %}
 
 {% block Content %}
-  {% comment %} Outlet Table {% endcomment %}
+{% comment %} Outlet Table {% endcomment %}
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex align-items-center">
+      <div>
+        <h4 class="card-title">Delivery Table</h4>
+    </div>
+  </div>
 
   <div class="container">
+    <br>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         {% for key, subkey in RouteListed.items %}
@@ -68,10 +76,9 @@
       {% for key, subkey in RouteListed.items %}
       <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
         <div class="card-header">
-          <hr>
           <div class="d-flex flex-column">
             <h3 class="text-center">Route {{forloop.counter}}</h3>
-            <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.detailsVehicle.TotalDistance|floatformat:3}} Km </p>
+            <p class="my-0">There are {{subkey.detailsVehicle.TotalOutlets}} locations to go with a total distance of {{subkey.detailsVehicle.TotalDistance|floatformat:3}} Km </p>
             <br>
             <div class="d-flex flex-column">
               <p></p>
@@ -109,59 +116,7 @@
       {% endfor %}
     </div>
   </div>
-
-
-  <!-- <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <div>
-              <h4 class="card-title">Delivery Table</h4>
-          </div>
-        </div>
-        {% for key, subkey in RouteListed.items %}
-          <div class="card-header">
-            <hr>
-            <div class="d-flex flex-column">
-              <h3 class="text-center">Route {{forloop.counter}}</h3>
-              <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.distance|floatformat:3}} Km </p>
-              <br>
-              <div class="d-flex flex-column">
-                <p></p>
-                <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
-                <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
-                <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
-              </div>
-          </div>  
-          <div class="card-body">
-            <div class="table-responsive">          
-                <table  class="display table table-striped table-hover" >
-                  <thead>
-                    <tr>
-                      <th scope="col">No.</th>
-                      <th>From </th>
-                      <th>To</th>
-                      <th>Distance</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for outletskey, value in subkey.detailsRoute.items %}
-                      <tr>
-                        <td scope="'row">{{forloop.counter}}</td>
-                        <td>{{value.firstOutlet}}</td>
-                        <td>{{value.secondOutlet}}</td>
-                        <td>{{value.distance|floatformat:3}} KM</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-            </div>
-          </div>
-          {%endfor%}
-      </div>
-    </div>
-  </div> -->
+</div>
 {% endblock Content %}
 
 {% block scripts_app %}
