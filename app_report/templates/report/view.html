@@ -39,7 +39,7 @@
       <i class="icon-arrow-right"></i>
     </li>
     <li class="nav-item">
-      <a>{{ScheduleObject.Schedule_id}}</a>
+      <a>{{Schedule_id}}</a>
     </li>
   </ul>
   <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
@@ -49,29 +49,69 @@
 {% endblock content_header %}
 
 {% block Content %}
+  {% comment %} Outlet Table {% endcomment %}
 
-<form id="driver-form" method="POST">
-  {% csrf_token %}
-    {% comment %} Result Page Header {% endcomment %}
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              <div>
-                <h4 class="card-title">The following are the results of the scheduling that has been made</h4>
-                <p class="my-0">Click Finish to save the results</p>
-              </div>
-              <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-                Finish
-              </button>
+  <div class="container">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% for key, subkey in RouteListed.items %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}-tab" data-bs-toggle="tab" data-bs-target="#tab-{{ forloop.counter }}" type="button" role="tab" aria-controls="tab-{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">  
+            <span>Route {{forloop.counter}}</span>
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Tab content -->
+    <div class="tab-content" id="myTabContent">
+      {% for key, subkey in RouteListed.items %}
+      <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
+        <div class="card-header">
+          <hr>
+          <div class="d-flex flex-column">
+            <h3 class="text-center">Route {{forloop.counter}}</h3>
+            <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.detailsVehicle.TotalDistance|floatformat:3}} Km </p>
+            <br>
+            <div class="d-flex flex-column">
+              <p></p>
+              <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
+              <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
+              <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
             </div>
+          </div>
+        </div>  
+        <div class="card-body">
+          <div class="table-responsive">          
+            <table class="display table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th>From </th>
+                  <th>To</th>
+                  <th>Distance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for outletskey, value in subkey.detailsRoute.items %}
+                  <tr>
+                    <td scope="'row">{{forloop.counter}}</td>
+                    <td>{{value.firstOutlet}}</td>
+                    <td>{{value.secondOutlet}}</td>
+                    <td>{{value.distance|floatformat:3}} KM</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
-  {% comment %} Outlet Table {% endcomment %}
-  <div class="row">
+  </div>
+
+
+  <!-- <div class="row">
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
@@ -94,7 +134,7 @@
                 <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
               </div>
           </div>  
-        <div class="card-body">
+          <div class="card-body">
             <div class="table-responsive">          
                 <table  class="display table table-striped table-hover" >
                   <thead>
@@ -121,23 +161,10 @@
           {%endfor%}
       </div>
     </div>
-  </div>
-</form>
+  </div> -->
 {% endblock Content %}
 
 {% block scripts_app %}
 <!-- Datatables -->
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
-<script>
-  $(document).ready(function () {
-    $('#generate-schedule-btn').click(function() {
-      $('#driver-form').submit();
-    });
-
-    $("#basic-datatables").DataTable({});
-    $("#basic-datatables2").DataTable({});
-    $("#basic-datatables3").DataTable({});
-
-  });
-  </script>
 {% endblock scripts_app %}

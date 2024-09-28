@@ -1,5 +1,7 @@
 import json
 import pytz
+import folium
+import polyline
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
 from app_schedules.models import ScheduleModel, ScheduleOutlet, ScheduleVehicle
@@ -31,12 +33,19 @@ def index(request):
     return render(request, 'report/index.html', context)
 
 @group_required('Admin', 'Driver')
+def map(request):
+    m = folium.Map(location=[-5.0996927819101625, 119.51127736549401], zoom_start=13)
+    json_file_path = finders.find('files/RouteDetails.json')
+    data = {}
+    if json_file_path:
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
+
+@group_required('Admin', 'Driver')
 def view(request, Schedule_id):
     OutletObject = ScheduleOutlet.objects.filter(Schedule_id=Schedule_id)
     VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
-    # OutletObject = ScheduleObject.Destination_outlet.all()
-    # TotalLocation = len(OutletObject)
-    # Find the path to the JSON file
+    
     json_file_path = finders.find('files/RouteDetails.json')
     data = {}
     if json_file_path:
@@ -46,12 +55,14 @@ def view(request, Schedule_id):
     RouteListed={}
     for vehicle in VehicleSchedule:
         key = vehicle.VehicleNumber_id
+        vehicleObject = VehicleModel.objects.get(VehicleNumber=key)
         RouteListed[key] = {
             'NumberLocation':vehicle.Total_location_each_vehicle, 
             'detailsVehicle':{
                 'VehicleNumber' : vehicle.VehicleNumber,
-                'VehicleType' : VehicleModel.objects.get(VehicleNumber=key).UnitType,
-                'DriverName' : VehicleModel.objects.get(VehicleNumber=key).DriverName,
+                'VehicleType' : vehicleObject.UnitType,
+                'DriverName' : vehicleObject.DriverName,
+                'TotalDistance' : vehicle.Total_distance_each_vehicle
             }
         }
         if 'detailsRoute' not in RouteListed[key]:
@@ -72,6 +83,7 @@ def view(request, Schedule_id):
             }
     context = {
         'RouteListed' : RouteListed,
+        'Schedule_id' : Schedule_id
     }
     return render(request, 'report/view.html', context)
 

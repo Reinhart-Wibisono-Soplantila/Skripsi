@@ -67,6 +67,8 @@ class GeneticAlgorithm:
         stop_iteration = False
         targetCounter = 0
         gen_number = 0
+        bestAnswer=0
+        is_best = False
         while(stop_iteration == False):
             new_population = []
             temp_population = []
@@ -178,10 +180,11 @@ class GeneticAlgorithm:
             
             if targetCounter == 10:
                 stop_iteration == True
-                print('It was Stoped')
-                
-                print('jarak', self.calcDistance(bestAnswer[1]))
-                print('best: ', bestAnswer)
+                if is_best == True:
+                    print('It was Stoped')
+                    
+                    print('jarak', self.calcDistance(bestAnswer[1]))
+                    print('best: ', bestAnswer)
                 break
             else:
                 if tempBestanswer[0] < TARGET:
@@ -190,7 +193,7 @@ class GeneticAlgorithm:
                     bestAnswer = tempBestanswer
                     print('HITUNG:', self.calcDistance(bestAnswer[1]))
                     print('bestAnswer:', bestAnswer[0])
-                    
+                    is_best=True
                     targetCounter=0
                 else:
                     print('')
@@ -203,10 +206,11 @@ class GeneticAlgorithm:
                         else:
                             print(f"{i} == {ori} -- {cek}")
                     print('')
+                    print('best Answer still')
                     targetCounter+=1
                     print('targetCounter: ', targetCounter)
         answer = bestAnswer
-        return answer, gen_number
+        return answer, gen_number, is_best 
 
     def main(self, outlets):
         count=1
@@ -220,7 +224,8 @@ class GeneticAlgorithm:
             firstPopulation, firstFitest = self.selectPopulation(outlets, POPULATION_SIZE)
             # print('len:  ',firstPopulation[0][1])
             TARGET = firstFitest[0]# tessspopulation = copy.deepcopy(firstPopulation)
-            answer, genNumber = self.geneticAlgorithm(
+            print('Target = ', TARGET)
+            answer, genNumber, is_best = self.geneticAlgorithm(
                 firstPopulation,
                 len(outlets),
                 TOURNAMENT_SELECTION_SIZE,
@@ -228,7 +233,10 @@ class GeneticAlgorithm:
                 CROSSOVER_RATE,
                 TARGET,
             )
-
+            if(is_best == False):
+                answer = firstFitest
+                print('best answer still the fisrt fittest')
+                print(answer[0])
             print("\n----------------------------------------------------------------")
             # print('Count:' + str(count))
             # print("Generation: " + str(genNumber))

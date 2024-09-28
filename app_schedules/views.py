@@ -19,6 +19,9 @@ def index(request):
     OutletObject = OutletModel.objects.exclude(OutletType='Source')
     error={}
     
+    request.session.pop('ScheduleResult', None)
+    request.session.pop('vehicles', None)
+    request.session.pop('outlets', None)
     if request.method == 'POST':
         CheckedList = request.POST.get('selected_outlets', '')
         
@@ -27,9 +30,7 @@ def index(request):
             messages.error(request, error['selected_outlets'])
         if not error:
             outlets = [str(x) for x in CheckedList.split(',')]
-            request.session.pop('ScheduleResult', None)
-            request.session.pop('vehicles', None)
-            request.session.pop('outlets', None)
+            request.session['outlets'] = outlets
             # messages.success(request, error['selected_outlets'])
             return redirect('app_schedules:viewoutlets')
         
@@ -37,8 +38,6 @@ def index(request):
         'error' : error,
         'OutletObject' : OutletObject
     }
-    request.session.pop('ScheduleResult', None)
-    request.session.pop('vehicles', None)
     return render(request, 'schedule/index.html', context)
 
 @group_required('Admin')
@@ -77,24 +76,31 @@ def processoutlets(request):
     outlets = request.session.get('outlets', [])
     vehicles = request.session.get('vehicles', [])
     vehicle_length = len(vehicles)
+    
+    # Find best route from all outlets
+    # GA
+    GA = GeneticAlgorithm()
+    result, genNumber  = GA.main(outlets)
     print( vehicle_length)
+    DeliveryList={}
     if vehicle_length > 1:
         divided_outlets_numpy = np.array_split(outlets, vehicle_length)
         divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
-    
-    group=0
-    DeliveryList={}
-    while group<vehicle_length:
+        group=0
+        while group<vehicle_length:
+            
+            # GA
+            GA = GeneticAlgorithm()
+            result, genNumber  = GA.main(divided_outlets[group])
+            result[1].insert(0, '15000000000000000000000000')
         
-        # GA
-        GA = GeneticAlgorithm()
-        result, genNumber  = GA.main(divided_outlets[group])
-        result[1].insert(0, '15000000000000000000000000')
+            print('answer=', result[0])
+            print('location=', result[1])
+            DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
+            group+=1
+    else:
+        DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
     
-        print('answer=', result[0])
-        print('location=', result[1])
-        DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
-        group+=1
     print(DeliveryList)
     request.session['ScheduleResult'] = DeliveryList
     
@@ -156,6 +162,7 @@ def result(request):
         
         for key in schedule:
             for outlet in schedule[key]['outlets']:
+                print(f"{key}, {outlet}")
                 ScheduleOutlet.objects.create(
                     OutletCode_id = outlet,
                     Group_vehicle_number = key,
