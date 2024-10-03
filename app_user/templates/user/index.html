@@ -1,23 +1,17 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block style_app %}
 <style>
-  .text-center {
-    text-align: center;
-    vertical-align: middle;
-  }
-  .large-checkbox {
-    width: 20px;
-    height: 20px;
-  }
-  table td .btn{
-    width: 100%;
-    margin: 0
-  }
-  table td .btn:nth-child(1){
-    margin-right: 10px
-  }
+table .vehicle .btn:nth-child(2){
+  margin-left: 10px
+}
+
+table .driver a{
+  width: 100%;
+  margin-right: 10px;
+}
 </style>
 {% endblock style_app %}
 
@@ -66,6 +60,7 @@
               <tr>
                 <th scope="col">No.</th>
                 <th scope="col">Username</th>
+                <th scope="col">Group</th>
                 <th scope="col">Email</th>
                 <th scope="col">Action</th>
               </tr>
@@ -75,21 +70,30 @@
               <tr>
                 <td scope="'row">{{forloop.counter}}</td>
                 <td>{{UserDatas.username}}</td>
+                {% for group in UserDatas.groups.all %}
+                  <td>{{group.name}}</td>
+                  {% if not forloop.last %}, 
+                  {% endif %} 
+                  {% empty %}
+                  <td>Tidak ada grup</td>  <!-- Jika user tidak tergabung dalam grup -->
+                {% endfor %}
+                
                 <td>{{UserDatas.email}}</td>
-                <td>
-                  {% comment %} <div class="form-button-action">
-                    <a href="{% url 'app_user:view' user_id=UserDatas.ID %}" class="btn btn-primary">
-                      View
-                    </a>
-                    <button 
-                    type="button" 
-                    class="btn btn-danger" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#deleteModal" 
-                    data-url="{% url 'app_user:delete' user_id=UserDatas.ID %}">
-                    Delete
-                </button> {% endcomment %}
-                  </div>
+                
+                <td class="d-flex vehicle">
+                  <a href="{% url 'app_user:userUpdate' userId=UserDatas.id %}">
+                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                      Edit
+                    </button>
+                  </a>
+                  <button 
+                      type="button" 
+                      class="btn btn-danger" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#deleteModal" 
+                      data-url="{% url 'app_user:userDelete' userId=UserDatas.id %}">
+                      Delete
+                  </button>
                 </td>
               </tr>
               {% endfor %}

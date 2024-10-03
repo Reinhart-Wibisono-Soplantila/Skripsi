@@ -52,3 +52,17 @@
         });
     });
 </script>
+
+<script>
+$(document).ready(function () {
+    const flashMessages = document.getElementById('flashMessages');
+    if (flashMessages) {
+        setTimeout(function() {
+            flashMessages.style.opacity = '0';
+            setTimeout(function() {
+                flashMessages.remove();
+            }, 500); // Hapus elemen setelah transisi selesai
+        }, 3000); // Waktu tampil 3000 ms atau 3 detik
+    }
+});
+</script>

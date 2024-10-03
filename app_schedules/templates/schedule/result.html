@@ -73,71 +73,71 @@
       </div>
     </div>
   {% comment %} Outlet Table {% endcomment %}
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="d-flex align-items-center">
-            <div>
-              <h4 class="card-title">Delivery Table</h4>
-          </div>
-        </div>
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-          {% for key, subkey in schedule.items %}
-          <li class="nav-item" role="presentation">
-              <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}-tab" data-bs-toggle="tab" data-bs-target="#tab-{{ forloop.counter }}" type="button" role="tab" aria-controls="tab-{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">  
-              <span>Route {{forloop.counter}}</span>
-              </button>
-          </li>
-          {% endfor %}
-        </ul>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="d-flex align-items-center">
+        <div>
+          <h4 class="card-title">Delivery Table</h4>
+      </div>
+    </div>
+    <div class="container">
+      <br>
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% for key, subkey in schedule.items %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}-tab" data-bs-toggle="tab" data-bs-target="#tab-{{ forloop.counter }}" type="button" role="tab" aria-controls="tab-{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">  
+            <span>Route {{forloop.counter}}</span>
+            </button>
+        </li>
+        {% endfor %}
+      </ul>
 
-        <!-- Tab content -->
-        <div class="tab-content" id="myTabContent">
-          {% for key, subkey in schedule.items %}
-          <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
-         
-            <div class="card-header">
-              <hr>
+      <!-- Tab content -->
+      <div class="tab-content" id="myTabContent">
+        {% for key, subkey in schedule.items %}
+        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
+        
+          <div class="card-header">
+            <hr>
+            <div class="d-flex flex-column">
+              <h3 class="text-center">Route {{forloop.counter}}</h3>
+              <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.distance|floatformat:3}} Km </p>
+              <br>
               <div class="d-flex flex-column">
-                <h3 class="text-center">Route {{forloop.counter}}</h3>
-                <p class="my-0">There are {{subkey.TotalOutlets}} locations to go with a total distance of {{subkey.distance|floatformat:3}} Km </p>
-                <br>
-                <div class="d-flex flex-column">
-                  <p></p>
-                  <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
-                  <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
-                  <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
-                </div>
-              </div>
-            </div>  
-            <div class="card-body">
-              <div class="table-responsive">          
-                  <table  class="display table table-striped table-hover" >
-                    <thead>
-                      <tr>
-                        <th scope="col">No.</th>
-                        <th>From </th>
-                        <th>To</th>
-                        <th>Distance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for outletskey, value in subkey.detailsRoute.items %}
-                        <tr>
-                          <td scope="'row">{{forloop.counter}}</td>
-                          <td>{{value.firstOutlet}}</td>
-                          <td>{{value.secondOutlet}}</td>
-                          <td>{{value.distance|floatformat:3}} KM</td>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                <p></p>
+                <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
+                <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
+                <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
               </div>
             </div>
+          </div>  
+          <div class="card-body">
+            <div class="table-responsive">          
+                <table  class="display table table-striped table-hover" >
+                  <thead>
+                    <tr>
+                      <th scope="col">No.</th>
+                      <th>From </th>
+                      <th>To</th>
+                      <th>Distance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for outletskey, value in subkey.detailsRoute.items %}
+                      <tr>
+                        <td scope="'row">{{forloop.counter}}</td>
+                        <td>{{value.firstOutlet}}</td>
+                        <td>{{value.secondOutlet}}</td>
+                        <td>{{value.distance|floatformat:3}} KM</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+            </div>
           </div>
-          {%endfor%}
         </div>
+        {%endfor%}
       </div>
     </div>
   </div>

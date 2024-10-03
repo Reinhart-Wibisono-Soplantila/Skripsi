@@ -60,15 +60,7 @@
                     {% endfor %}
                   </div>
                 {% endfor %}
-                <button class="btn btn-success" name="updateProfile" type="submit">Submit</button>
-                <button 
-                    type="button" 
-                    class="btn btn-danger" 
-                    data-bs-toggle="modal" 
-                    data-bs-target="#Modal" 
-                    data-url="">
-                    Change Password
-                </button>
+                <button class="btn btn-success" type="submit">Submit</button>
               </form>
             </div>
           </div>
@@ -76,34 +68,14 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal Konfirmasi Hapus -->
-<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Change Password</h5>
-            </div>
-            <div class="modal-body">
-                <form action="" method='POST'>
-                    {% csrf_token %}
-                    {{ passwordForm.as_p }}
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" name="changePassword" class="btn btn-danger" id="Confirm">Change Password</button>
-                    </div>
-                  </form>
-            </div>
-        </div>
-    </div>
-  </div>
 {% endblock Content %}
 
 {% block scripts_app %}
 <script>
   $(document).ready(function () {
+    
     var deleteUrl = '';
-
+    
     // Atur URL hapus saat modal ditampilkan
     document.getElementById('Modal').addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget; // Tombol yang memicu modal
@@ -123,4 +95,5 @@
 
   });
   </script>
+
 {% endblock scripts_app %}

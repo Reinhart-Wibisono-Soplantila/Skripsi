@@ -12,8 +12,16 @@
     {% include "includes/styles.html" %}
   </head>
   <body>
-    {% block messages %}
-    {% endblock messages %}
+    <div id="flashMessages" class="flash-messages bootstrap-alert">
+        {% if messages %}
+            {% for message in messages %}
+                  <div style="background-color:#d4edda; color:#155724;" class="alert alert-success" role="alert">
+                      {{ message }}
+                  </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
     <div class="wrapper">
       <!-- Sidebar -->
       {% include "includes/sidebar.html" %}
