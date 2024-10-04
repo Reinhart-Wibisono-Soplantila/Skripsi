@@ -6,7 +6,7 @@
 }
   
 body {
-  background: #31ce36;
+  background: #2d3b55 ;
   font-family: 'Rubik', sans-serif;
 }
 
@@ -85,7 +85,7 @@ body {
   font-family: 'Rubik', sans-serif;
   cursor: pointer;
   text-transform: uppercase;
-  background: #2d3b55;
+  background: #2bb930;
   color: #fff;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -95,5 +95,5 @@ body {
   transition: all .3s;
 }
 .login-form .action button:hover {
-  background: #3c4d6d;
+  background: #31ce36 ;
 }
