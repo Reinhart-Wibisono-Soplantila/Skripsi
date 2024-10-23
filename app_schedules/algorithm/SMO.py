@@ -123,7 +123,7 @@ class SpiderMonkeyAlgorithm:
                     return temp
                 
                 LL = []
-                for k in range(len(SM)):
+                for k in range(len(SM)):            #mencari nilai terbaik sebagai GL dan LL pada pencarian pertama kali
                     LLLc[k] = 0
                     max_fit = 1000000000
                     max_fit_index = 0
@@ -138,7 +138,7 @@ class SpiderMonkeyAlgorithm:
 
                 print(f'LL[0] = {LL[0]}')
                 print(f'GL[1] = {GL[1]}')
-
+                print(SM[GL[0]][GL[1]])
                 while Repeat <= True:
                     print('*'*20)
                     """
@@ -354,7 +354,9 @@ class SpiderMonkeyAlgorithm:
                                 GL[1] = LL[k]
                     print('*'*20)
                     print('')
-                
+                    
+                    print(SM[GL[0]][GL[1]])
+                    
                     print(f"Algo 2.3 LL = {LL}")
                     if TARGET_Counter > 5:
                         answer_index = GL[1]
