@@ -54,7 +54,8 @@ def viewoutlets(request):
 
 @group_required('Admin')
 def vehicles(request):
-    VehicleObject = VehicleModel.objects.all()
+    # VehicleObject = VehicleModel.objects.all()
+    VehicleObject = VehicleModel.objects.filter(Status='Ready')
     error = {}
     if request.method == 'POST':
         

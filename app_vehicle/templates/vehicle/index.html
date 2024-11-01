@@ -18,7 +18,7 @@ table .driver a{
   margin-right: 10px;
 }
 
-table td{
+table th, td{
   text-align: center;
   vertical-align: middle;
 }
@@ -158,8 +158,8 @@ table td .badge{
       $("#basic-datatables").DataTable({});
     });
 
+    // add style for each status
     const tds = document.querySelectorAll('span.badge');
-
     // Iterasi setiap <td> dan ubah kelas berdasarkan teksnya
     tds.forEach(td => {
         const text = td.textContent.trim().toLowerCase(); // Mengambil teks dan mengonversi ke huruf kecil

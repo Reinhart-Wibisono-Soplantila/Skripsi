@@ -12,6 +12,11 @@ table .driver a{
   width: 100%;
   margin-right: 10px;
 }
+
+table th, td{
+  text-align: center;
+  vertical-align: middle;
+}
 </style>
 {% endblock style_app %}
 
@@ -44,7 +49,7 @@ table .driver a{
       <div class="card-header">
         <div class="d-flex align-items-center">
           <h4 class="card-title">List of User</h4>
-          <a class="ms-auto" href="{% url "app_user:register" %}">
+          <a class="ms-auto" href="{% url 'app_user:register' %}">
             <button class="btn btn-primary btn-round" >
               <i class="fa fa-plus"></i>
               Add User

@@ -30,6 +30,10 @@ table td .btn{
 table td .btn:nth-child(1){
   margin-bottom: 10px
 }
+table th, td{
+  text-align: center;
+  vertical-align: middle;
+}
 </style>
 {% endblock style_app %}
 
@@ -63,7 +67,7 @@ table td .btn:nth-child(1){
                 <!-- <th scope="col">Outlet Code</th> -->
                 <th scope="col">Outet Name</th>
                 <th scope="col">Outlet Type</th>
-                <th scope="col">Provinsi</th>
+                <!-- <th scope="col">Provinsi</th> -->
                 <th scope="col">Kabupaten/Kota</th>
                 <th scope="col">Kecamatan</th>
                 <th scope="col">Kelurahan</th>
@@ -78,7 +82,7 @@ table td .btn:nth-child(1){
                     <!-- <td>{{data.OutletCode}}</td> -->
                     <td>{{data.OutletName}}</td>
                     <td>{{data.OutletType}}</td>
-                    <td>{{data.Provinsi}}</td>
+                    <!-- <td>{{data.Provinsi}}</td> -->
                     <td>{{data.Kabupaten}}</td>
                     <td>{{data.Kecamatan}}</td>
                     <td>{{data.Kelurahan}}</td>
