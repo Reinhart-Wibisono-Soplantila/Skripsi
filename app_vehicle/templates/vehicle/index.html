@@ -17,6 +17,16 @@ table .driver a{
   width: 100%;
   margin-right: 10px;
 }
+
+table td{
+  text-align: center;
+  vertical-align: middle;
+}
+table td .badge{
+  font-size: small;
+  justify-content: center;
+  display: inline-block;
+}
 </style>
 {% endblock style_app %}
 
@@ -79,7 +89,7 @@ table .driver a{
                 <td>{{vehicleData.UnitType}}</td>
                 <td>{{vehicleData.VehicleNumber}}</td>
                 <td>{{vehicleData.DriverName}}</td>
-                <td>{{vehicleData.Status}}</td>
+                <td><span class="badge"> {{vehicleData.Status}}</span>  </td>
                 {% if user|has_group:"Admin" %}
                 <td class="d-flex vehicle">
                   
@@ -146,6 +156,29 @@ table .driver a{
           window.location.href = deleteUrl;
       });
       $("#basic-datatables").DataTable({});
+    });
+
+    const tds = document.querySelectorAll('span.badge');
+
+    // Iterasi setiap <td> dan ubah kelas berdasarkan teksnya
+    tds.forEach(td => {
+        const text = td.textContent.trim().toLowerCase(); // Mengambil teks dan mengonversi ke huruf kecil
+
+        // Kondisi untuk mengubah kelas berdasarkan teks
+        switch (text) {
+            case 'used':
+                td.className = 'badge badge-primary';
+                break;
+            case 'ready':
+                td.className = 'badge badge-success';
+                break;
+            case 'repaired':
+                td.className = 'badge badge-warning';
+                break;
+            // Tambahkan kondisi lainnya sesuai kebutuhan
+            default:
+                td.className = 'badge badge-default'; // Kelas default jika teks tidak cocok
+        }
     });
   </script>
 {% endblock scripts_app %}

@@ -80,42 +80,42 @@ def processoutlets(request):
     
     # Find best route from all outlets
     # GA
-    # GA = GeneticAlgorithm()
-    # result, genNumber  = GA.main(outlets)
-    # print( result)
-    # DeliveryList={}
-    # if vehicle_length > 1:
-    #     divided_outlets_numpy = np.array_split(outlets, vehicle_length)
-    #     divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
-    #     group=0
-    #     while group<vehicle_length:
+    GA = GeneticAlgorithm()
+    result, genNumber  = GA.main(outlets)
+    print( result)
+    DeliveryList={}
+    if vehicle_length > 1:
+        divided_outlets_numpy = np.array_split(outlets, vehicle_length)
+        divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
+        group=0
+        while group<vehicle_length:
             
-    #         # GA
-    #         GA = GeneticAlgorithm()
-    #         result, genNumber  = GA.main(divided_outlets[group])
-    #         result[1].insert(0, '15000000000000000000000000')
+            # GA
+            GA = GeneticAlgorithm()
+            result, genNumber  = GA.main(divided_outlets[group])
+            result[1].insert(0, '15000000000000000000000000')
         
-    #         print('answer=', result[0])
-    #         print('location=', result[1])
-    #         DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
-    #         group+=1
-    # else:
-    #     DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
+            print('answer=', result[0])
+            print('location=', result[1])
+            DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
+            group+=1
+    else:
+        DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
     
-    # print(DeliveryList)
-    # request.session['ScheduleResult'] = DeliveryList
+    print(DeliveryList)
+    request.session['ScheduleResult'] = DeliveryList
     
     # # SMO
-    SMO = SpiderMonkeyAlgorithm()
-    location, fitness = SMO.main(outlets)
-    print(location)
-    print('')
-    print(fitness)
+    # SMO = SpiderMonkeyAlgorithm()
+    # location, fitness = SMO.main(outlets)
+    # print(location)
+    # print('')
+    # print(fitness)
             
     # Hapus data dari sesi jika tidak diperlukan lagi
     # request.session.pop('cities_ids', None)
-    # return redirect('app_schedules:result')
-    return redirect('app_schedules:vehicles')
+    return redirect('app_schedules:result')
+    # return redirect('app_schedules:vehicles')
 
 @group_required('Admin')
 def result(request):
