@@ -7,9 +7,11 @@ import pandas as pd
 from .forms import StatusForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from app_schedules.models import ScheduleModel, ScheduleOutlet, ScheduleVehicle
 from app_vehicle.models import VehicleModel
 from app_outlet.models import OutletModel
@@ -127,7 +129,7 @@ def view(request, Schedule_id):
     for vehicle in VehicleSchedule:
         key = vehicle.VehicleNumber_id
         ScheduleObject = ScheduleOutlet.objects.filter(
-            Q(Group_vehicle_number=key) & Q(Schedule_id=Schedule_id))
+            Q(Group_vehicle_number=key) & Q(Schedule_id=Schedule_id)).order_by('id')
         vehicleObject = VehicleModel.objects.get(VehicleNumber=key)
         RouteListed[key] = {
             'NumberLocation':vehicle.Total_location_each_vehicle, 
@@ -145,7 +147,7 @@ def view(request, Schedule_id):
         for iteration in range(len(ScheduleObject)-1):
             firstKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration]
             secondKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration+1]
-            statusRoute = ScheduleObject.values_list('Status', flat=True)[iteration]
+            statusRoute = ScheduleObject.values_list('Status', flat=True)[iteration+1]
             
             firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
             secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
@@ -161,30 +163,39 @@ def view(request, Schedule_id):
                 'distance' : distance,
                 'status' : statusRoute
             }
-            
+    print(RouteListed)
     statusForm = StatusForm(request.POST or None)
     error = None
     if request.method == 'POST':
         if statusForm.is_valid():
             selected_outlets_data = request.POST.get("selected-outlets")
             # Parse JSON string menjadi list of dictionaries
+            print(selected_outlets_data)
             status = statusForm.cleaned_data['Status']
-            print(status)
             try:
                 selected_outlets = json.loads(selected_outlets_data)
             except json.JSONDecodeError:
                 print('error')
-            #     return JsonResponse({"error": "Invalid JSON format"}, status=400)
+                return JsonResponse({"error": "Invalid JSON format"}, status=400)
             if not selected_outlets_data:
-                print('non')
-                # error['selected_outlets'] = "You must select at least one option."
-                # messages.error(request, error['selected_outlets'])
-            # if not error:
-            #     outlets = [str(x) for x in selected_outlets_data.split(',')]
-                # request.session['outlets'] = outlets
-                # messages.success(request, error['selected_outlets'])
-                # return redirect('app_schedules:viewoutlets')
-                # return redirect('app_vehicle:vehicleIndex')
+                print('Error: No outlets selected')
+                messages.error(request, "You must select at least one outlet.")
+                return redirect('your_view_name')
+            # Loop untuk memproses setiap outlet yang dipilih
+            for outlet_data in selected_outlets:
+                vehicle_id = outlet_data.get("vehicleId")
+                schedule_id = outlet_data.get("scheduleId")
+                selected_outlet_ids = outlet_data.get("selectedOutlets", [])
+
+                # Proses untuk mengupdate status berdasarkan vehicle_id, schedule_id, dan outlet yang dipilih
+                # Misalnya, Anda mencari record di database dan mengubah statusnya
+                # Pastikan model dan field sesuai dengan data yang Anda miliki
+                ScheduleOutlet.objects.filter(
+                    Group_vehicle_number=vehicle_id,
+                    Schedule_id=schedule_id,
+                    OutletCode_id__in=selected_outlet_ids
+                ).update(Status=status)
+                return redirect(reverse('app_report:view', kwargs={'Schedule_id':Schedule_id}))
         else:
             error = statusForm.errors
             

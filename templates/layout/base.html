@@ -15,8 +15,21 @@
     <div id="flashMessages" class="flash-messages bootstrap-alert">
         {% if messages %}
             {% for message in messages %}
-                  <div style="background-color:#d4edda; color:#155724;" class="alert alert-success" role="alert">
+                  <div style="
+                            {% if message.tags == 'error' %}
+                                background-color: #e70909; color: #ffffff;
+                            {% elif message.tags == 'success' %}
+                                background-color: #28a745; color: #ffffff;
+                            {% else %}
+                                background-color: #17a2b8; color: #ffffff;
+                            {% endif %}"
+                      class="
+                            alert {% if message.tags == 'error' %} alert-danger
+                            {% elif message.tags == 'success' %} alert-success
+                            {% else %} alert-info {% endif %}" 
+                      role="alert">
                       {{ message }}
+                      
                   </div>
             {% endfor %}
         {% endif %}

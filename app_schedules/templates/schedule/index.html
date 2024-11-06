@@ -31,15 +31,6 @@
 {% endblock content_header %}
 
 {% block messages %}
-  <div id="flashMessages" class="flash-messages bootstrap-alert">
-      {% if messages %}
-          {% for message in messages %}
-              <div class="alert" style="background-color: #F25961; color: #fff;" role="alert">
-                  {{ message }}
-              </div>
-          {% endfor %}
-      {% endif %}
-  </div>
 {% endblock messages %}
 
 {% block Content %}
@@ -173,16 +164,6 @@
       $('#generate-schedule-btn').click(function() {
         $('#schedule-form').submit();
       });
-
-      const flashMessages = document.getElementById('flashMessages');
-      if (flashMessages) {
-          setTimeout(function() {
-              flashMessages.style.opacity = '0';
-              setTimeout(function() {
-                  flashMessages.remove();
-              }, 500); // Hapus elemen setelah transisi selesai
-          }, 3000); // Waktu tampil 3000 ms atau 3 detik
-      }
       
       $("#basic-datatables").DataTable({});
 
