@@ -142,43 +142,41 @@ table td .badge{
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
 
 <script>
-    $(document).ready(function () {
-      var deleteUrl = '';
+  $(document).ready(function () {
+    var deleteUrl = '';
 
-      // Atur URL hapus saat modal ditampilkan
-      document.getElementById('deleteModal').addEventListener('show.bs.modal', function (event) {
-          var button = event.relatedTarget; // Tombol yang memicu modal
-          deleteUrl = button.getAttribute('data-url'); // Mengambil data-url dari tombol
-      });
-
-      // Hapus data saat pengguna mengkonfirmasi
-      document.getElementById('confirmDelete').addEventListener('click', function() {
-          window.location.href = deleteUrl;
-      });
-      $("#basic-datatables").DataTable({});
+    // Atur URL hapus saat modal ditampilkan
+    document.getElementById('deleteModal').addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Tombol yang memicu modal
+        deleteUrl = button.getAttribute('data-url'); // Mengambil data-url dari tombol
     });
 
-    // add style for each status
-    const tds = document.querySelectorAll('span.badge');
-    // Iterasi setiap <td> dan ubah kelas berdasarkan teksnya
-    tds.forEach(td => {
-        const text = td.textContent.trim().toLowerCase(); // Mengambil teks dan mengonversi ke huruf kecil
-
-        // Kondisi untuk mengubah kelas berdasarkan teks
-        switch (text) {
-            case 'used':
-                td.className = 'badge badge-primary';
-                break;
-            case 'ready':
-                td.className = 'badge badge-success';
-                break;
-            case 'repaired':
-                td.className = 'badge badge-warning';
-                break;
-            // Tambahkan kondisi lainnya sesuai kebutuhan
-            default:
-                td.className = 'badge badge-default'; // Kelas default jika teks tidak cocok
+    // Hapus data saat pengguna mengkonfirmasi
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        window.location.href = deleteUrl;
+    });
+    $("#basic-datatables").DataTable({
+      "createdRow": function( row, data, dataIndex ) {
+          // Cari semua badge di dalam baris yang baru dibuat
+          const badges = $(row).find('span.badge');
+          badges.each(function() {
+              const text = $(this).text().trim().toLowerCase();
+              switch (text) {
+                case 'used':
+                    $(this).removeClass().addClass('badge badge-primary');
+                    break;
+                case 'ready':
+                    $(this).removeClass().addClass('badge badge-success');
+                    break;
+                case 'repaired':
+                    $(this).removeClass().addClass('badge badge-warning');
+                    break;
+                default:
+                    $(this).removeClass().addClass('badge badge-default');
+              }
+          });
         }
     });
+  });
   </script>
 {% endblock scripts_app %}

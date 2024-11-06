@@ -78,7 +78,8 @@ class ScheduleModel(models.Model):
 class ScheduleOutlet(models.Model):
     Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)
     OutletCode = models.ForeignKey(OutletModel, on_delete=models.CASCADE)
-    Group_vehicle_number = models.CharField(max_length=255)  
+    Group_vehicle_number = models.CharField(max_length=255)
+    Status = models.CharField(max_length=20, default='On progress')  
 
 class ScheduleVehicle(models.Model):
     Schedule = models.ForeignKey(ScheduleModel, on_delete=models.CASCADE)

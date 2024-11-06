@@ -30,7 +30,7 @@ def vehicle_create(request):
             error = VehicleForm_Create.errors
     context={
         'pageHeader' : 'Add Vehicle',
-        'form': VehicleForm,
+        'form': VehicleForm_Create,
         'error' : error 
     }
     return render(request, 'vehicle/create.html', context)

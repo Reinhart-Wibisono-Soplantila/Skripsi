@@ -4,8 +4,12 @@ import pytz
 import folium
 import polyline
 import pandas as pd
+from .forms import StatusForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from app_schedules.models import ScheduleModel, ScheduleOutlet, ScheduleVehicle
 from app_vehicle.models import VehicleModel
 from app_outlet.models import OutletModel
@@ -14,8 +18,6 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.timezone import make_naive
 from proweb.decorators import group_required
-from django.templatetags.static import static
-
 # Create your views here.
 @group_required('Admin', 'Driver')
 def index(request):
@@ -120,17 +122,18 @@ def view(request, Schedule_id):
     if json_file_path:
         with open(json_file_path, 'r') as json_file:
             data = json.load(json_file)
-    
+            
     RouteListed={}
     for vehicle in VehicleSchedule:
         key = vehicle.VehicleNumber_id
-        OutletObject = ScheduleOutlet.objects.filter(
+        ScheduleObject = ScheduleOutlet.objects.filter(
             Q(Group_vehicle_number=key) & Q(Schedule_id=Schedule_id))
         vehicleObject = VehicleModel.objects.get(VehicleNumber=key)
         RouteListed[key] = {
             'NumberLocation':vehicle.Total_location_each_vehicle, 
             'detailsVehicle':{
-                'VehicleNumber' : vehicle.VehicleNumber,
+                'ScheduleId' : Schedule_id,
+                'VehicleNumber' : vehicleObject.VehicleNumber,
                 'VehicleType' : vehicleObject.UnitType,
                 'DriverName' : vehicleObject.DriverName,
                 'TotalDistance' : vehicle.Total_distance_each_vehicle,
@@ -139,25 +142,60 @@ def view(request, Schedule_id):
         }
         if 'detailsRoute' not in RouteListed[key]:
             RouteListed[key]['detailsRoute'] = {}
-        for iteration in range(len(OutletObject)-1):
-            firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
-            secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
+        for iteration in range(len(ScheduleObject)-1):
+            firstKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration]
+            secondKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration+1]
+            statusRoute = ScheduleObject.values_list('Status', flat=True)[iteration]
+            
+            firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+            secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+            
             searchedKey = f'{firstKey}, {secondKey}'
             FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
             distance = FilteredDict.get(searchedKey, {})
             distance = distance.get('jarak')
-            firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
-            secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
             RouteListed[key]['detailsRoute'][searchedKey]={
                 'firstOutlet' : firstOutlet,
                 'secondOutlet' : secondOutlet,
-                'distance' : distance
+                'secondCode' : secondKey,
+                'distance' : distance,
+                'status' : statusRoute
             }
+            
+    statusForm = StatusForm(request.POST or None)
+    error = None
+    if request.method == 'POST':
+        if statusForm.is_valid():
+            selected_outlets_data = request.POST.get("selected-outlets")
+            # Parse JSON string menjadi list of dictionaries
+            status = statusForm.cleaned_data['Status']
+            print(status)
+            try:
+                selected_outlets = json.loads(selected_outlets_data)
+            except json.JSONDecodeError:
+                print('error')
+            #     return JsonResponse({"error": "Invalid JSON format"}, status=400)
+            if not selected_outlets_data:
+                print('non')
+                # error['selected_outlets'] = "You must select at least one option."
+                # messages.error(request, error['selected_outlets'])
+            # if not error:
+            #     outlets = [str(x) for x in selected_outlets_data.split(',')]
+                # request.session['outlets'] = outlets
+                # messages.success(request, error['selected_outlets'])
+                # return redirect('app_schedules:viewoutlets')
+                # return redirect('app_vehicle:vehicleIndex')
+        else:
+            error = statusForm.errors
+            
     context = {
         'RouteListed' : RouteListed,
-        'Schedule_id' : Schedule_id
+        'Schedule_id' : Schedule_id,
+        'form': statusForm,
+        'error':error
     }
-    print(RouteListed)
+    
+    # print(RouteListed)
     return render(request, 'report/view.html', context)
 
 

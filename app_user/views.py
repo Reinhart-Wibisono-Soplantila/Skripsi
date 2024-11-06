@@ -122,7 +122,7 @@ class LoginView(View):
                 login(request, user)
                 return redirect('app_dashboard:home')
             else:
-                messages.error(request, "Wrong Username or Wrong Password.")
+                messages.error(request, "You are not registered")
         else:
-            messages.error(request, "Invalid Input.")
+            messages.error(request, "Wrong Username or Wrong Password.")
         return render(request, 'user/login.html', context)

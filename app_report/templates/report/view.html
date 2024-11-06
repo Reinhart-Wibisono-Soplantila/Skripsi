@@ -64,7 +64,16 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         {% for key, subkey in RouteListed.items %}
         <li class="nav-item" role="presentation">
-            <button class="nav-link {% if forloop.first %}active{% endif %}" id="tab-{{ forloop.counter }}-tab" data-bs-toggle="tab" data-bs-target="#tab-{{ forloop.counter }}" type="button" role="tab" aria-controls="tab-{{ forloop.counter }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">  
+            <button 
+              class="nav-link {% if forloop.first %}active{% endif %}" 
+              id="tab-{{ forloop.counter }}-tab" 
+              data-bs-toggle="tab" 
+              data-bs-target="#tab-{{ forloop.counter }}" 
+              type="button" 
+              role="tab" 
+              aria-controls="tab-{{ forloop.counter }}" 
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+
             <span>Route {{forloop.counter}}</span>
             </button>
         </li>
@@ -85,27 +94,48 @@
               <span>Vehicle Type : {{subkey.detailsVehicle.VehicleType}}</span>
               <span>Vehicle Number : {{subkey.detailsVehicle.VehicleNumber}}</span>
               <span>Driver : {{subkey.detailsVehicle.DriverName}}</span>
+              <button 
+                  type="button" 
+                  class="btn btn-secondary" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#deleteModal" >
+                  Change Delivery Status
+              </button>
             </div>
           </div>
         </div>  
         <div class="card-body">
           <div class="table-responsive">          
-            <table class="display table table-striped table-hover" >
+            <table 
+                id="basic-datatables-{{ forloop.counter }}" 
+                class="display table table-striped table-hover" 
+                data-vehicle-id = "{{subkey.detailsVehicle.VehicleNumber}}"
+                data-schedule-id = "{{subkey.detailsVehicle.ScheduleId}}">
               <thead>
                 <tr>
                   <th scope="col">No.</th>
+                  <th>
+                    <input type="checkbox" id="select-all" class="select-all">
+                  </th>
                   <th>From </th>
                   <th>To</th>
                   <th>Distance</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {% for outletskey, value in subkey.detailsRoute.items %}
                   <tr>
                     <td scope="'row">{{forloop.counter}}</td>
+                    <td>
+                      <input type="checkbox" class="item-checkbox" value="{{ value.secondCode }}">
+                    </td>
                     <td>{{value.firstOutlet}}</td>
                     <td>{{value.secondOutlet}}</td>
                     <td>{{value.distance|floatformat:3}} KM</td>
+                    <td>
+                      <span class="badge"> {{value.status}}</span>
+                    </td>
                   </tr>
                 {% endfor %}
               </tbody>
@@ -117,9 +147,147 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="deleteModalLabel">Ganti Status Pengiriman</h5>
+          </div>
+          <form method="post" id="updateForm" class="updateForm">
+            <div class="modal-body">
+                {% csrf_token %}
+                <div class="mt-3 mb-3">
+                  <label>Pilih Status:</label>
+                  <input type="hidden" id="selected-outlets" class="selected-outlets" name="selected-outlets">
+                      {{ form.Status }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-secondary" id="updateButton">Update Status</button>
+            </div>
+            
+          </form>
+      </div>
+  </div>
+</div>
+
 {% endblock Content %}
 
 {% block scripts_app %}
 <!-- Datatables -->
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script>
+  $(document).ready(function() {
+    
+    $("#basic-datatables-1").DataTable({
+      "drawCallback": function( settings ) {
+        const tds = document.querySelectorAll('span.badge');
+        tds.forEach(td => {
+          const text = td.textContent.trim().toLowerCase();
+          switch (text) {
+              case 'finish':
+                  td.className = 'badge badge-success';
+                  break;
+              case 'on progress':
+                  td.className = 'badge badge-warning';
+                  break;
+              default:
+                  td.className = 'badge badge-default';
+          }
+        });
+      }
+    });
+
+
+    // Event listener for tab change
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var targetId = $(e.target).data('bs-target'); // Get target tab ID
+      var tableId = $(targetId).find('table').attr('id'); // Get the table ID in the active tab
+      // Initialize DataTable if it hasn't been initialized already
+      if (!$.fn.DataTable.isDataTable('#' + tableId)) {
+          $('#' + tableId).DataTable();
+      }
+    });
+
+    // Clear session storage on page load
+    sessionStorage.clear(); 
+    $('input[type="checkbox"]').prop('checked', false);
+
+    // Restore checked checkboxes from session storage
+    //$('input[type="checkbox"]').each(function() {
+    //    var id = $(this).val();
+    //    if (sessionStorage.getItem(id)) {
+    //        $(this).prop('checked', true);
+    //    }
+    //});
+    
+    // Checkbox "select all" functionality
+    $(document).on('change', '.select-all', function() {
+        var isChecked = $(this).is(':checked');
+        var table = $(this).closest('table');
+
+        table.find('.item-checkbox').each(function() {
+            $(this).prop('checked', isChecked).trigger('change');
+        });
+    });
+
+    var allSelectedOutletsData = [];
+    // Event listener for checkbox changes to track selected outlets across tabs
+    $(document).on('change', 'input.item-checkbox', function() {
+      var table = $(this).closest('table');
+      var vehicleId = table.data('vehicle-id');
+      var scheduleId = table.data('schedule-id');
+      var outletId = $(this).val();
+
+      // Find or create entry for the current table (vehicleId)
+      var entry = allSelectedOutletsData.find(data => data.vehicleId === vehicleId);
+
+      if (!entry) {
+          entry = {
+              vehicleId: vehicleId,
+              scheduleId: scheduleId,
+              selectedOutlets: []
+          };
+          allSelectedOutletsData.push(entry);
+      }
+
+      // Add or remove outlet ID from the selectedOutlets array
+      if ($(this).is(':checked')) {
+          if (!entry.selectedOutlets.includes(outletId)) {
+              entry.selectedOutlets.push(outletId);
+          }
+      } else {
+          entry.selectedOutlets = entry.selectedOutlets.filter(id => id !== outletId);
+      
+          // Jika selectedOutlets kosong setelah penghapusan, hapus seluruh objek
+          if (entry.selectedOutlets.length === 0) {
+            allSelectedOutletsData = allSelectedOutletsData.filter(entry => entry.vehicleId !== vehicleId);
+          }
+      }
+      console.log(allSelectedOutletsData)
+    });
+
+    // Handle form submission for any tab
+    $('.updateForm').on('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+      // Jika tidak ada data yang dipilih, kirimkan array kosong untuk mencegah error
+      //if (allSelectedOutletsData.length === 0) {
+      //  allSelectedOutletsData.push({
+      //      scheduleId: null,
+      //      vehicleId: null,
+      //      selectedOutlets: []
+      //  });
+      //}
+      // Update the hidden input with the combined data from allSelectedOutletsData
+      $(this).find('.selected-outlets').val(JSON.stringify(allSelectedOutletsData));
+
+      // Submit the form
+      this.submit();
+    });
+});
+</script>
 {% endblock scripts_app %}

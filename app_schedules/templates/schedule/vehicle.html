@@ -194,39 +194,35 @@
 
     $("#add-row").DataTable({
       pageLength: 10,
+      "createdRow": function( row, data, dataIndex ) {
+          // Cari semua badge di dalam baris yang baru dibuat
+          const badges = $(row).find('span.badge');
+          badges.each(function() {
+              const text = $(this).text().trim().toLowerCase();
+              switch (text) {
+                case 'used':
+                    $(this).removeClass().addClass('badge badge-primary');
+                    break;
+                case 'ready':
+                    $(this).removeClass().addClass('badge badge-success');
+                    break;
+                case 'repaired':
+                    $(this).removeClass().addClass('badge badge-warning');
+                    break;
+                default:
+                    $(this).removeClass().addClass('badge badge-default');
+              }
+          });
+        }
     });
 
     var action =
       '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
 
     $("#addRowButton").click(function () {
-      $("#add-row")
-        .dataTable()
+      $("#add-row").dataTable()
       $("#addRowModal").modal("hide");
     });
-  });
-
-  // add style for each status
-  const tds = document.querySelectorAll('span.badge');
-  // Iterasi setiap <td> dan ubah kelas berdasarkan teksnya
-  tds.forEach(td => {
-      const text = td.textContent.trim().toLowerCase(); // Mengambil teks dan mengonversi ke huruf kecil
-
-      // Kondisi untuk mengubah kelas berdasarkan teks
-      switch (text) {
-          case 'used':
-              td.className = 'badge badge-primary';
-              break;
-          case 'ready':
-              td.className = 'badge badge-success';
-              break;
-          case 'repaired':
-              td.className = 'badge badge-warning';
-              break;
-          // Tambahkan kondisi lainnya sesuai kebutuhan
-          default:
-              td.className = 'badge badge-default'; // Kelas default jika teks tidak cocok
-      }
   });
   </script>
 {% endblock scripts_app %}
