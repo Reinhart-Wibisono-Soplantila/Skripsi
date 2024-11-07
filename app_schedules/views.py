@@ -32,7 +32,6 @@ def index(request):
         if not error:
             outlets = [str(x) for x in CheckedList.split(',')]
             request.session['outlets'] = outlets
-            # messages.success(request, error['selected_outlets'])
             return redirect('app_schedules:viewoutlets')
         
     context={

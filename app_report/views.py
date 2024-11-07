@@ -42,78 +42,72 @@ def index(request):
     return render(request, 'report/index.html', context)
 
 @group_required('Admin', 'Driver')
-def maps(request, Schedule_id):
+def maps(request, Schedule_id, vehicle_number):
     
-    existing_map = Map.objects.filter(name=Schedule_id).first()
+    existing_map = Map.objects.filter(name=f'{Schedule_id}-{vehicle_number}').first()
     if existing_map:
         # Jika sudah ada, kembalikan file path atau response sesuai kebutuhan
         return render(request, f'maps/{Schedule_id}.html')
     else:
-        VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
-        maps=[]
-        for vehicle in VehicleSchedule:
-            Route=[]
-            key = vehicle.VehicleNumber_id
-            OutletObject = ScheduleOutlet.objects.filter(
-                Q(Group_vehicle_number=key) & Q(Schedule_id=Schedule_id))
-            for iteration in range(len(OutletObject)-1):
-                firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
-                secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
-                Route.append(f'{firstKey}, {secondKey}')
-            maps.append(Route)
-        
-                
+        ScheduleObject = ScheduleOutlet.objects.filter( Q(Group_vehicle_number=vehicle_number) & Q(Schedule_id=Schedule_id)).order_by('id')
+        AllRoute=[]
+        for iteration in range(len(ScheduleObject)-1):
+            firstKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration]
+            secondKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration+1]
+            AllRoute.append(f'{firstKey}, {secondKey}')
+        # print(Route)
         json_file_path = finders.find('files/RouteDetails.json')
         data = {}
         if json_file_path:
             with open(json_file_path, 'r') as json_file:
                 data = json.load(json_file)
                 
-        for map in maps:
-            start_route = map[0]
-            start_location = [data[start_route]['from']['outlet_coord'][1], data[start_route]['from']['outlet_coord'][0]]
-            result_map = folium.Map(location=start_location, zoom_start=12)
+        start_route = AllRoute[0]
+        start_location = [data[start_route]['from']['outlet_coord'][1], data[start_route]['from']['outlet_coord'][0]]
+        result_map = folium.Map(location=start_location, zoom_start=12)
 
-            # Loop hanya melalui rute yang dipilih
+        # Loop hanya melalui rute yang dipilih
+        
+        i=1
+        for key in AllRoute:
+            if key in data:
+                route_data = data[key]
+                from_coord = route_data['from']['outlet_coord']
+                from_coord = [from_coord[1], from_coord[0]]
+                
+                to_coord = route_data['to']['outlet_coord']
+                to_coord = [to_coord[1], to_coord[0]]
+                # Tambahkan marker untuk 'from' dan 'to' outlet
+                # folium.Marker(from_coord, popup=f"From: {route_data['from']['outlet_code']}").add_to(m)
+                # Tambahkan marker hijau untuk semua 'from' outlet
+                folium.Marker(
+                    location = from_coord,
+                    popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
+                    # icon=folium.DivIcon(html=f"""<div style="font-size: 12pt; font-weight: bold; color: black">{i}</div>""")
+                ).add_to(result_map)
+                
+                # folium.Marker(to_coord, popup=f"To: {route_data['to']['outlet_code']}").add_to(m)
+                # Tambahkan marker merah untuk 'to' outlet
+                folium.Marker(
+                    location = to_coord,
+                    popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
+                ).add_to(result_map)
+                
+                # Decode geometri polyline dan tambahkan ke peta sebagai PolyLine
+                encoded_geometri = route_data['geometri']
+                decoded_coords = polyline.decode(encoded_geometri)
+                
+                # Tambahkan rute ke peta
+                folium.PolyLine(decoded_coords, color="blue", weight=2.5, opacity=1).add_to(result_map)
+            i+=1
             
-            i=1
-            for key in map:
-                if key in data:
-                    route_data = data[key]
-                    from_coord = route_data['from']['outlet_coord']
-                    from_coord = [from_coord[1], from_coord[0]]
-                    
-                    to_coord = route_data['to']['outlet_coord']
-                    to_coord = [to_coord[1], to_coord[0]]
-                    # Tambahkan marker untuk 'from' dan 'to' outlet
-                    # folium.Marker(from_coord, popup=f"From: {route_data['from']['outlet_code']}").add_to(m)
-                    # Tambahkan marker hijau untuk semua 'from' outlet
-                    folium.Marker(
-                        location = from_coord,
-                        popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
-                        # icon=folium.DivIcon(html=f"""<div style="font-size: 12pt; font-weight: bold; color: black">{i}</div>""")
-                    ).add_to(result_map)
-                    
-                    # folium.Marker(to_coord, popup=f"To: {route_data['to']['outlet_code']}").add_to(m)
-                    # Tambahkan marker merah untuk 'to' outlet
-                    folium.Marker(
-                        location = to_coord,
-                        popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
-                    ).add_to(result_map)
-                    
-                    # Decode geometri polyline dan tambahkan ke peta sebagai PolyLine
-                    encoded_geometri = route_data['geometri']
-                    decoded_coords = polyline.decode(encoded_geometri)
-                    
-                    # Tambahkan rute ke peta
-                    folium.PolyLine(decoded_coords, color="blue", weight=2.5, opacity=1).add_to(result_map)
-                i+=1
+            file_path = os.path.join('app_report', 'templates', 'maps', f'{Schedule_id}-{vehicle_number}.html')
             
-            file_path = os.path.join('app_report', 'templates', 'maps', f'{Schedule_id}.html')
-            # Simpan peta ke file HTML
-            result_map.save(file_path)
-            Map.objects.create(name=Schedule_id, file_path=file_path)
-            return render(request, f'maps/{Schedule_id}.html')
+        # Simpan peta ke file HTML
+        result_map.save(file_path)
+        Map.objects.create(name=f'{Schedule_id}-{vehicle_number}', Schedule_id=Schedule_id, file_path=file_path)
+        return render(request, f'maps/{Schedule_id}-{vehicle_number}.html')
+        # return redirect(reverse('app_report:view', kwargs={'Schedule_id':Schedule_id}))
 
 @group_required('Admin', 'Driver')
 def view(request, Schedule_id):
@@ -163,7 +157,6 @@ def view(request, Schedule_id):
                 'distance' : distance,
                 'status' : statusRoute
             }
-    print(RouteListed)
     statusForm = StatusForm(request.POST or None)
     error = None
     if request.method == 'POST':
