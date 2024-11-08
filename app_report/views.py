@@ -241,10 +241,6 @@ def add(request, Schedule_id, Vehicle_id):
 @group_required('Admin')
 def processoutlets(request):
     outlets = request.session.get('outlets', [])
-    vehicle_id = request.session.get('vehicle_id', [])
-    schedule_id = request.session.get('schedule_id', [])
-    
-    
     # Find best route from all outlets
     # GA
     GA = GeneticAlgorithm()
@@ -309,7 +305,9 @@ def result(request):
             }
             schedule['TotalOutlets'] = len(schedule['outlets'])-1
     context ={
-        'schedule' : schedule
+        'schedule' : schedule,
+        'Schedule_id' : schedule_id,
+        'Vehicle_id' : vehicle_id
     }
     
     print('schedule')
