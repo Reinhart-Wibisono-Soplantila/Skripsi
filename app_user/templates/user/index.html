@@ -36,7 +36,7 @@ table th, td{
       <a href="#">List of User</a>
     </li>
   </ul>
-  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+  <!-- <button id="generate-schedule-btn" class="btn btn-secondary btn-round ms-auto">
     Finish
   </button> -->
 </div>
@@ -50,7 +50,7 @@ table th, td{
         <div class="d-flex align-items-center">
           <h4 class="card-title">List of User</h4>
           <a class="ms-auto" href="{% url 'app_user:register' %}">
-            <button class="btn btn-primary btn-round" >
+            <button class="btn btn-secondary btn-round" >
               <i class="fa fa-plus"></i>
               Add User
             </button>
@@ -86,7 +86,7 @@ table th, td{
                 
                 <td class="d-flex vehicle">
                   <a href="{% url 'app_user:userUpdate' userId=UserDatas.id %}">
-                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-secondary" data-original-title="Edit Task">
                       Edit
                     </button>
                   </a>

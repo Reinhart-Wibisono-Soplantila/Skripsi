@@ -58,7 +58,7 @@ table td .badge{
           <h4 class="card-title">Vehicle Table</h4>
           {% if user|has_group:"Admin" %}
           <a class="ms-auto" href="{% url VehicleLink %}">
-            <button class="btn btn-primary btn-round" >
+            <button class="btn btn-secondary" >
               <i class="fa fa-plus"></i>
               {{VehicleButton}}
             </button>
@@ -94,7 +94,7 @@ table td .badge{
                 <td class="d-flex vehicle">
                   
                   <a href="{% url 'app_vehicle:vehicleUpdate' vehicleNumber=vehicleData.VehicleNumber %}">
-                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit Task">
+                    <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-secondary" data-original-title="Edit Task">
                       Edit
                     </button>
                   </a>
@@ -163,7 +163,7 @@ table td .badge{
               const text = $(this).text().trim().toLowerCase();
               switch (text) {
                 case 'used':
-                    $(this).removeClass().addClass('badge badge-primary');
+                    $(this).removeClass().addClass('badge badge-secondary');
                     break;
                 case 'ready':
                     $(this).removeClass().addClass('badge badge-success');

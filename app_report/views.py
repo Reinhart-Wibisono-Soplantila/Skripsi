@@ -5,9 +5,11 @@ import folium
 import polyline
 import pandas as pd
 from .forms import StatusForm
+from app_schedules.algorithm.GA import GeneticAlgorithm 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.staticfiles import finders
 from django.contrib import messages
+from django.db.models import Case, When
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -42,14 +44,14 @@ def index(request):
     return render(request, 'report/index.html', context)
 
 @group_required('Admin', 'Driver')
-def maps(request, Schedule_id, vehicle_number):
+def maps(request, Schedule_id, Vehicle_id):
     
-    existing_map = Map.objects.filter(name=f'{Schedule_id}-{vehicle_number}').first()
+    existing_map = Map.objects.filter(name=f'{Schedule_id}-{Vehicle_id}').first()
     if existing_map:
         # Jika sudah ada, kembalikan file path atau response sesuai kebutuhan
         return render(request, f'maps/{Schedule_id}.html')
     else:
-        ScheduleObject = ScheduleOutlet.objects.filter( Q(Group_vehicle_number=vehicle_number) & Q(Schedule_id=Schedule_id)).order_by('id')
+        ScheduleObject = ScheduleOutlet.objects.filter( Q(Group_vehicle_number=Vehicle_id) & Q(Schedule_id=Schedule_id)).order_by('id')
         AllRoute=[]
         for iteration in range(len(ScheduleObject)-1):
             firstKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration]
@@ -101,16 +103,17 @@ def maps(request, Schedule_id, vehicle_number):
                 folium.PolyLine(decoded_coords, color="blue", weight=2.5, opacity=1).add_to(result_map)
             i+=1
             
-            file_path = os.path.join('app_report', 'templates', 'maps', f'{Schedule_id}-{vehicle_number}.html')
+            file_path = os.path.join('app_report', 'templates', 'maps', f'{Schedule_id}-{Vehicle_id}.html')
             
         # Simpan peta ke file HTML
         result_map.save(file_path)
-        Map.objects.create(name=f'{Schedule_id}-{vehicle_number}', Schedule_id=Schedule_id, file_path=file_path)
-        return render(request, f'maps/{Schedule_id}-{vehicle_number}.html')
+        Map.objects.create(name=f'{Schedule_id}-{Vehicle_id}', Schedule_id=Schedule_id, file_path=file_path)
+        return render(request, f'maps/{Schedule_id}-{Vehicle_id}.html')
         # return redirect(reverse('app_report:view', kwargs={'Schedule_id':Schedule_id}))
 
 @group_required('Admin', 'Driver')
 def view(request, Schedule_id):
+    # Retrieve data for view page section
     VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
     
     json_file_path = finders.find('files/RouteDetails.json')
@@ -157,6 +160,8 @@ def view(request, Schedule_id):
                 'distance' : distance,
                 'status' : statusRoute
             }
+            
+    # Change Status Section
     statusForm = StatusForm(request.POST or None)
     error = None
     if request.method == 'POST':
@@ -196,13 +201,157 @@ def view(request, Schedule_id):
         'RouteListed' : RouteListed,
         'Schedule_id' : Schedule_id,
         'form': statusForm,
-        'error':error
+        'error':error,
     }
     
     # print(RouteListed)
     return render(request, 'report/view.html', context)
 
+@group_required('Admin')
+def add(request, Schedule_id, Vehicle_id):
+    # Retrieve data for add outlet section
+    OutletObject = OutletModel.objects.exclude(OutletType='Source')
+    
+    request.session.pop('outlets', None)
+    request.session.pop('vehicle_id', None)
+    request.session.pop('schedule_id', None)
+    request.session.pop('ScheduleResult', None)
+    
+    error={}
+    if request.method == 'POST':
+        CheckedList = request.POST.get('selected_outlets', '')
+        
+        if not CheckedList:
+            error['selected_outlets'] = "You must select at least one option."
+            messages.error(request, error['selected_outlets'])
+        if not error:
+            outlets = [str(x) for x in CheckedList.split(',')]
+            request.session['outlets'] = outlets
+            request.session['vehicle_id'] = Vehicle_id
+            request.session['schedule_id'] = Schedule_id
+            return redirect('app_report:processoutlets')
+            
+    context={
+        'Schedule_id' : Schedule_id,
+        'Vehicle_id' : Vehicle_id,
+        'OutletObject' : OutletObject
+    }
+    return render(request, 'report/add.html', context)
 
+@group_required('Admin')
+def processoutlets(request):
+    outlets = request.session.get('outlets', [])
+    vehicle_id = request.session.get('vehicle_id', [])
+    schedule_id = request.session.get('schedule_id', [])
+    
+    
+    # Find best route from all outlets
+    # GA
+    GA = GeneticAlgorithm()
+    result, genNumber  = GA.main(outlets)
+    print( result)
+    DeliveryList={}
+    result[1].insert(0, '15000000000000000000000000')
+    DeliveryList = {'distance':result[0], 'outlets':result[1]}
+    
+    print('DeliveryList')
+    print(DeliveryList)
+    request.session['ScheduleResult'] = DeliveryList
+    
+    # # SMO
+    # SMO = SpiderMonkeyAlgorithm()
+    # location, fitness = SMO.main(outlets)
+    # print(location)
+    # print('')
+    # print(fitness)
+            
+    # Hapus data dari sesi jika tidak diperlukan lagi
+    # request.session.pop('cities_ids', None)
+    return redirect('app_report:result')
+    # return redirect('app_schedules:vehicles')
+
+@group_required('Admin')
+def result(request):
+    schedule = request.session.get('ScheduleResult', [])
+    vehicle_id = request.session.get('vehicle_id', [])
+    schedule_id = request.session.get('schedule_id', [])
+    json_file_path = finders.find('files/RouteDetails.json')
+    data = {}
+    
+    if json_file_path:
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
+    
+    OutletObject = OutletModel.objects.filter(OutletCode__in=schedule['outlets']).order_by(
+        Case(*[When(OutletCode=id, then=pos) for pos, id in enumerate(schedule['outlets'])])
+        )
+    
+    VehicleObject = VehicleModel.objects.get(VehicleNumber = vehicle_id)
+    schedule['detailsRoute'] = {}
+    for iteration in range(len(OutletObject)-1):
+            firstKey = OutletObject.values_list('OutletCode', flat=True)[iteration]
+            secondKey = OutletObject.values_list('OutletCode', flat=True)[iteration+1]
+            searchedKey = f'{firstKey}, {secondKey}'
+            FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
+            distance = FilteredDict.get(searchedKey, {})
+            distance = distance.get('jarak')
+            firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+            secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+            schedule['detailsRoute'][searchedKey] = {
+                    'firstOutlet' : firstOutlet,
+                    'secondOutlet' : secondOutlet,
+                    'distance' : distance
+                }
+            schedule['detailsVehicle']={
+                'VehicleNumber' : VehicleObject.VehicleNumber,
+                'VehicleType' : VehicleObject.UnitType,
+                'DriverName' : VehicleObject.DriverName,
+            }
+            schedule['TotalOutlets'] = len(schedule['outlets'])-1
+    context ={
+        'schedule' : schedule
+    }
+    
+    print('schedule')
+    print(schedule)
+    return render(request, 'report/result.html', context)
+    # VehicleSchedule = ScheduleVehicle.objects.filter(Q(Group_vehicle_number=Vehicle_id) & Q(Schedule_id=Schedule_id))
+    # RouteListed={}
+    # ScheduleObject = ScheduleOutlet.objects.filter(
+    #     Q(Group_vehicle_number=Vehicle_id) & Q(Schedule_id=Schedule_id)).order_by('id')
+    # vehicleObject = VehicleModel.objects.get(VehicleNumber=Vehicle_id)
+    # RouteListed = {
+    #     'NumberLocation':VehicleSchedule.Total_location_each_vehicle, 
+    #     'detailsVehicle':{
+    #         'ScheduleId' : Schedule_id,
+    #         'VehicleNumber' : vehicleObject.VehicleNumber,
+    #         'VehicleType' : vehicleObject.UnitType,
+    #         'DriverName' : vehicleObject.DriverName,
+    #         'TotalDistance' : VehicleSchedule.Total_distance_each_vehicle,
+    #         'TotalOutlets' : VehicleSchedule.Total_location_each_vehicle
+    #     }
+    # }
+    # RouteListed['detailsRoute'] = {}
+    # for iteration in range(len(ScheduleObject)-1):
+    #     firstKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration]
+    #     secondKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration+1]
+    #     statusRoute = ScheduleObject.values_list('Status', flat=True)[iteration+1]
+        
+    #     firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
+    #     secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+        
+    #     searchedKey = f'{firstKey}, {secondKey}'
+    #     FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
+    #     distance = FilteredDict.get(searchedKey, {})
+    #     distance = distance.get('jarak')
+    #     RouteListed['detailsRoute'][searchedKey]={
+    #         'firstOutlet' : firstOutlet,
+    #         'secondOutlet' : secondOutlet,
+    #         'secondCode' : secondKey,
+    #         'distance' : distance,
+    #         'status' : statusRoute
+    #     }
+        
 @group_required('Admin')
 def delete(request, Schedule_id):
     ScheduleObject = ScheduleModel.objects.get(pk=Schedule_id)

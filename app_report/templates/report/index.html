@@ -42,7 +42,7 @@
       <a href="{% url breadcrumbs.report.index.url %}">{{breadcrumbs.report.index.name}}</a>
     </li>
   </ul>
-  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
+  <!-- <button id="generate-schedule-btn" class="btn btn-secondary btn-round ms-auto">
     Finish
   </button> -->
 </div>
@@ -78,7 +78,7 @@
                 <td>{{ScheduleDatas.Created_at|date:"g:i a" }}</td>
                 <td>
                   <div class="form-button-action">
-                    <a href="{% url 'app_report:view' Schedule_id=ScheduleDatas.Schedule_id %}" class="btn btn-primary">
+                    <a href="{% url 'app_report:view' Schedule_id=ScheduleDatas.Schedule_id %}" class="btn btn-secondary">
                       View
                     </a>
                     {% if user|has_group:"Admin" %}

@@ -100,6 +100,7 @@ def processoutlets(request):
             DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
             group+=1
     else:
+        result[1].insert(0, '15000000000000000000000000')
         DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
     
     print(DeliveryList)

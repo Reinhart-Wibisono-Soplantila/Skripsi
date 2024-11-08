@@ -1,5 +1,6 @@
 {% extends "layout/base.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block style_app %}
 <style>
@@ -42,9 +43,6 @@
       <a>{{Schedule_id}}</a>
     </li>
   </ul>
-  <!-- <button id="generate-schedule-btn" class="btn btn-primary btn-round ms-auto">
-    Finish
-  </button> -->
 </div>
 {% endblock content_header %}
 
@@ -53,8 +51,33 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex align-items-center">
-      <div>
-        <h4 class="card-title">Delivery Table</h4>
+      <h4 class="card-title">Delivery Table</h4>
+      {% if user|has_group:"Admin" %}
+      
+      <div class="tab-content ms-auto" id="myTabContent">
+        {% for key, subkey in RouteListed.items %}
+          <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
+          
+            <a href="{% url 'app_report:add' Schedule_id=subkey.detailsVehicle.ScheduleId Vehicle_id=subkey.detailsVehicle.VehicleNumber %}">
+              <button class="btn btn-secondary" >
+                <i class="fa fa-plus"></i>
+                Add new outlet
+              </button>
+            </a>
+          </div>
+        {%endfor%}
+      </div>
+
+      <!-- <button 
+          type="button" 
+          class="btn btn-secondary ms-auto" 
+          data-bs-toggle="modal" 
+          data-bs-target="#addOutlet" >
+          
+          <i class="fa fa-plus"></i>
+          
+      </button> -->
+      {%endif%}
     </div>
   </div>
 
@@ -98,7 +121,7 @@
             </div>
             <div class="col-md-6">
               <div class="d-flex justify-content-between">
-                
+              
                 <button 
                     type="button" 
                     class="btn btn-secondary" 
@@ -108,7 +131,7 @@
                     Change Delivery Status
                 </button>
                 
-                <a href="{% url 'app_report:maps' Schedule_id=subkey.detailsVehicle.ScheduleId vehicle_number=subkey.detailsVehicle.VehicleNumber%}" class="btn btn-success" style="width: 45%;">
+                <a href="{% url 'app_report:maps' Schedule_id=subkey.detailsVehicle.ScheduleId Vehicle_id=subkey.detailsVehicle.VehicleNumber%}" class="btn btn-success" style="width: 45%;">
                   Maps
                 </a>
               </div>
@@ -185,6 +208,31 @@
   </div>
 </div>
 
+<!-- Modal Tambah Toko -->
+<div class="modal fade" id="addOutlet" tabindex="-1" aria-labelledby="changeStatusLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="changeStatusLabel">Add Outlet</h5>
+          </div>
+          <!-- <form method="post" id="updateForm" class="updateForm">
+            <div class="modal-body">
+                {% csrf_token %}
+                <div class="mt-3 mb-3">
+                  <label>Pilih Status:</label>
+                  <input type="hidden" id="selected-outlets" class="selected-outlets" name="selected-outlets">
+                      {{ form.Status }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-secondary" id="updateButton">Update Status</button>
+            </div>
+            
+          </form> -->
+      </div>
+  </div>
+</div>
 {% endblock Content %}
 
 {% block scripts_app %}

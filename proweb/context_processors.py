@@ -45,10 +45,10 @@ def breadcrumb_context(request):
             'result' : {'name': 'Result'},
 
         },
-
         'report' : {
             'index': {'name': 'List of Report', 'url': 'app_report:index'},
             'view' : {'name': 'View Report',},
+            'add' : {'name' : 'Add New Outlet'}
         },
         # 'user' : {'name': 'Vehicles', 'url': 'app_user:index'},
         
