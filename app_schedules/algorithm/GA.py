@@ -17,7 +17,7 @@ class GeneticAlgorithm:
             self.copy = copy
             self.time = time
 
-            file_path = finders.find('files/DistanceMatriks.xlsx')
+            file_path = finders.find('files/distanceMatrix_Saturday.xlsx')
             self.distance_df = pd.read_excel(file_path, engine='openpyxl', index_col=0)
             self.start = time.time()
             print("library sudah terimpor")

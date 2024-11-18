@@ -68,7 +68,7 @@
                       <tr>
                           <td scope="row" class="text-center">{{forloop.counter}}</td>
                           <td class="text-center">
-                            <input class="large-checkbox" type="checkbox" value="{{ OutletDatas.OutletCode }}">
+                            <input class="large-checkbox checkbox-input" type="checkbox" value="{{ OutletDatas.OutletCode }}">
                           </td>
                           <!-- <td>{{ OutletDatas.OutletCode }}</td> -->
                           <td>{{ OutletDatas.OutletName }}</td>
@@ -100,31 +100,32 @@
     $(document).ready(function () {
       // Clear session storage on page load
       sessionStorage.clear(); 
-      $('input[type="checkbox"]').prop('checked', false);
+      $('.checkbox-input').prop('checked', false);
 
       // Restore checked checkboxes from session storage
-      $('input[type="checkbox"]').each(function() {
-          var id = $(this).val();
-          if (sessionStorage.getItem(id)) {
-              $(this).prop('checked', true);
-          }
+      $('.checkbox-input').each(function() {
+        var id = $(this).val();
+        if (sessionStorage.getItem(id)) {
+            $(this).prop('checked', true);
+        }
       });
 
       // Save checked checkboxes to session storage
-      $(document).on('change', 'input[type="checkbox"]', function() {
-          var id = $(this).val();
-          if ($(this).is(':checked')) {
-              sessionStorage.setItem(id, 'checked');
-          } else {
-              sessionStorage.removeItem(id);
-          }
+      $(document).on('change', '.checkbox-input', function() {
+        var id = $(this).val();
+        if ($(this).is(':checked')) {
+            sessionStorage.setItem(id, 'checked');
+        } else {
+            sessionStorage.removeItem(id);
+        }
       });
 
+      // Select all checkboxes
       $('#select-all').click(function() {
         var isChecked = this.checked;
-        $('input[type="checkbox"]').prop('checked', isChecked);
+        $('.checkbox-input').prop('checked', isChecked);
 
-        $('input[type="checkbox"]').each(function() {
+        $('.checkbox-input').each(function() {
             var id = $(this).val();
             if (isChecked) {
                 sessionStorage.setItem(id, 'checked');

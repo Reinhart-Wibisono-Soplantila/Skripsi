@@ -52,7 +52,7 @@ def viewoutlets(request):
     return render(request, 'schedule/confirm.html', context)
 
 @group_required('Admin')
-def vehicles(request):
+def vehicle(request):
     # VehicleObject = VehicleModel.objects.all()
     VehicleObject = VehicleModel.objects.filter(Status='Ready')
     error = {}
@@ -77,7 +77,7 @@ def processoutlets(request):
     outlets = request.session.get('outlets', [])
     vehicles = request.session.get('vehicles', [])
     vehicle_length = len(vehicles)
-    
+    outlets_length = len(outlets)
     # Find best route from all outlets
     # GA
     GA = GeneticAlgorithm()
@@ -121,20 +121,23 @@ def processoutlets(request):
 @group_required('Admin')
 def result(request):
     schedule = request.session.get('ScheduleResult', [])
+    print()
+    print(schedule)
+    print()
     vehicles = request.session.get('vehicles', [])
     # Find the path to the JSON file
-    json_file_path = finders.find('files/RouteDetails.json')
+    json_file_path = finders.find('files/distanceMatrix.json')
     data = {}
     if json_file_path:
         with open(json_file_path, 'r') as json_file:
             data = json.load(json_file)
-    
     for key, subkey in schedule.items():
         OutletObject = OutletModel.objects.filter(OutletCode__in=schedule[key]['outlets']).order_by(
             Case(*[When(OutletCode=id, then=pos) for pos, id in enumerate(schedule[key]['outlets'])])
             )
         if 'detailsRoute' not in subkey:
             subkey['detailsRoute'] = {}
+        print(key)
         VehicleObject = VehicleModel.objects.get(VehicleNumber = key)
         print(VehicleObject)
         for iteration in range(len(OutletObject)-1):
@@ -146,10 +149,16 @@ def result(request):
             distance = distance.get('jarak')
             firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
             secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
+            
+            firstOutlet_Address = OutletModel.objects.get(OutletCode=firstKey).Address
+            secondOutlet_Address = OutletModel.objects.get(OutletCode=secondKey).Address
+            
             subkey['detailsRoute'][searchedKey] = {
-                    'firstOutlet' : firstOutlet,
-                    'secondOutlet' : secondOutlet,
-                    'distance' : distance
+                    'from_Outlet' : firstOutlet,
+                    'to_Outlet' : secondOutlet,
+                    'distance' : distance,
+                    'from_address' : firstOutlet_Address,
+                    'to_address' : secondOutlet_Address,
                 }
             subkey['detailsVehicle']={
                 'VehicleNumber' : VehicleObject.VehicleNumber,
@@ -157,7 +166,7 @@ def result(request):
                 'DriverName' : VehicleObject.DriverName,
             }
             subkey['TotalOutlets'] = len(schedule[key]['outlets'])-1
-    
+        print(f'sudah{key}')
     if request.method == 'POST':
         scheduleModel = ScheduleModel()
         scheduleModel.Total_location = len(request.session.get('outlets', []))

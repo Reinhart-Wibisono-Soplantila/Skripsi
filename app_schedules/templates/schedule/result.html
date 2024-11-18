@@ -118,7 +118,9 @@
                     <tr>
                       <th scope="col">No.</th>
                       <th>From </th>
+                      <th>Address</th>
                       <th>To</th>
+                      <th>Address</th>
                       <th>Distance</th>
                     </tr>
                   </thead>
@@ -126,8 +128,10 @@
                     {% for outletskey, value in subkey.detailsRoute.items %}
                       <tr>
                         <td scope="'row">{{forloop.counter}}</td>
-                        <td>{{value.firstOutlet}}</td>
-                        <td>{{value.secondOutlet}}</td>
+                        <td>{{value.from_Outlet}}</td>
+                        <td>{{value.from_address}}</td>
+                        <td>{{value.to_Outlet}}</td>
+                        <td>{{value.to_address}}</td>
                         <td>{{value.distance|floatformat:3}} KM</td>
                       </tr>
                     {% endfor %}

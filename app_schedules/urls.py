@@ -6,6 +6,6 @@ urlpatterns = [
     path('select-outlets', views.index, name='index'),
     path('confirm-outlets/', views.viewoutlets, name='viewoutlets'),
     path('selected-outlets/process-outlets/', views.processoutlets, name='processoutlets'),
-    path('select-vehicles/', views.vehicles, name='vehicles'),
+    path('select-vehicles/', views.vehicle, name='vehicles'),
     path('result/', views.result, name='result'),
 ]

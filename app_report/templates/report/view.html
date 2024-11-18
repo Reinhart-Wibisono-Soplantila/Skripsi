@@ -54,7 +54,7 @@
       <h4 class="card-title">Delivery Table</h4>
       {% if user|has_group:"Admin" %}
       
-      <div class="tab-content ms-auto" id="myTabContent">
+      <!-- <div class="tab-content ms-auto" id="myTabContent">
         {% for key, subkey in RouteListed.items %}
           <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="tab-{{ forloop.counter }}" role="tabpanel" aria-labelledby="tab-{{ forloop.counter }}-tab">
           
@@ -66,7 +66,7 @@
             </a>
           </div>
         {%endfor%}
-      </div>
+      </div> -->
 
       <!-- <button 
           type="button" 
@@ -152,7 +152,11 @@
                     <input type="checkbox" id="select-all" class="select-all">
                   </th>
                   <th>From </th>
+                  <th>Address </th>
+                  
                   <th>To</th>
+                  <th>Address </th>
+
                   <th>Distance</th>
                   <th>Status</th>
                 </tr>
@@ -165,7 +169,9 @@
                       <input type="checkbox" class="item-checkbox" value="{{ value.secondCode }}">
                     </td>
                     <td>{{value.firstOutlet}}</td>
+                    <td>{{value.from_address}}</td>
                     <td>{{value.secondOutlet}}</td>
+                    <td>{{value.to_address}}</td>
                     <td>{{value.distance|floatformat:3}} KM</td>
                     <td>
                       <span class="badge"> {{value.status}}</span>

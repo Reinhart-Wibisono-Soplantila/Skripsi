@@ -49,7 +49,7 @@ def maps(request, Schedule_id, Vehicle_id):
     existing_map = Map.objects.filter(name=f'{Schedule_id}-{Vehicle_id}').first()
     if existing_map:
         # Jika sudah ada, kembalikan file path atau response sesuai kebutuhan
-        return render(request, f'maps/{Schedule_id}.html')
+        return render(request, f'maps/{Schedule_id}-{Vehicle_id}.html')
     else:
         ScheduleObject = ScheduleOutlet.objects.filter( Q(Group_vehicle_number=Vehicle_id) & Q(Schedule_id=Schedule_id)).order_by('id')
         AllRoute=[]
@@ -58,7 +58,8 @@ def maps(request, Schedule_id, Vehicle_id):
             secondKey = ScheduleObject.values_list('OutletCode', flat=True)[iteration+1]
             AllRoute.append(f'{firstKey}, {secondKey}')
         # print(Route)
-        json_file_path = finders.find('files/RouteDetails.json')
+        
+        json_file_path = finders.find('files/distanceMatrix.json')
         data = {}
         if json_file_path:
             with open(json_file_path, 'r') as json_file:
@@ -70,31 +71,42 @@ def maps(request, Schedule_id, Vehicle_id):
 
         # Loop hanya melalui rute yang dipilih
         
-        i=1
+        i=0
         for key in AllRoute:
             if key in data:
+                location_to = OutletModel.objects.filter(OutletCode=data[key]['to']['outlet_code']).values_list('OutletName', flat=True).first()
+                location_from = OutletModel.objects.filter(OutletCode=data[key]['from']['outlet_code']).values_list('OutletName', flat=True).first()
+                
                 route_data = data[key]
                 from_coord = route_data['from']['outlet_coord']
                 from_coord = [from_coord[1], from_coord[0]]
                 
                 to_coord = route_data['to']['outlet_coord']
                 to_coord = [to_coord[1], to_coord[0]]
-                # Tambahkan marker untuk 'from' dan 'to' outlet
-                # folium.Marker(from_coord, popup=f"From: {route_data['from']['outlet_code']}").add_to(m)
-                # Tambahkan marker hijau untuk semua 'from' outlet
+                
+                if i == 0:
+                    folium.Marker(
+                        location = from_coord,
+                        popup=folium.Popup( f"""Start : {location_from}""",max_width=500),
+                    ).add_to(result_map)
+                    
                 folium.Marker(
                     location = from_coord,
-                    popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
-                    # icon=folium.DivIcon(html=f"""<div style="font-size: 12pt; font-weight: bold; color: black">{i}</div>""")
+                    popup=folium.Popup( f"""From: {location_from} - To: {location_to}""",max_width=500),
+                    icon=folium.DivIcon(html=f"""<div style="font-size: 20pt; font-weight: bold; color: black">{i}</div>""")
                 ).add_to(result_map)
                 
-                # folium.Marker(to_coord, popup=f"To: {route_data['to']['outlet_code']}").add_to(m)
-                # Tambahkan marker merah untuk 'to' outlet
                 folium.Marker(
                     location = to_coord,
-                    popup=f"From: {route_data['from']['outlet_code']}, To: {route_data['to']['outlet_code']}",
+                    popup=folium.Popup( f"""From: {location_from} - To: {location_to}""",max_width=500),
                 ).add_to(result_map)
                 
+                if i==len(AllRoute)-1:
+                    folium.Marker(
+                        location = to_coord,
+                        icon=folium.DivIcon(html=f"""<div style="font-size: 20pt; font-weight: bold; color: black">{i+1}</div>""")
+                    ).add_to(result_map)
+                    
                 # Decode geometri polyline dan tambahkan ke peta sebagai PolyLine
                 encoded_geometri = route_data['geometri']
                 decoded_coords = polyline.decode(encoded_geometri)
@@ -116,7 +128,7 @@ def view(request, Schedule_id):
     # Retrieve data for view page section
     VehicleSchedule = ScheduleVehicle.objects.filter(Schedule_id=Schedule_id)
     
-    json_file_path = finders.find('files/RouteDetails.json')
+    json_file_path = finders.find('files/distanceMatrix.json')
     data = {}
     if json_file_path:
         with open(json_file_path, 'r') as json_file:
@@ -149,6 +161,9 @@ def view(request, Schedule_id):
             firstOutlet = OutletModel.objects.get(OutletCode=firstKey).OutletName
             secondOutlet = OutletModel.objects.get(OutletCode=secondKey).OutletName
             
+            firstOutlet_Address = OutletModel.objects.get(OutletCode=firstKey).Address
+            secondOutlet_Address = OutletModel.objects.get(OutletCode=secondKey).Address
+            
             searchedKey = f'{firstKey}, {secondKey}'
             FilteredDict = {key: value for key, value in data.items() if key == searchedKey}
             distance = FilteredDict.get(searchedKey, {})
@@ -157,6 +172,8 @@ def view(request, Schedule_id):
                 'firstOutlet' : firstOutlet,
                 'secondOutlet' : secondOutlet,
                 'secondCode' : secondKey,
+                'from_address' : firstOutlet_Address,
+                'to_address' : secondOutlet_Address,
                 'distance' : distance,
                 'status' : statusRoute
             }
@@ -271,7 +288,7 @@ def result(request):
     schedule = request.session.get('ScheduleResult', [])
     vehicle_id = request.session.get('vehicle_id', [])
     schedule_id = request.session.get('schedule_id', [])
-    json_file_path = finders.find('files/RouteDetails.json')
+    json_file_path = finders.find('files/distanceMatrix.json')
     data = {}
     
     if json_file_path:
