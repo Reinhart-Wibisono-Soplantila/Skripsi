@@ -96,7 +96,7 @@ class GeneticAlgorithm:
             for k in range(int((len(population) - 2) / 2)):
                 # CROSSOVER
                 random_number = self.random.random()
-                if random_number < CROSSOVER_RATE:
+                if random_number <= CROSSOVER_RATE:
                     # print('cross')
                     parent_chromosome1 = sorted(
                         self.random.choices(population, k=TOURNAMENT_SELECTION_SIZE), key=lambda x: x[0]
@@ -127,7 +127,7 @@ class GeneticAlgorithm:
                 child_chromosome2 = self.copy.deepcopy(child_chromosome2)
                 
                 # MUTATION
-                if self.random.random() < MUTATION_RATE:
+                if self.random.random() >= MUTATION_RATE:
                     point1 = self.random.randint(0, lenCities - 1)
                     point2 = self.random.randint(0, lenCities - 1)
                     child_chromosome1[point1], child_chromosome1[point2] = (

@@ -13,6 +13,7 @@ from django.utils import timezone
 from datetime import datetime
 from proweb.decorators import group_required
 from django.templatetags.static import static
+from django.http import JsonResponse
 
 @group_required('Admin')
 def index(request):
@@ -57,15 +58,22 @@ def vehicle(request):
     VehicleObject = VehicleModel.objects.filter(Status='Ready')
     error = {}
     if request.method == 'POST':
-        
-        CheckedList = request.POST.get('selected_vehicles', '')
-        if not CheckedList:
-            error['selected_vehicles'] = "You must select at least one option."
-            messages.error(request, error['selected_vehicles'])
+        vehicleList = request.POST.get('selected-vehicles', '')
+        selectedAlgoritm = request.POST.get('algorithm', '')
+        if not vehicleList:
+            error['selected-vehicles'] = "You must select at least one vehicle."
+            messages.error(request, error['selected-vehicles'])
+        # if not selectedAlgoritm:
+        #     error['algorithm'] = "You must select one algorithm before generate schedule."
+        #     messages.error(request, error['algorithm'])
         if not error:
-            print('check: ',CheckedList)
-            VehiclesList = CheckedList.split(',')
-            request.session['vehicles'] = VehiclesList
+            vehicleList = json.loads(vehicleList)
+            request.session['algorithm'] = selectedAlgoritm
+            # vehicleList = vehicleList.split(',')
+            request.session['vehicles'] = vehicleList
+            print('check: ',vehicleList)
+            print('check: ',selectedAlgoritm)
+            # return JsonResponse({'GET': request.POST.dict()})
             return redirect('app_schedules:processoutlets')
     context={
         'VehicleObject' : VehicleObject,
@@ -76,47 +84,64 @@ def vehicle(request):
 def processoutlets(request):
     outlets = request.session.get('outlets', [])
     vehicles = request.session.get('vehicles', [])
+    algorithm = request.session.get('algorithm', [])
     vehicle_length = len(vehicles)
     outlets_length = len(outlets)
-    # Find best route from all outlets
-    # GA
-    GA = GeneticAlgorithm()
-    result, genNumber  = GA.main(outlets)
-    print( result)
-    DeliveryList={}
-    if vehicle_length > 1:
-        divided_outlets_numpy = np.array_split(outlets, vehicle_length)
-        divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
-        group=0
-        while group<vehicle_length:
+    
+    if(algorithm == 'GA'):
+        # Find best route from all outlets
+        # GA
+        GA = GeneticAlgorithm()
+        result, genNumber  = GA.main(outlets)
+        print( result)
+        DeliveryList={}
+        if vehicle_length > 1:
+            divided_outlets_numpy = np.array_split(outlets, vehicle_length)
+            divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
+            group=0
+            while group<vehicle_length:
+                # GA
+                GA = GeneticAlgorithm()
+                result, genNumber  = GA.main(divided_outlets[group])
+                result[1].insert(0, '15000000000000000000000000')
             
-            # GA
-            GA = GeneticAlgorithm()
-            result, genNumber  = GA.main(divided_outlets[group])
+                print('answer=', result[0])
+                print('location=', result[1])
+                DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
+                group+=1
+        else:
             result[1].insert(0, '15000000000000000000000000')
+            DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
+    
+        print(DeliveryList)
+        request.session['ScheduleResult'] = DeliveryList
+    elif(algorithm == 'SMO'):
+        # SMO
+        SMO = SpiderMonkeyAlgorithm()
+        location, fitness = SMO.main(outlets)
         
-            print('answer=', result[0])
-            print('location=', result[1])
-            DeliveryList[vehicles[group]] = {'distance':result[0], 'outlets':result[1]}
-            group+=1
-    else:
-        result[1].insert(0, '15000000000000000000000000')
-        DeliveryList[vehicles[0]] = {'distance':result[0], 'outlets':result[1]}
+        DeliveryList={}
+        if vehicle_length > 1:
+            divided_outlets_numpy = np.array_split(outlets, vehicle_length)
+            divided_outlets = [sub_array.tolist() for sub_array in divided_outlets_numpy]
+            group=0
+            while group<vehicle_length:
+                # SMO
+                SMO = SpiderMonkeyAlgorithm()
+                location, fitness = SMO.main(divided_outlets[group])
+                
+                location.insert(0, '15000000000000000000000000')
+                print('answer=', fitness)
+                print('location=', location)
+                DeliveryList[vehicles[group]] = {'distance':fitness, 'outlets':location}
+                group+=1
+        else:
+            location.insert(0, '15000000000000000000000000')
+            DeliveryList[vehicles[0]] = {'distance':fitness, 'outlets':location}
     
-    print(DeliveryList)
-    request.session['ScheduleResult'] = DeliveryList
-    
-    # # SMO
-    # SMO = SpiderMonkeyAlgorithm()
-    # location, fitness = SMO.main(outlets)
-    # print(location)
-    # print('')
-    # print(fitness)
-            
-    # Hapus data dari sesi jika tidak diperlukan lagi
-    # request.session.pop('cities_ids', None)
+        print(DeliveryList)
+        request.session['ScheduleResult'] = DeliveryList
     return redirect('app_schedules:result')
-    # return redirect('app_schedules:vehicles')
 
 @group_required('Admin')
 def result(request):

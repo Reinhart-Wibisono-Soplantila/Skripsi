@@ -21,6 +21,10 @@
     justify-content: center;
     display: inline-block;
   }
+  input[type="radio"] {
+    transform: scale(1.5);
+    margin-right: 10px;
+  }
 </style>
 {% endblock style_app %}
 
@@ -62,54 +66,80 @@
         <div class="card-header">
           <div class="d-flex align-items-center">
             <h4 class="card-title">Vehicle Table</h4>
-            <button id="generate-schedule-btn" class="btn btn-secondary ms-auto">
+            <button class="btn btn-secondary ms-auto" data-bs-toggle="modal" data-bs-target="#chooseAlgorithm">
               Generate Schedule
             </button>
           </div>
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <form id="vehicle-form" method="POST">
-              {% csrf_token %}
-                
-              {% if error.datas %}
-                  <div class="error">{{ errors.datas }}</div>
-              {% endif %}
-              <table id="add-row" class="display table table-striped table-hover" >
-                <thead>
-                  <tr>
-                    <th scope="col">No.</th>
-                    <th class="text-center">
-                      <input type="checkbox" id="select-all" class="large-checkbox">
-                    </th>
-                    <th scope="col">Unit Type</th>
-                    <th scope="col">Vehicle Number</th>
-                    <th scope="col">Driver</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for VehicleDatas in VehicleObject %}
-                  <tr>
-                    <td scope="'row">{{forloop.counter}}</td>
-                    <td class="text-center">
-                      <input class="large-checkbox checkbox-input" type="checkbox" value="{{VehicleDatas.VehicleNumber}}">
-                    </td>
-                    <td>{{VehicleDatas.UnitType}}</td>
-                    <td>{{VehicleDatas.VehicleNumber}}</td>
-                    <td>{{VehicleDatas.DriverName}}</td>
-                    <td><span class="badge"> {{VehicleDatas.Status}}</span></td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <input type="hidden" id="selected-vehicles" name="selected_vehicles">
-            </form>
+            {% if error.datas %}
+                <div class="error">{{ errors.datas }}</div>
+            {% endif %}
+            <table id="add-row" class="display table table-striped table-hover" >
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th class="text-center">
+                    <input type="checkbox" id="select-all" class="select-all large-checkbox">
+                  </th>
+                  <th scope="col">Unit Type</th>
+                  <th scope="col">Vehicle Number</th>
+                  <th scope="col">Driver</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for VehicleDatas in VehicleObject %}
+                <tr>
+                  <td scope="'row">{{forloop.counter}}</td>
+                  <td class="text-center">
+                    <input class="large-checkbox item-checkbox" type="checkbox" value="{{VehicleDatas.VehicleNumber}}">
+                  </td>
+                  <td>{{VehicleDatas.UnitType}}</td>
+                  <td>{{VehicleDatas.VehicleNumber}}</td>
+                  <td>{{VehicleDatas.DriverName}}</td>
+                  <td><span class="badge"> {{VehicleDatas.Status}}</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal Pilih Algoritma -->
+<div class="modal fade" id="chooseAlgorithm" tabindex="-1" aria-labelledby="chooseAlgorithmLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="chooseAlgorithmLabel">Select Algorithm</h5>
+          </div>
+          <form method="post" id="algoForm" class="algoForm">
+            <div class="modal-body">
+                {% csrf_token %}
+                Before generate schedule, select one of these option:
+                <div class="mt-3 mb-3">
+                  <label>
+                    <input type="radio" name="algorithm" value="GA" required> Genetic Algorithm
+                  </label><br>
+                  <label>
+                    <input type="radio" name="algorithm" value="SMO"> Spider Monkey Optimization
+                  </label>
+                  <input type="hidden" id="selected-vehicles" name="selected-vehicles">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-secondary" id="generate-schedule-btn">Submit</button>
+            </div>
+            
+          </form>
+      </div>
+  </div>
+</div>
 {% endblock Content %}
 
 {% block scripts_app %}
@@ -117,59 +147,47 @@
 <script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
 <script>
   $(document).ready(function () {
-    // Clear session storage on page load
-    sessionStorage.clear(); 
-    $('input[type="checkbox"]').prop('checked', false);
 
-    // Restore checked checkboxes from session storage
-    $('.checkbox-input').each(function() {
-      var id = $(this).val();
-      if (sessionStorage.getItem(id)) {
-          $(this).prop('checked', true);
-      }
-    });
+      // Clear session storage on page load
+      sessionStorage.clear(); 
+      $('input[type="checkbox"]').prop('checked', false);
 
-    // Save checked checkboxes to session storage
-    $(document).on('change', '.checkbox-input', function() {
-      var id = $(this).val();
-      if ($(this).is(':checked')) {
-          sessionStorage.setItem(id, 'checked');
-      } else {
-          sessionStorage.removeItem(id);
-      }
-    });
+     // Checkbox "select all" functionality
+     $(document).on('change', '.select-all', function() {
+      var isChecked = $(this).is(':checked');
+      var table = $(this).closest('table');
 
-    // Select all checkboxes
-    $('#select-all').click(function() {
-      var isChecked = this.checked;
-      $('.checkbox-input').prop('checked', isChecked);
-
-      $('.checkbox-input').each(function() {
-          var id = $(this).val();
-          if (isChecked) {
-              sessionStorage.setItem(id, 'checked');
-          } else {
-              sessionStorage.removeItem(id);
-          }
+      table.find('.item-checkbox').each(function() {
+          $(this).prop('checked', isChecked).trigger('change');
       });
     });
 
-    // Collect all checked values before submitting the form
-    $('#vehicle-form').on('submit', function() {
-      var checkedIds = [];
-      // Collect checked ids from sessionStorage
-      for (var i = 0; i < sessionStorage.length; i++) {
-          var key = sessionStorage.key(i);
-          // Validate if key is a valid vehicle number (adjust regex as needed)
-          if (/^[A-Z]{1,2} \d{1,4} [A-Z]{1,3}$/.test(key)) {
-              checkedIds.push(key);
-          }
-      }
-      $('#selected-vehicles').val(checkedIds.join(','));
+    var selectedVehicles = [];
+    // Event listener for checkbox changes to track selected vehicle
+    $(document).on('change', 'input.item-checkbox', function() {
+      var vehicleNumber = $(this).val();
 
-      // Clear session storage after submitting the form
-      sessionStorage.clear();
+      // Add or remove outlet ID from the selectedOutlets array
+      if ($(this).is(':checked')) {
+          if (!selectedVehicles.includes(vehicleNumber)) {
+            selectedVehicles.push(vehicleNumber);
+          }
+      } else {
+          selectedVehicles = selectedVehicles.filter(id => id !== vehicleNumber);
+      }
+      console.log(selectedVehicles)
     });
+
+    $('.algoForm').on('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+      // Update the hidden input with the combined data from allSelectedOutletsData
+      $(this).find('#selected-vehicles').val(JSON.stringify(selectedVehicles));
+
+      // Submit the form
+      this.submit();
+    });
+
+    
 
     // Clear session storage when the page is unloaded
     $(window).on('beforeunload', function() {
